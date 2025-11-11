@@ -42,9 +42,11 @@ class ParityValidator {
   private report: ValidationReport;
   private results: ValidationResult[] = [];
   private specificDomain?: string;
+  private pythonCommand: string;
 
   constructor(specificDomain?: string) {
     this.specificDomain = specificDomain;
+    this.pythonCommand = 'python'; // Will be set in checkPythonAvailability
     this.report = {
       timestamp: new Date().toISOString(),
       totalTests: 0,
@@ -87,15 +89,22 @@ class ParityValidator {
   }
 
   private checkPythonAvailability(): void {
+    // Try python3 first (common on macOS/Linux), then python
     try {
-      execSync('python --version', { stdio: 'pipe' });
+      execSync('python3 --version', { stdio: 'pipe' });
+      this.pythonCommand = 'python3';
     } catch {
-      throw new Error('Python is not available. Install Python to run parity validation.');
+      try {
+        execSync('python --version', { stdio: 'pipe' });
+        this.pythonCommand = 'python';
+      } catch {
+        throw new Error('Python is not available. Install Python 3 to run parity validation.');
+      }
     }
 
     // Check if Python recipe_scrapers is installed
     try {
-      execSync('python -c "import recipe_scrapers"', { stdio: 'pipe' });
+      execSync(`${this.pythonCommand} -c "import recipe_scrapers"`, { stdio: 'pipe' });
     } catch {
       throw new Error('Python recipe_scrapers not installed. Run: pip install -e ../');
     }
@@ -164,7 +173,7 @@ scraper = scrape_html(html, 'https://${domain}/')
 print(json.dumps(scraper.to_json(), sort_keys=True, default=str))
       `;
 
-      const output = execSync(`python -c "${script}"`, {
+      const output = execSync(`${this.pythonCommand} -c "${script}"`, {
         encoding: 'utf-8',
         maxBuffer: 10 * 1024 * 1024,
       });

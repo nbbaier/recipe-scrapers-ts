@@ -22,10 +22,27 @@ import { getTestCases, loadTestHtml } from '../tests/helpers/test-data';
 class OutputComparer {
   private domain: string;
   private testFile?: string;
+  private pythonCommand: string;
 
   constructor(domain: string, testFile?: string) {
     this.domain = domain;
     this.testFile = testFile;
+    this.pythonCommand = this.detectPythonCommand();
+  }
+
+  private detectPythonCommand(): string {
+    // Try python3 first (common on macOS/Linux), then python
+    try {
+      execSync('python3 --version', { stdio: 'pipe' });
+      return 'python3';
+    } catch {
+      try {
+        execSync('python --version', { stdio: 'pipe' });
+        return 'python';
+      } catch {
+        throw new Error('Python not found. Please install Python 3.');
+      }
+    }
   }
 
   async compare(): Promise<void> {
@@ -119,7 +136,7 @@ scraper = scrape_html(html, 'https://${this.domain}/')
 print(json.dumps(scraper.to_json(), indent=2, sort_keys=True, default=str))
       `;
 
-      const output = execSync(`python -c "${script}"`, {
+      const output = execSync(`${this.pythonCommand} -c "${script}"`, {
         encoding: 'utf-8',
         maxBuffer: 10 * 1024 * 1024,
       });
