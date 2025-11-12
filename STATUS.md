@@ -1,8 +1,8 @@
 # TypeScript Port Status
 
-**Last Updated:** 2025-11-12
-**Current Phase:** Foundation (Phase 0/1)
-**Overall Progress:** ~5% complete
+- **Last Updated:** 2025-11-12
+- **Current Phase:** Foundation (Phase 0/1)
+- **Overall Progress:** ~5% complete
 
 ---
 
