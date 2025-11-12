@@ -1,6 +1,8 @@
 # recipe-scrapers (TypeScript) 🚧
 
-> **Status:** Early Development (Phase 0/1) | **Progress:** ~5% | **Target:** 100% API parity
+- **Status:** Early Development (Phase 0/1)
+- **Progress:** ~5%
+- **Target:** 100% API parity
 
 TypeScript port of the popular [recipe-scrapers](https://github.com/hhursev/recipe-scrapers) Python library.
 
