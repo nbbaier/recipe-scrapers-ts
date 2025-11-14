@@ -37,7 +37,7 @@ export function urlPathToDict(path: string): UrlComponents | null {
     /^((?<schema>.+?):\/\/)?((?<user>.+?)(:(?<password>.*?))?@)?(?<host>[^:/]+)(:(?<port>\d+?))?(?<path>\/.*?)?(?<query>[?].*?)?$/;
 
   const match = path.match(pattern);
-  if (!match || !match.groups) {
+  if (!match?.groups) {
     return null;
   }
 

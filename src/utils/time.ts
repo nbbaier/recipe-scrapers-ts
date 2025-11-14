@@ -92,7 +92,7 @@ export function getMinutes(
 
   // Parse text-based time format
   const match = TIME_REGEX.exec(timeText);
-  if (!match || !match.groups) {
+  if (!match?.groups) {
     return null;
   }
 
