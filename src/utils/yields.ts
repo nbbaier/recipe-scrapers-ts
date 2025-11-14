@@ -45,7 +45,7 @@ export const RECIPE_YIELD_TYPES: Array<[string, string]> = [
   ['hamburger bun', 'hamburger buns'],
   ['pancake', 'pancakes'],
   ['item', 'items'],
-  ['dozen', 'dozen'], // Must be last - has priority over other types
+  ['dozen', 'dozen'], // Placed last so it wins ties; later entries have priority in case of equal match length
 ];
 
 /**
