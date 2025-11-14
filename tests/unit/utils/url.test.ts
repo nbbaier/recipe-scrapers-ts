@@ -151,7 +151,7 @@ describe('getUrlSlug', () => {
   });
 
   it('should handle URLs with trailing slashes', () => {
-    expect(getUrlSlug('https://example.com/recipes/chocolate-cake/')).toBe('');
+    expect(getUrlSlug('https://example.com/recipes/chocolate-cake/')).toBe('chocolate-cake');
     expect(getUrlSlug('https://example.com/recipes/')).toBe('');
   });
 
