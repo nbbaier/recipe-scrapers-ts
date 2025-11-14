@@ -23,6 +23,7 @@ const SERVE_REGEX_TO = /\d+(\s+to\s+|-)\d+/i;
  * Used to identify and format specific yield types
  */
 export const RECIPE_YIELD_TYPES: Array<[string, string]> = [
+  ['dozen', 'dozen'],
   ['batch', 'batches'],
   ['cake', 'cakes'],
   ['cookie', 'cookies'],
@@ -45,7 +46,6 @@ export const RECIPE_YIELD_TYPES: Array<[string, string]> = [
   ['hamburger bun', 'hamburger buns'],
   ['pancake', 'pancakes'],
   ['item', 'items'],
-  ['dozen', 'dozen'], // Placed last so it wins ties; later entries have priority in case of equal match length
 ];
 
 /**
@@ -134,8 +134,8 @@ export function getYields(
         : plural.length;
 
       // Use the longest match (e.g., "hamburger bun" over "bun")
-      // For equal lengths, later matches win (e.g., "dozen" has priority)
-      if (matchLength >= bestMatchLength) {
+      // For equal lengths, first match wins (matches Python behavior)
+      if (matchLength > bestMatchLength) {
         bestMatchLength = matchLength;
         bestMatch = formatCountLabel(matched, singular, plural);
       }
