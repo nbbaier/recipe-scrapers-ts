@@ -30,6 +30,31 @@ interface SchemaEntity {
 }
 
 /**
+ * Represents a HowToStep schema item
+ */
+interface HowToStep {
+  '@type': 'HowToStep';
+  name?: string;
+  text?: string;
+  itemListElement?: HowToStep;
+}
+
+/**
+ * Represents a HowToSection schema item
+ */
+interface HowToSection {
+  '@type': 'HowToSection';
+  name?: string;
+  Name?: string;
+  itemListElement?: HowToSchemaItem[];
+}
+
+/**
+ * Union type for instruction schema items
+ */
+type HowToSchemaItem = string | HowToStep | HowToSection;
+
+/**
  * Schema.org parser for recipe data
  */
 export class SchemaOrg {
@@ -433,7 +458,7 @@ export class SchemaOrg {
   /**
    * Extracts text from HowTo instruction items
    */
-  private extractHowToInstructionsText(schemaItem: any): string[] {
+  private extractHowToInstructionsText(schemaItem: HowToSchemaItem): string[] {
     const instructionsGist: string[] = [];
 
     if (typeof schemaItem === 'string') {
@@ -449,7 +474,7 @@ export class SchemaOrg {
       }
 
       // Handle nested itemListElement
-      if (schemaItem.itemListElement) {
+      if (schemaItem.itemListElement?.text) {
         instructionsGist.push(schemaItem.itemListElement.text);
       } else if (schemaItem.text) {
         instructionsGist.push(schemaItem.text);

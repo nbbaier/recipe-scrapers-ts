@@ -292,31 +292,30 @@ export abstract class AbstractScraper {
     'equipment',
   ] as const;
 
-  // Type for allowed method names
-  type ScraperMethodName = typeof AbstractScraper.scraperMethodNames[number];
-
   toJson(): Partial<Recipe> {
-    const jsonDict: Partial<Recipe> = {};
+    // Use Record<string, unknown> for type-safe dynamic property assignment
+    const jsonDict: Record<string, unknown> = {};
 
     // List of methods to call (excluding internal methods)
-    const methodsToCall: ScraperMethodName[] = AbstractScraper.scraperMethodNames as ScraperMethodName[];
+    const methodsToCall: readonly string[] = AbstractScraper.scraperMethodNames;
 
     for (const method of methodsToCall) {
       try {
-        const func = this[method];
+        const func = this[method as keyof this];
         if (typeof func === 'function') {
-          const result = func.call(this);
+          const result = (func as () => unknown).call(this);
 
           // Map method names to Recipe field names
-          const fieldName = this.mapMethodToField(method);
-          (jsonDict as any)[fieldName] = result;
+          const fieldName = this.mapMethodToField(method as keyof AbstractScraper);
+          jsonDict[fieldName] = result;
         }
       } catch (error) {
         // Skip fields that throw exceptions (data not available)
       }
     }
 
-    return jsonDict;
+    // Safe to cast since we control the method names and field mappings
+    return jsonDict as Partial<Recipe>;
   }
 
   /**
