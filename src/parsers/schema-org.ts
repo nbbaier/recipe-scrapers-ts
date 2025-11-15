@@ -365,8 +365,11 @@ export class SchemaOrg {
     // Check if it's an absolute URL
     if (
       typeof image === 'string' &&
-      !image.includes('http://') &&
-      !image.includes('https://')
+      !(
+        image.startsWith('http://') ||
+        image.startsWith('https://') ||
+        image.startsWith('//')
+      )
     ) {
       // Relative URLs are not supported; return empty string
       return '';
@@ -632,7 +635,7 @@ export class SchemaOrg {
     }
 
     const formattedDiets = dietaryRestrictions
-      .map((diet: any) => formatDietName(String(diet)))
+      .map((diet: unknown) => formatDietName(String(diet)))
       .filter((diet: string | null): diet is string => diet !== null);
 
     const joined = formattedDiets.join(', ');
