@@ -263,43 +263,49 @@ export abstract class AbstractScraper {
    * Converts the recipe to JSON format
    * Calls all public methods and catches exceptions for missing data
    */
+  // Type for public method names of AbstractScraper that return any value (excluding constructor and properties)
+  private static readonly scraperMethodNames = [
+    'host',
+    'canonicalUrl',
+    'language',
+    'author',
+    'siteName',
+    'title',
+    'category',
+    'yields',
+    'description',
+    'ingredients',
+    'ingredientGroups',
+    'instructions',
+    'instructionsList',
+    'totalTime',
+    'cookTime',
+    'prepTime',
+    'ratings',
+    'ratingsCount',
+    'cuisine',
+    'cookingMethod',
+    'image',
+    'keywords',
+    'dietaryRestrictions',
+    'nutrients',
+    'equipment',
+  ] as const;
+
+  // Type for allowed method names
+  type ScraperMethodName = typeof AbstractScraper.scraperMethodNames[number];
+
   toJson(): Partial<Recipe> {
     const jsonDict: Partial<Recipe> = {};
 
     // List of methods to call (excluding internal methods)
-    const methodsToCall: Array<keyof AbstractScraper> = [
-      'host',
-      'canonicalUrl',
-      'language',
-      'author',
-      'siteName',
-      'title',
-      'category',
-      'yields',
-      'description',
-      'ingredients',
-      'ingredientGroups',
-      'instructions',
-      'instructionsList',
-      'totalTime',
-      'cookTime',
-      'prepTime',
-      'ratings',
-      'ratingsCount',
-      'cuisine',
-      'cookingMethod',
-      'image',
-      'keywords',
-      'dietaryRestrictions',
-      'nutrients',
-      'equipment',
-    ];
+    const methodsToCall: ScraperMethodName[] = AbstractScraper.scraperMethodNames as ScraperMethodName[];
 
     for (const method of methodsToCall) {
       try {
         const func = this[method];
         if (typeof func === 'function') {
-          const result = (func as any).call(this);
+          const result = func.call(this);
 
           // Map method names to Recipe field names
           const fieldName = this.mapMethodToField(method);
