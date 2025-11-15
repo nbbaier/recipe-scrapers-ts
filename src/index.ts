@@ -5,14 +5,27 @@
  * Extract recipe data from 518+ cooking websites.
  */
 
-// Core exports will be added as we implement them
-// export { scrapeHtml, scrapeMe } from './factory';
-// export { AbstractScraper } from './scrapers/abstract';
-// export type { Recipe, IngredientGroup, Nutrients } from './types/recipe';
-// export { SCRAPERS } from './scrapers/registry';
+// Type exports
+export type { Recipe, IngredientGroup, Nutrients } from './types/recipe';
 
-// Placeholder for initial development
+// Scraper exports
+export { AbstractScraper } from './scrapers/abstract';
+
+// Parser exports
+export { SchemaOrg } from './parsers/schema-org';
+export { OpenGraph } from './parsers/opengraph';
+
+// Exception exports
+export {
+  RecipeScrapersException,
+  ElementNotFoundInHtml,
+  SchemaOrgException,
+  OpenGraphException,
+  WebsiteNotImplementedError,
+} from './exceptions';
+
+// Utility exports
+export * from './utils';
+
+// Version
 export const VERSION = '0.1.0';
-
-console.log('recipe-scrapers TypeScript v' + VERSION);
-console.log('Under development - coming soon!');

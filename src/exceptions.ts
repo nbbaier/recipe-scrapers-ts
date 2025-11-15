@@ -25,6 +25,17 @@ export class SchemaOrgException extends RecipeScrapersException {
 }
 
 /**
+ * Exception raised when OpenGraph data is not found or invalid
+ */
+export class OpenGraphException extends RecipeScrapersException {
+  constructor(message: string) {
+    super(message);
+    this.name = 'OpenGraphException';
+    Object.setPrototypeOf(this, OpenGraphException.prototype);
+  }
+}
+
+/**
  * Exception raised when an expected HTML element is not found
  */
 export class ElementNotFoundInHtml extends RecipeScrapersException {
