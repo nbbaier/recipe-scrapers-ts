@@ -89,6 +89,19 @@ export function getHostName(url: string): string {
 export function getUrlSlug(url: string): string {
   const parsed = urlPathToDict(url);
   const path = parsed?.path || '';
-  const segments = path.split('/');
-  return segments[segments.length - 1] || '';
+
+  // Filter out empty segments
+  const segments = path.split('/').filter((seg) => seg !== '');
+
+  // If no segments or if there's only one segment and path ends with '/',
+  // treat it as a directory (not a slug)
+  if (segments.length === 0) {
+    return '';
+  }
+
+  if (segments.length === 1 && path.endsWith('/')) {
+    return '';
+  }
+
+  return segments[segments.length - 1];
 }
