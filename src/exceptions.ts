@@ -114,3 +114,14 @@ export class FieldNotProvidedByWebsiteException extends StaticValueException {
     Object.setPrototypeOf(this, FieldNotProvidedByWebsiteException.prototype);
   }
 }
+
+/**
+ * Exception raised when a method is not implemented by a scraper
+ */
+export class NotImplementedError extends RecipeScrapersException {
+  constructor(message: string) {
+    super(message);
+    this.name = 'NotImplementedError';
+    Object.setPrototypeOf(this, NotImplementedError.prototype);
+  }
+}

@@ -16,6 +16,9 @@ interface ImageCandidate {
   order?: number;
 }
 
+// Maximum reasonable dimension for an image (10000x10000 should cover most real images)
+const MAX_DIMENSION = 10000;
+
 export class BestImagePlugin extends PluginInterface {
   static override runOnHosts = ['*'];
   static override runOnMethods = ['image'];
@@ -138,8 +141,12 @@ export class BestImagePlugin extends PluginInterface {
       return;
     }
 
-    const images: Map<string, ImageCandidate> = new Map();
-    let currentUrl: string | null = null;
+    // First pass: collect all OG metadata by index
+    const ogImageData: Array<{
+      url?: string;
+      width?: number | null;
+      height?: number | null;
+    }> = [];
 
     const metas = $('meta').toArray();
     for (const meta of metas) {
@@ -160,21 +167,36 @@ export class BestImagePlugin extends PluginInterface {
         prop === 'og:image:url' ||
         prop === 'og:image:secure_url'
       ) {
+        // Start a new image entry
         const url = String(content).trim();
-        currentUrl = url;
-        if (!images.has(url)) {
-          images.set(url, { url, width: null, height: null });
+        ogImageData.push({ url, width: null, height: null });
+      } else if (prop === 'og:image:width') {
+        // Apply width to the most recent image entry
+        if (ogImageData.length > 0) {
+          const lastImage = ogImageData[ogImageData.length - 1];
+          lastImage.width = this._parseDimension(content);
         }
-        const current = images.get(url)!;
-        this._mergeCandidate(candidates, current, 'opengraph');
-      } else if (prop === 'og:image:width' && currentUrl && images.has(currentUrl)) {
-        const candidate = images.get(currentUrl)!;
-        candidate.width = this._parseDimension(content);
-        this._mergeCandidate(candidates, candidate, 'opengraph');
-      } else if (prop === 'og:image:height' && currentUrl && images.has(currentUrl)) {
-        const candidate = images.get(currentUrl)!;
-        candidate.height = this._parseDimension(content);
-        this._mergeCandidate(candidates, candidate, 'opengraph');
+      } else if (prop === 'og:image:height') {
+        // Apply height to the most recent image entry
+        if (ogImageData.length > 0) {
+          const lastImage = ogImageData[ogImageData.length - 1];
+          lastImage.height = this._parseDimension(content);
+        }
+      }
+    }
+
+    // Second pass: merge collected OG images into candidates
+    for (const imageData of ogImageData) {
+      if (imageData.url) {
+        this._mergeCandidate(
+          candidates,
+          {
+            url: imageData.url,
+            width: imageData.width,
+            height: imageData.height,
+          },
+          'opengraph'
+        );
       }
     }
   }
@@ -233,14 +255,19 @@ export class BestImagePlugin extends PluginInterface {
     }
 
     if (typeof value === 'number') {
-      return Math.floor(value);
+      const dimension = Math.floor(value);
+      // Validate dimension is reasonable
+      return dimension > 0 && dimension <= MAX_DIMENSION ? dimension : null;
     }
 
     if (typeof value === 'string') {
       const match = value.match(/\d+/);
       if (match) {
         const parsed = parseInt(match[0], 10);
-        return isNaN(parsed) ? null : parsed;
+        if (!isNaN(parsed)) {
+          // Validate dimension is reasonable
+          return parsed > 0 && parsed <= MAX_DIMENSION ? parsed : null;
+        }
       }
       return null;
     }

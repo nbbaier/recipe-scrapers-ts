@@ -5,7 +5,7 @@
  * attempt to return results from OpenGraph metadata.
  */
 
-import { FillPluginException } from '../exceptions';
+import { FillPluginException, NotImplementedError } from '../exceptions';
 import { settings } from '../settings';
 import { PluginInterface } from './interface';
 
@@ -31,7 +31,7 @@ export class OpenGraphFillPlugin extends PluginInterface {
         // Only handle FillPluginException and NotImplementedError
         if (
           error instanceof FillPluginException ||
-          (error instanceof Error && error.message.includes('not implemented'))
+          error instanceof NotImplementedError
         ) {
           // Try to get function from opengraph
           const opengraphMethod = this.opengraph?.[decorated.name];

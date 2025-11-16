@@ -5,7 +5,7 @@
  * attempt to return results from Schema.org data.
  */
 
-import { FillPluginException, RecipeSchemaNotFound } from '../exceptions';
+import { FillPluginException, RecipeSchemaNotFound, NotImplementedError } from '../exceptions';
 import { settings } from '../settings';
 import { PluginInterface } from './interface';
 
@@ -53,7 +53,7 @@ export class SchemaOrgFillPlugin extends PluginInterface {
         // Only handle FillPluginException and NotImplementedError
         if (
           error instanceof FillPluginException ||
-          (error instanceof Error && error.message.includes('not implemented'))
+          error instanceof NotImplementedError
         ) {
           // Check if schema data exists
           if (!this.schema?.data) {

@@ -108,6 +108,19 @@ class TestPlugin extends PluginInterface {
   }
 }
 
+/**
+ * Helper function to create a fresh scraper class for testing
+ * This is useful for tests that need to re-initialize plugins
+ */
+function createFreshScraperClass(hostSuffix: string): typeof TestScraper {
+  class FreshScraper extends TestScraper {
+    override host(): string {
+      return `test-${hostSuffix}.com`;
+    }
+  }
+  return FreshScraper;
+}
+
 describe('AbstractScraper', () => {
   const testHtml = `
     <html>
@@ -153,15 +166,8 @@ describe('AbstractScraper', () => {
       // Configure plugin
       updateSettings({ PLUGINS: [TestPlugin] });
 
-      // Create a new scraper class (force plugin re-initialization)
-      class TestScraper2 extends TestScraper {
-        override host(): string {
-          return 'test2.com';
-        }
-      }
-
-      // Reset plugin initialization flag
-      (TestScraper2 as any).pluginsInitialized = false;
+      // Create a new scraper class
+      const TestScraper2 = createFreshScraperClass('2');
 
       const scraper = new TestScraper2(testHtml, 'https://test.com/recipe');
       const title = scraper.title();
@@ -173,14 +179,7 @@ describe('AbstractScraper', () => {
     it('should only apply plugins once per class', () => {
       updateSettings({ PLUGINS: [TestPlugin] });
 
-      class TestScraper3 extends TestScraper {
-        override host(): string {
-          return 'test3.com';
-        }
-      }
-
-      // Reset plugin initialization flag
-      (TestScraper3 as any).pluginsInitialized = false;
+      const TestScraper3 = createFreshScraperClass('3');
 
       // Create two instances of the same class
       const scraper1 = new TestScraper3(testHtml, 'https://test.com/recipe');
@@ -209,14 +208,7 @@ describe('AbstractScraper', () => {
 
       updateSettings({ PLUGINS: [HostSpecificPlugin] });
 
-      class TestScraper4 extends TestScraper {
-        override host(): string {
-          return 'test4.com';
-        }
-      }
-
-      // Reset plugin initialization flag
-      (TestScraper4 as any).pluginsInitialized = false;
+      const TestScraper4 = createFreshScraperClass('4');
 
       const scraper = new TestScraper4(testHtml, 'https://test.com/recipe');
 
