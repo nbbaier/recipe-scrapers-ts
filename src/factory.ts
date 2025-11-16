@@ -106,7 +106,8 @@ export class SchemaScraper extends AbstractScraper {
  */
 export type ScraperConstructor = new (
   html: string,
-  url: string
+  url: string,
+  bestImage?: boolean
 ) => AbstractScraper;
 
 /**
@@ -144,14 +145,14 @@ export function scrapeHtml(
   url: string,
   options: ScrapeOptions = {}
 ): AbstractScraper {
-  const { supportedOnly = true } = options;
+  const { supportedOnly = true, bestImage } = options;
 
   const hostName = getHostName(url);
 
   // Check if we have a specific scraper for this domain
   const ScraperClass = SCRAPERS[hostName];
   if (ScraperClass) {
-    return new ScraperClass(html, url);
+    return new ScraperClass(html, url, bestImage);
   }
 
   // Domain not supported
@@ -164,7 +165,7 @@ request on our bugtracker.`;
   }
 
   // Wild mode: try generic Schema.org scraping
-  const schemaScraper = new SchemaScraper(html, url);
+  const schemaScraper = new SchemaScraper(html, url, bestImage);
   if (schemaScraper['schema'] && (schemaScraper['schema'] as any).data) {
     return schemaScraper;
   }
