@@ -298,6 +298,7 @@ export class BestImagePlugin extends PluginInterface {
     }
 
     const secure = candidate.url?.startsWith('https://') ? 1 : 0;
+    // Negate order so that lower (earlier) order values are preferred when area and security are equal.
     const order = -(candidate.order ?? 0);
 
     return [area, secure, order];
