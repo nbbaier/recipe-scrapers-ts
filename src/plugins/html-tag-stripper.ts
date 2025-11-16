@@ -24,8 +24,9 @@ function stripTags(html: string): string {
     const $ = cheerio.load(html);
     return $.text().trim();
   } catch {
-    // Fallback to simple approach if parsing fails
-    return html.replace(/<[^>]*>/g, '').trim();
+    // Fallback: if cheerio fails to parse, return empty string
+    // We prefer failing safely rather than using incomplete sanitization
+    return '';
   }
 }
 
