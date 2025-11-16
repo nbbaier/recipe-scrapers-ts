@@ -166,7 +166,7 @@ request on our bugtracker.`;
 
   // Wild mode: try generic Schema.org scraping
   const schemaScraper = new SchemaScraper(html, url, bestImage);
-  if (schemaScraper['schema'] && (schemaScraper['schema'] as any).data) {
+  if (schemaScraper.hasSchema()) {
     return schemaScraper;
   }
 

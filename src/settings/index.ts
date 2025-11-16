@@ -70,16 +70,65 @@ export function resetSettings(): void {
 }
 
 /**
+ * Deep merge helper for nested objects
+ */
+function deepMerge(target: any, source: any): any {
+  const output = { ...target };
+  
+  if (isObject(target) && isObject(source)) {
+    Object.keys(source).forEach(key => {
+      if (isObject(source[key])) {
+        if (!(key in target)) {
+          output[key] = source[key];
+        } else {
+          output[key] = deepMerge(target[key], source[key]);
+        }
+      } else {
+        output[key] = source[key];
+      }
+    });
+  }
+  
+  return output;
+}
+
+function isObject(item: any): boolean {
+  return item && typeof item === 'object' && !Array.isArray(item);
+}
+
+/**
  * Update settings with custom values
+ * Uses deep merge for nested objects like ON_EXCEPTION_RETURN_VALUES
  */
 export function updateSettings(customSettings: Partial<Settings>): void {
-  Object.assign(settings, customSettings);
+  // Special handling for nested objects - deep merge them
+  if (customSettings.ON_EXCEPTION_RETURN_VALUES) {
+    settings.ON_EXCEPTION_RETURN_VALUES = deepMerge(
+      settings.ON_EXCEPTION_RETURN_VALUES,
+      customSettings.ON_EXCEPTION_RETURN_VALUES
+    );
+    
+    // Remove from customSettings to avoid overwriting with shallow assign
+    const { ON_EXCEPTION_RETURN_VALUES, ...rest } = customSettings;
+    Object.assign(settings, rest);
+  } else {
+    Object.assign(settings, customSettings);
+  }
 }
 
 /**
  * Configure plugins (called after all plugins are loaded)
+ * This should only be called once during initialization
  */
+let pluginsConfigured = false;
+
 export function configureDefaultPlugins(plugins: (typeof PluginInterface)[]): void {
+  if (pluginsConfigured) {
+    console.warn('configureDefaultPlugins() has already been called. Ignoring subsequent call.');
+    return;
+  }
+  
   settings.PLUGINS = [...plugins];
   defaultSettings.PLUGINS = [...plugins];
+  pluginsConfigured = true;
 }

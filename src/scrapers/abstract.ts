@@ -25,6 +25,14 @@ export abstract class AbstractScraper {
   protected bestImageSelection: boolean;
 
   /**
+   * Check if Schema.org data is available
+   * Used by factory to determine if wild mode scraping is possible
+   */
+  hasSchema(): boolean {
+    return !!(this.schema && (this.schema as any).data);
+  }
+
+  /**
    * Creates a new scraper instance
    *
    * @param html - HTML content of the recipe page

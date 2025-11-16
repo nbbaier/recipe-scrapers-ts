@@ -5,34 +5,29 @@
  * Handles both string outputs and arrays of strings.
  */
 
+import * as cheerio from 'cheerio';
 import { settings } from '../settings';
 import { PluginInterface } from './interface';
 
 /**
- * Strip HTML tags from a string
- * Uses a simple regex-based approach for safety
+ * Strip HTML tags from a string using cheerio
+ * Properly handles edge cases like comments, CDATA, and malformed HTML
  */
 function stripTags(html: string): string {
   if (!html || typeof html !== 'string') {
     return '';
   }
 
-  // Remove HTML tags
-  let result = html.replace(/<[^>]*>/g, '');
-
-  // Decode HTML entities (handle any level of encoding)
-  let prevResult;
-  do {
-    prevResult = result;
-    result = result
-      .replace(/&amp;/g, '&')
-      .replace(/&lt;/g, '<')
-      .replace(/&gt;/g, '>')
-      .replace(/&quot;/g, '"')
-      .replace(/&#39;/g, "'")
-      .replace(/&nbsp;/g, ' ');
-  } while (result !== prevResult);
-  return result;
+  try {
+    // Use cheerio to parse and extract text content
+    // This properly handles all HTML edge cases
+    const $ = cheerio.load(html);
+    return $.text().trim();
+  } catch {
+    // Fallback: if cheerio fails to parse, return empty string
+    // We prefer failing safely rather than using incomplete sanitization
+    return '';
+  }
 }
 
 export class HTMLTagStripperPlugin extends PluginInterface {
