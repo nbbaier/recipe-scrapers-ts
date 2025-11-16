@@ -113,7 +113,9 @@ class ParityValidator {
         console.log(chalk.gray(`Using Python from PYTHON_COMMAND: ${envPython}`));
         this.pythonCommand = envPython;
       } catch {
-        console.warn(chalk.yellow(`Warning: PYTHON_COMMAND="${envPython}" failed, trying defaults...`));
+        console.warn(
+          chalk.yellow(`Warning: PYTHON_COMMAND="${envPython}" failed, trying defaults...`)
+        );
       }
     }
 
@@ -138,7 +140,7 @@ class ParityValidator {
       if (!this.pythonCommand) {
         throw new Error(
           'Python not found. Please install Python 3 or set PYTHON_COMMAND environment variable.\n' +
-          'Tried: uv run python, python3, python'
+            'Tried: uv run python, python3, python'
         );
       }
     }
@@ -151,7 +153,7 @@ class ParityValidator {
     } catch {
       throw new Error(
         'Python recipe_scrapers not installed.\n' +
-        `Run: ${this.pythonCommand.includes('uv') ? 'uv pip install' : 'pip install'} -e ../`
+          `Run: ${this.pythonCommand.includes('uv') ? 'uv pip install' : 'pip install'} -e ../`
       );
     }
   }
@@ -188,7 +190,11 @@ class ParityValidator {
           } else {
             this.report.failed++;
             const differences = this.findDifferences(pythonOutput, tsOutput);
-            this.report.failures.push({ domain, testFile: testCase.html, differences });
+            this.report.failures.push({
+              domain,
+              testFile: testCase.html,
+              differences,
+            });
             console.log(chalk.red(`✗ ${domain}/${testCase.html}`));
             this.printDifferences(differences);
           }
@@ -263,7 +269,9 @@ print(json.dumps(scraper.to_json(), sort_keys=True, default=str))
 
     try {
       // Create scraper instance - will throw WebsiteNotImplementedError if not supported
-      const scraper = scrapeHtml(html, `https://${domain}/`, { supportedOnly: true });
+      const scraper = scrapeHtml(html, `https://${domain}/`, {
+        supportedOnly: true,
+      });
 
       // Get JSON output
       return scraper.toJson() as ScraperOutput;
