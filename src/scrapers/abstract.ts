@@ -129,103 +129,163 @@ export abstract class AbstractScraper {
 
   /**
    * Extracts the recipe author
+   * Override in subclass or will be filled by SchemaOrgFillPlugin
    */
-  abstract author(): string | undefined;
+  author(): string | undefined {
+    throw new Error('This should be implemented');
+  }
 
   /**
    * Extracts the site name
+   * Override in subclass or will be filled by SchemaOrgFillPlugin
    */
-  abstract siteName(): string;
+  siteName(): string {
+    throw new Error('This should be implemented');
+  }
 
   /**
    * Extracts the recipe title
+   * Override in subclass or will be filled by SchemaOrgFillPlugin
    */
-  abstract title(): string;
+  title(): string {
+    throw new Error('This should be implemented');
+  }
 
   /**
    * Extracts the recipe category
+   * Override in subclass or will be filled by SchemaOrgFillPlugin
    */
-  abstract category(): string | undefined;
+  category(): string | undefined {
+    throw new Error('This should be implemented');
+  }
 
   /**
    * Extracts the recipe yields/servings
+   * Override in subclass or will be filled by SchemaOrgFillPlugin
    */
-  abstract yields(): string;
+  yields(): string {
+    throw new Error('This should be implemented');
+  }
 
   /**
    * Extracts the recipe description
+   * Override in subclass or will be filled by SchemaOrgFillPlugin
    */
-  abstract description(): string;
+  description(): string {
+    throw new Error('This should be implemented');
+  }
 
   /**
    * Extracts the recipe ingredients
+   * Override in subclass or will be filled by SchemaOrgFillPlugin
    */
-  abstract ingredients(): string[];
+  ingredients(): string[] {
+    throw new Error('This should be implemented');
+  }
 
   /**
    * Extracts the recipe instructions as a single string
+   * Override in subclass or will be filled by SchemaOrgFillPlugin
    */
-  abstract instructions(): string;
+  instructions(): string {
+    throw new Error('This should be implemented');
+  }
 
   /**
    * Extracts total time in minutes
+   * Override in subclass or will be filled by SchemaOrgFillPlugin
    */
-  abstract totalTime(): number | null;
+  totalTime(): number | null {
+    throw new Error('This should be implemented');
+  }
 
   /**
    * Extracts cook time in minutes
+   * Override in subclass or will be filled by SchemaOrgFillPlugin
    */
-  abstract cookTime(): number | null;
+  cookTime(): number | null {
+    throw new Error('This should be implemented');
+  }
 
   /**
    * Extracts prep time in minutes
+   * Override in subclass or will be filled by SchemaOrgFillPlugin
    */
-  abstract prepTime(): number | null;
+  prepTime(): number | null {
+    throw new Error('This should be implemented');
+  }
 
   /**
    * Extracts recipe ratings
+   * Override in subclass or will be filled by SchemaOrgFillPlugin
    */
-  abstract ratings(): number | null;
+  ratings(): number | null {
+    throw new Error('This should be implemented');
+  }
 
   /**
    * Extracts ratings count
+   * Override in subclass or will be filled by SchemaOrgFillPlugin
    */
-  abstract ratingsCount(): number | null;
+  ratingsCount(): number | null {
+    throw new Error('This should be implemented');
+  }
 
   /**
    * Extracts cuisine type
+   * Override in subclass or will be filled by SchemaOrgFillPlugin
    */
-  abstract cuisine(): string;
+  cuisine(): string {
+    throw new Error('This should be implemented');
+  }
 
   /**
    * Extracts cooking method
+   * Override in subclass or will be filled by SchemaOrgFillPlugin
    */
-  abstract cookingMethod(): string;
+  cookingMethod(): string {
+    throw new Error('This should be implemented');
+  }
 
   /**
    * Extracts recipe image URL
+   * Override in subclass or will be filled by SchemaOrgFillPlugin
    */
-  abstract image(): string;
+  image(): string {
+    throw new Error('This should be implemented');
+  }
 
   /**
    * Extracts keywords/tags
+   * Override in subclass or will be filled by SchemaOrgFillPlugin
    */
-  abstract keywords(): string[];
+  keywords(): string[] {
+    throw new Error('This should be implemented');
+  }
 
   /**
    * Extracts dietary restrictions
+   * Override in subclass or will be filled by SchemaOrgFillPlugin
    */
-  abstract dietaryRestrictions(): string[];
+  dietaryRestrictions(): string[] {
+    throw new Error('This should be implemented');
+  }
 
   /**
    * Extracts nutrition information
+   * Override in subclass or will be filled by SchemaOrgFillPlugin
    */
-  abstract nutrients(): Record<string, string>;
+  nutrients(): Record<string, string> {
+    throw new Error('This should be implemented');
+  }
 
   /**
    * Extracts equipment needed
+   * Override in subclass or will be filled by SchemaOrgFillPlugin
    */
-  abstract equipment(): string[];
+  equipment(): string[] {
+    throw new Error('This should be implemented');
+  }
 
   /**
    * Extracts the canonical URL of the recipe

@@ -35,6 +35,7 @@ export { SchemaOrg } from './parsers/schema-org';
 export * from './plugins';
 // Scraper exports
 export { AbstractScraper } from './scrapers/abstract';
+export * from './scrapers/sites';
 // Settings exports
 export { resetSettings, settings, updateSettings } from './settings';
 // Type exports

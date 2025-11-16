@@ -1,8 +1,8 @@
 # TypeScript Port Status
 
 - **Last Updated:** 2025-11-16
-- **Current Phase:** Phase 4 (Testing & Site Scrapers) - **IN PROGRESS** 🚧
-- **Overall Progress:** ~60% complete (by phases), ~25% complete (by LOC: ~2,948 / ~11,700)
+- **Current Phase:** Phase 4 (Site Scrapers) - **IN PROGRESS** 🚧
+- **Overall Progress:** ~62% complete (by phases), ~27% complete (by LOC: ~3,418 / ~11,700)
   - _Progress by phases completed; LOC-based progress shown for transparency._
 ---
 
@@ -34,7 +34,7 @@
 
 ### What's Not Implemented ❌
 
-- **All 518 site-specific scrapers** - Phase 4 (Next up!)
+- **Remaining 508 site-specific scrapers** - Phase 4 (in progress, 10/518 complete!)
 - Plugin-specific tests (plugins work, but need dedicated test files)
 - Parity validation scripts (scaffolded but not yet functional)
 - Microdata/RDFa support (deferred, JSON-LD covers 90%+)
@@ -93,29 +93,36 @@
 | Fraction extraction | ✅ Complete | ~30 | 81 | Unicode fractions (½, ⅓, etc.) |
 | URL utilities | ✅ Complete | ~20 | 95 | Parse URL, get hostname, get slug |
 | Helper utilities | ✅ Complete | ~25 | 97 | changeKeys, getEquipment, nutrition keys |
+| **Grouping utilities** | ✅ Complete | ~150 | 120 | Ingredient grouping by sections ✨ **NEW!** |
 
 **Dependencies:** `luxon` (installed), `cheerio` (installed)
 
 **Test Coverage:** 94.71% statements, 93.04% branches, 89.47% functions
 **Tests:** 150 passing (all utility tests complete)
 
-### 4. Site-Specific Scrapers (0/518 Complete)
+### 4. Site-Specific Scrapers (10/518 Complete) ✨ **NEW!**
 
-- **Priority scrapers** (not started):
-  - allrecipes.com
-  - foodnetwork.com
-  - seriouseats.com
-  - bbcgoodfood.com
-  - bonappetit.com
-  - epicurious.com
-  - delish.com
-  - simplyrecipes.com
-  - tasty.co
-  - thepioneerwoman.com
+- **Priority scrapers** (✅ 10/10 COMPLETE!):
+  - ✅ allrecipes.com - Minimal scraper (relies on Schema.org)
+  - ✅ foodnetwork.com - Custom author/siteName extraction
+  - ✅ seriouseats.com - Minimal scraper (relies on Schema.org)
+  - ✅ bbcgoodfood.com - Ingredient grouping support
+  - ✅ bonappetit.com - Override totalTime() to return null
+  - ✅ epicurious.com - Custom author extraction from HTML
+  - ✅ delish.com - Ingredient grouping support
+  - ✅ simplyrecipes.com - Custom instructions parsing
+  - ✅ tasty.co - Ingredient grouping support
+  - ✅ thepioneerwoman.com - Ingredient grouping + custom instructions
 
 - **Remaining:** 508 scrapers
 
-**Blockers:** Requires AbstractScraper, plugins, and parsers
+**Status:** First 10 priority scrapers implemented and registered with factory! All build successfully and tests pass (268 passing).
+
+**Implementation Patterns:**
+- Minimal scrapers (3): Just extend AbstractScraper and define host()
+- Custom field overrides (3): Override specific methods like author(), totalTime()
+- Ingredient grouping (4): Use groupIngredients() utility for sectioned ingredients
+- Custom parsing (2): Override instructions() with custom HTML parsing
 
 ### 5. Testing Infrastructure (85% Complete) ✨ **MAJOR UPDATE!**
 
@@ -181,7 +188,7 @@
 
 ## Files Implemented
 
-### Source Files (27 files) ✨ +10 NEW!
+### Source Files (39 files) ✨ +12 NEW!
 
 ```
 typescript/src/
@@ -209,7 +216,19 @@ typescript/src/
 │   └── index.ts           ✅ 5 lines - Parser exports
 ├── scrapers/
 │   ├── abstract.ts        ✅ 310 lines - Abstract scraper base class
-│   └── index.ts           ✅ 4 lines - Scraper exports
+│   ├── index.ts           ✅ 4 lines - Scraper exports
+│   └── sites/            ✨ **NEW!** 10 site-specific scrapers
+│       ├── allrecipes.ts        ✅ 14 lines - Minimal scraper
+│       ├── bbcgoodfood.ts       ✅ 24 lines - Ingredient grouping
+│       ├── bonappetit.ts        ✅ 20 lines - Override totalTime()
+│       ├── delish.ts            ✅ 24 lines - Ingredient grouping
+│       ├── epicurious.ts        ✅ 23 lines - Custom author extraction
+│       ├── foodnetwork.ts       ✅ 37 lines - Custom author/siteName
+│       ├── seriouseats.ts       ✅ 14 lines - Minimal scraper
+│       ├── simplyrecipes.ts     ✅ 36 lines - Custom instructions
+│       ├── tasty.ts             ✅ 24 lines - Ingredient grouping
+│       ├── thepioneerwoman.ts   ✅ 38 lines - Grouping + instructions
+│       └── index.ts             ✅ 11 lines - Site scraper exports
 └── utils/
     ├── fractions.ts       ✅ 81 lines - Unicode fraction parsing
     ├── time.ts            ✅ 131 lines - Duration/time parsing
@@ -217,7 +236,8 @@ typescript/src/
     ├── yields.ts          ✅ 157 lines - Recipe yield parsing
     ├── url.ts             ✅ 107 lines - URL parsing utilities
     ├── helpers.ts         ✅ 97 lines - changeKeys, equipment, nutrition
-    └── index.ts           ✅ 36 lines - Utility exports
+    ├── grouping.ts        ✅ 120 lines - Ingredient grouping ✨ NEW!
+    └── index.ts           ✅ 38 lines - Utility exports (updated)
 ```
 
 ### Test Files (12 files) ✨ **UPDATED!**
@@ -376,11 +396,11 @@ typescript/
 |-----------|------------|---------------------------|------------------------|--------|
 | Core (abstract, parsers, factory) | ~1,200 | ~1,400 | **~1,232** | **100%** ✅ |
 | Plugins + Settings | ~800 | ~950 | **~936** | **100%** ✅ |
-| Utilities | ~300 | ~350 | **~780** | **100%** ✅ |
-| Site scrapers (518) | ~8,000 | ~9,000 | 0 | 0% |
-| **Total** | **~10,300** | **~11,700** | **~2,948** | **~55%** |
+| Utilities (inc. grouping) | ~450 | ~500 | **~900** | **100%** ✅ |
+| Site scrapers (518) | ~8,000 | ~9,000 | **~270** (10 scrapers) | **~2%** (10/518) ✨ **NEW!** |
+| **Total** | **~10,450** | **~11,850** | **~3,338** | **~28%** |
 
-**Progress:** Core architecture complete! ~2,948 lines of production code implemented.
+**Progress:** Core architecture 100% complete! First 10 site scrapers implemented! ~3,338 lines of production code.
 
 ### Test Coverage ✨ **UPDATED!**
 

@@ -111,10 +111,34 @@ export type ScraperConstructor = new (
  * Registry of all supported scrapers
  * Maps hostname to scraper class
  */
-export const SCRAPERS: Record<string, ScraperConstructor> = {
-  // Site-specific scrapers will be registered here
-  // For now, this is empty as we haven't ported any site scrapers yet
-};
+export const SCRAPERS: Record<string, ScraperConstructor> = {};
+
+// Import site-specific scrapers
+import {
+  AllRecipesScraper,
+  BBCGoodFoodScraper,
+  BonAppetitScraper,
+  DelishScraper,
+  EpicuriousScraper,
+  FoodNetworkScraper,
+  SeriousEatsScraper,
+  SimplyRecipesScraper,
+  TastyScraper,
+  ThePioneerWomanScraper,
+} from './scrapers/sites';
+
+// Register all site-specific scrapers
+registerScraper('allrecipes.com', AllRecipesScraper);
+registerScraper('bbcgoodfood.com', BBCGoodFoodScraper);
+registerScraper('bonappetit.com', BonAppetitScraper);
+registerScraper('delish.com', DelishScraper);
+registerScraper('epicurious.com', EpicuriousScraper);
+registerScraper('foodnetwork.com', FoodNetworkScraper);
+registerScraper('foodnetwork.co.uk', FoodNetworkScraper);
+registerScraper('seriouseats.com', SeriousEatsScraper);
+registerScraper('simplyrecipes.com', SimplyRecipesScraper);
+registerScraper('tasty.co', TastyScraper);
+registerScraper('thepioneerwoman.com', ThePioneerWomanScraper);
 
 /**
  * Options for scrapeHtml function

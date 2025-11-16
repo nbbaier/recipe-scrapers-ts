@@ -29,3 +29,6 @@ export {
 } from './url';
 // Yield utilities
 export { getYields, RECIPE_YIELD_TYPES } from './yields';
+
+// Grouping utilities
+export { groupIngredients } from './grouping';
