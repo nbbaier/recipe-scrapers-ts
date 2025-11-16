@@ -172,7 +172,7 @@ class ParityValidator {
             tsOutput = this.runTypeScriptScraper(domain, testCase.html);
           } catch (error: unknown) {
             // If scraper not implemented for this domain, skip
-            if (error instanceof Error && error.message.includes('not supported')) {
+            if (error instanceof Error && error.message.includes('not implemented')) {
               this.report.skipped++;
               console.log(
                 chalk.yellow(`⊘ ${domain}/${testCase.html} (skipped - scraper not implemented)`)
@@ -256,11 +256,19 @@ print(json.dumps(scraper.to_json(), sort_keys=True, default=str))
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const { scrapeHtml } = require('../dist/index.cjs');
 
-    // Create scraper instance
-    const scraper = scrapeHtml(html, `https://${domain}/`, { supportedOnly: true });
+    try {
+      // Create scraper instance - will throw WebsiteNotImplementedError if not supported
+      const scraper = scrapeHtml(html, `https://${domain}/`, { supportedOnly: true });
 
-    // Get JSON output
-    return scraper.toJson() as ScraperOutput;
+      // Get JSON output
+      return scraper.toJson() as ScraperOutput;
+    } catch (error: unknown) {
+      // Re-throw with a clear message if scraper not implemented
+      if (error instanceof Error && error.name === 'WebsiteNotImplementedError') {
+        throw new Error(`Scraper not implemented for ${domain}`);
+      }
+      throw error;
+    }
   }
 
   private areEqual(a: ScraperOutput, b: ScraperOutput): boolean {
