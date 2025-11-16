@@ -132,7 +132,7 @@ export abstract class AbstractScraper {
    * Override in subclass or will be filled by SchemaOrgFillPlugin
    */
   author(): string | undefined {
-    throw new Error('This should be implemented');
+    throw new Error('author() must be implemented in subclass or provided by SchemaOrgFillPlugin');
   }
 
   /**

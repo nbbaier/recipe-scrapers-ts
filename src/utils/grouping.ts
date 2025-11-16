@@ -2,8 +2,6 @@ import * as cheerio from 'cheerio';
 import type { IngredientGroup } from '../types/recipe';
 import { normalizeString } from './strings';
 
-// @ts-ignore - cheerio is used for type annotations (cheerio.CheerioAPI, cheerio.Element)
-const __cheerio__ = cheerio;
 
 function normalizeFractions(text: string): string {
   const fractionMap: Record<string, string> = {

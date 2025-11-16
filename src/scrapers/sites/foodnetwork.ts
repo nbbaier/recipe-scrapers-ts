@@ -11,8 +11,8 @@ export class FoodNetworkScraper extends AbstractScraper {
   /**
    * Host domain - supports both .com and .co.uk
    */
-  host(domain: 'com' | 'co.uk' = 'co.uk'): string {
-    return `foodnetwork.${domain}`;
+  host(): string {
+    return 'foodnetwork.co.uk';
   }
 
   /**
