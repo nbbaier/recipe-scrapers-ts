@@ -7,11 +7,11 @@
  */
 
 import * as cheerio from 'cheerio';
-import { SchemaOrg } from '../parsers/schema-org';
-import { OpenGraph } from '../parsers/opengraph';
 import { ElementNotFoundInHtml } from '../exceptions';
-import type { Recipe, IngredientGroup } from '../types/recipe';
+import { OpenGraph } from '../parsers/opengraph';
+import { SchemaOrg } from '../parsers/schema-org';
 import { settings } from '../settings';
+import type { IngredientGroup, Recipe } from '../types/recipe';
 
 /**
  * Abstract base scraper class
@@ -74,17 +74,29 @@ export abstract class AbstractScraper {
     const methods: string[] = [];
     const proto = Object.getPrototypeOf(this);
 
-    // Walk up the prototype chain
+    // Walk up the prototype chain with safety checks
+    const MAX_DEPTH = 50; // Reasonable limit for prototype chain depth
+    const visited = new Set<object>(); // Track visited prototypes to detect cycles
+
     let current = proto;
+    let depth = 0;
+
     while (current && current !== Object.prototype) {
+      // Safety check: prevent infinite loops with maximum depth
+      if (depth >= MAX_DEPTH) {
+        break;
+      }
+
+      // Safety check: detect circular references
+      if (visited.has(current)) {
+        break;
+      }
+      visited.add(current);
+
       const names = Object.getOwnPropertyNames(current);
       for (const name of names) {
         // Skip constructor, private methods (starting with _), and duplicates
-        if (
-          name !== 'constructor' &&
-          !name.startsWith('_') &&
-          !methods.includes(name)
-        ) {
+        if (name !== 'constructor' && !name.startsWith('_') && !methods.includes(name)) {
           const descriptor = Object.getOwnPropertyDescriptor(current, name);
           // Check if it's a method (function) not a getter/setter or property
           if (descriptor && typeof descriptor.value === 'function') {
@@ -92,7 +104,9 @@ export abstract class AbstractScraper {
           }
         }
       }
+
       current = Object.getPrototypeOf(current);
+      depth++;
     }
 
     return methods;
