@@ -241,28 +241,166 @@ print(json.dumps(scraper.to_json(), indent=2, sort_keys=True, default=str))
     this.compareFields(pythonOutput, typescriptOutput);
   }
 
+  /**
+   * Deep equality check that handles:
+   * - Objects with different key ordering
+   * - Arrays (order matters)
+   * - Nested structures
+   * - null vs undefined (considered different)
+   */
+  private deepEqual(a: unknown, b: unknown): boolean {
+    // Strict equality check (handles primitives, null, undefined, same reference)
+    if (a === b) return true;
+
+    // Type mismatch
+    if (typeof a !== typeof b) return false;
+
+    // null check (null === null handled above, but null !== undefined)
+    if (a === null || b === null) return false;
+
+    // Array comparison (order matters)
+    if (Array.isArray(a) && Array.isArray(b)) {
+      if (a.length !== b.length) return false;
+      return a.every((item, index) => this.deepEqual(item, b[index]));
+    }
+
+    // Object comparison (key order doesn't matter)
+    if (typeof a === 'object' && typeof b === 'object') {
+      const aKeys = Object.keys(a as Record<string, unknown>).sort();
+      const bKeys = Object.keys(b as Record<string, unknown>).sort();
+
+      // Different number of keys
+      if (aKeys.length !== bKeys.length) return false;
+
+      // Different key names
+      if (!aKeys.every((key, i) => key === bKeys[i])) return false;
+
+      // Compare values for each key
+      return aKeys.every((key) =>
+        this.deepEqual(
+          (a as Record<string, unknown>)[key],
+          (b as Record<string, unknown>)[key]
+        )
+      );
+    }
+
+    // All other cases (shouldn't reach here if types match)
+    return false;
+  }
+
+  /**
+   * Check if difference is cosmetic (doesn't affect functionality)
+   */
+  private isCosmeticDifference(key: string, pyValue: unknown, tsValue: unknown): string | null {
+    // Handle ingredient_groups.purpose: null vs undefined
+    if (key === 'ingredient_groups') {
+      if (Array.isArray(pyValue) && Array.isArray(tsValue)) {
+        // Same length check
+        if (pyValue.length !== tsValue.length) return null;
+
+        // Check if only difference is purpose: null vs missing purpose
+        const pyWithoutPurpose = pyValue.map((group: any) => {
+          if (typeof group !== 'object' || group === null) return group;
+          const copy = { ...group };
+          delete copy.purpose;
+          return copy;
+        });
+        const tsWithoutPurpose = tsValue.map((group: any) => {
+          if (typeof group !== 'object' || group === null) return group;
+          const copy = { ...group };
+          delete copy.purpose;
+          return copy;
+        });
+
+        if (this.deepEqual(pyWithoutPurpose, tsWithoutPurpose)) {
+          // Check if Python has purpose:null and TypeScript has purpose:undefined
+          const pyHasPurposeNull = pyValue.some(
+            (g: any) =>
+              typeof g === 'object' &&
+              g !== null &&
+              Object.hasOwn(g, 'purpose') &&
+              g.purpose === null
+          );
+          const tsHasPurposeUndefined = tsValue.every(
+            (g: any) =>
+              typeof g === 'object' &&
+              g !== null &&
+              Object.hasOwn(g, 'purpose') &&
+              g.purpose === undefined
+          );
+
+          if (pyHasPurposeNull && tsHasPurposeUndefined) {
+            return 'Python serializes "purpose": null, TypeScript omits "purpose": undefined';
+          }
+        }
+      }
+    }
+
+    // Handle nutrients: same values, different key order
+    if (key === 'nutrients') {
+      if (
+        typeof pyValue === 'object' &&
+        pyValue !== null &&
+        typeof tsValue === 'object' &&
+        tsValue !== null
+      ) {
+        if (this.deepEqual(pyValue, tsValue)) {
+          return 'Same values, different key ordering (cosmetic)';
+        }
+      }
+    }
+
+    return null;
+  }
+
   private compareFields(python: ScraperOutput, typescript: ScraperOutput): void {
     console.log(chalk.bold('\nField-by-Field Comparison:'));
     console.log(chalk.blue('─'.repeat(60)));
 
     const allKeys = new Set([...Object.keys(python || {}), ...Object.keys(typescript || {})]);
+    let cosmeticDiffs = 0;
+    let realDiffs = 0;
 
     for (const key of Array.from(allKeys).sort()) {
       const pyValue = python?.[key];
       const tsValue = typescript?.[key];
-      const pyStr = JSON.stringify(pyValue);
-      const tsStr = JSON.stringify(tsValue);
 
-      if (pyStr === tsStr) {
+      if (this.deepEqual(pyValue, tsValue)) {
         console.log(chalk.green(`✓ ${key}`));
       } else {
-        console.log(chalk.red(`✗ ${key}`));
-        console.log(chalk.gray(`  Python:     ${pyStr}`));
-        console.log(chalk.gray(`  TypeScript: ${tsStr}`));
+        // Check if it's a cosmetic difference
+        const cosmeticReason = this.isCosmeticDifference(key, pyValue, tsValue);
+
+        if (cosmeticReason) {
+          console.log(chalk.yellow(`⚠ ${key} (cosmetic difference)`));
+          console.log(chalk.gray(`  Reason: ${cosmeticReason}`));
+          cosmeticDiffs++;
+        } else {
+          console.log(chalk.red(`✗ ${key}`));
+          console.log(chalk.gray(`  Python:     ${JSON.stringify(pyValue)}`));
+          console.log(chalk.gray(`  TypeScript: ${JSON.stringify(tsValue)}`));
+          realDiffs++;
+        }
       }
     }
 
     console.log('');
+
+    // Summary
+    if (realDiffs === 0 && cosmeticDiffs === 0) {
+      console.log(chalk.green.bold('🎉 Perfect match!\n'));
+    } else if (realDiffs === 0 && cosmeticDiffs > 0) {
+      console.log(
+        chalk.yellow.bold(`⚠️  ${cosmeticDiffs} cosmetic difference(s) - functionally identical\n`)
+      );
+    } else {
+      console.log(chalk.red.bold(`❌ ${realDiffs} real difference(s) found\n`));
+      if (cosmeticDiffs > 0) {
+        console.log(
+          chalk.yellow(`   (plus ${cosmeticDiffs} cosmetic difference(s))\n`)
+        );
+      }
+    }
   }
 
   private printPythonOutput(pythonOutput: ScraperOutput): void {

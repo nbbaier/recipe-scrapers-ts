@@ -164,28 +164,34 @@ class ParityValidator {
         this.report.totalTests++;
 
         try {
-          // For now, skip actual scraper validation since we haven't implemented scrapers yet
-          // This will be uncommented once we have scrapers implemented
+          const pythonOutput = this.runPythonScraper(domain, testCase.html);
 
-          // const pythonOutput = this.runPythonScraper(domain, testCase.html);
-          // const tsOutput = this.runTypeScriptScraper(domain, testCase.html);
+          // Try to run TypeScript scraper
+          let tsOutput: ScraperOutput;
+          try {
+            tsOutput = this.runTypeScriptScraper(domain, testCase.html);
+          } catch (error: unknown) {
+            // If scraper not implemented for this domain, skip
+            if (error instanceof Error && error.message.includes('not supported')) {
+              this.report.skipped++;
+              console.log(
+                chalk.yellow(`⊘ ${domain}/${testCase.html} (skipped - scraper not implemented)`)
+              );
+              continue;
+            }
+            throw error;
+          }
 
-          // if (this.areEqual(pythonOutput, tsOutput)) {
-          //   this.report.passed++;
-          //   console.log(chalk.green(`✓ ${domain}/${testCase.html}`));
-          // } else {
-          //   this.report.failed++;
-          //   const differences = this.findDifferences(pythonOutput, tsOutput);
-          //   this.report.failures.push({ domain, testFile: testCase.html, differences });
-          //   console.log(chalk.red(`✗ ${domain}/${testCase.html}`));
-          //   this.printDifferences(differences);
-          // }
-
-          // Temporary: Skip until scrapers are implemented
-          this.report.skipped++;
-          console.log(
-            chalk.yellow(`⊘ ${domain}/${testCase.html} (skipped - scrapers not yet implemented)`)
-          );
+          if (this.areEqual(pythonOutput, tsOutput)) {
+            this.report.passed++;
+            console.log(chalk.green(`✓ ${domain}/${testCase.html}`));
+          } else {
+            this.report.failed++;
+            const differences = this.findDifferences(pythonOutput, tsOutput);
+            this.report.failures.push({ domain, testFile: testCase.html, differences });
+            console.log(chalk.red(`✗ ${domain}/${testCase.html}`));
+            this.printDifferences(differences);
+          }
         } catch (error: unknown) {
           this.report.failed++;
           const message = error instanceof Error ? error.message : 'Unknown error';
@@ -244,16 +250,17 @@ print(json.dumps(scraper.to_json(), sort_keys=True, default=str))
   }
 
   private runTypeScriptScraper(domain: string, testFile: string): ScraperOutput {
-    // This will be implemented once we have scrapers
-    // For now, return empty object
-    const _html = loadTestHtml(domain, testFile);
+    const html = loadTestHtml(domain, testFile);
 
-    // Once scrapeHtml is implemented:
-    // const { scrapeHtml } = require('../dist');
-    // const scraper = scrapeHtml(html, `https://${domain}/`);
-    // return scraper.toJson();
+    // Import the built scrapeHtml function
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const { scrapeHtml } = require('../dist/index.cjs');
 
-    throw new Error('TypeScript scrapers not yet implemented');
+    // Create scraper instance
+    const scraper = scrapeHtml(html, `https://${domain}/`, { supportedOnly: true });
+
+    // Get JSON output
+    return scraper.toJson() as ScraperOutput;
   }
 
   private areEqual(a: ScraperOutput, b: ScraperOutput): boolean {
