@@ -217,6 +217,11 @@ class ParityValidator {
       const script = `
 import sys
 import json
+import warnings
+
+# Suppress all warnings (including StaticValueWarning)
+warnings.filterwarnings('ignore')
+
 sys.path.insert(0, '../')
 
 from recipe_scrapers import scrape_html
