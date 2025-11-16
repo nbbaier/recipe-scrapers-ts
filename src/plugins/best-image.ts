@@ -133,22 +133,23 @@ export class BestImagePlugin extends PluginInterface {
     scraper: any,
     candidates: Map<string, ImageCandidate>
   ): void {
-    const soup = scraper.soup;
-    if (!soup) {
+    const $ = scraper.$;
+    if (!$) {
       return;
     }
 
     const images: Map<string, ImageCandidate> = new Map();
     let currentUrl: string | null = null;
 
-    const metas = soup.findAll?.('meta') || [];
+    const metas = $('meta').toArray();
     for (const meta of metas) {
+      const $meta = $(meta);
       const prop = (
-        meta.get?.('property') ||
-        meta.get?.('name') ||
+        $meta.attr('property') ||
+        $meta.attr('name') ||
         ''
       ).toLowerCase();
-      const content = meta.get?.('content');
+      const content = $meta.attr('content');
 
       if (!content) {
         continue;

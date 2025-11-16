@@ -43,12 +43,10 @@ export class OpenGraphImageFetchPlugin extends PluginInterface {
         );
       }
 
-      const ogImage = this.soup?.find('meta', {
-        property: 'og:image',
-        content: true,
-      });
+      // Use Cheerio to find the og:image meta tag
+      const ogImage = this.$('meta[property="og:image"][content]').attr('content');
 
-      return ogImage?.get('content') || null;
+      return ogImage || null;
     };
 
     Object.defineProperty(wrapper, 'name', { value: decorated.name });

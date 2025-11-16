@@ -36,7 +36,7 @@ export class OpenGraphFillPlugin extends PluginInterface {
           // Try to get function from opengraph
           const opengraphMethod = this.opengraph?.[decorated.name];
 
-          if (this.opengraph?.soup && opengraphMethod) {
+          if (this.opengraph && opengraphMethod) {
             if (settings.LOG_LEVEL <= 1) {
               // info level
               console.info(

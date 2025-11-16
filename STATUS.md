@@ -21,7 +21,7 @@
 - **Schema.org JSON-LD parser** (642 lines, handles @graph, entity resolution)
 - **OpenGraph parser** (73 lines, fallback metadata)
 - **AbstractScraper base class** (310 lines, 20+ methods, toJson())
-- **Complete Plugin System** (8 plugins, 900+ lines) ✨ **NEW!**
+- **Complete Plugin System** (8 plugins, ~846 lines) ✨ **NEW!**
 - **Settings System** (configurable, user-customizable) ✨ **NEW!**
 - **Factory Pattern** (scraper registry, wild mode support) ✨ **NEW!**
 - Comprehensive test suite (150 utility tests passing, 94.71% coverage)

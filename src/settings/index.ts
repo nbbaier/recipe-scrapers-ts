@@ -62,7 +62,11 @@ export const settings: Settings = { ...defaultSettings };
  * Reset settings to default values
  */
 export function resetSettings(): void {
-  Object.assign(settings, defaultSettings);
+  settings.PLUGINS = [...defaultSettings.PLUGINS];
+  settings.BEST_IMAGE_SELECTION = defaultSettings.BEST_IMAGE_SELECTION;
+  settings.SUPPRESS_EXCEPTIONS = defaultSettings.SUPPRESS_EXCEPTIONS;
+  settings.ON_EXCEPTION_RETURN_VALUES = JSON.parse(JSON.stringify(defaultSettings.ON_EXCEPTION_RETURN_VALUES));
+  settings.LOG_LEVEL = defaultSettings.LOG_LEVEL;
 }
 
 /**
@@ -76,6 +80,6 @@ export function updateSettings(customSettings: Partial<Settings>): void {
  * Configure plugins (called after all plugins are loaded)
  */
 export function configureDefaultPlugins(plugins: (typeof PluginInterface)[]): void {
-  settings.PLUGINS = plugins;
-  defaultSettings.PLUGINS = plugins;
+  settings.PLUGINS = [...plugins];
+  defaultSettings.PLUGINS = [...plugins];
 }
