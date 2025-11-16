@@ -14,7 +14,7 @@ import { PluginInterface } from './interface';
  */
 function stripTags(html: string): string {
   if (!html || typeof html !== 'string') {
-    return html;
+    return '';
   }
 
   // Remove HTML tags
