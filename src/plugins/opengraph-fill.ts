@@ -11,7 +11,7 @@ import { PluginInterface } from './interface';
 
 export class OpenGraphFillPlugin extends PluginInterface {
   static override runOnHosts = ['*'];
-  static override runOnMethods = ['site_name', 'image'];
+  static override runOnMethods = ['siteName', 'image'];
 
   // biome-ignore lint/suspicious/noExplicitAny: decorator pattern requires flexible type signature
   static override run<T extends (...args: any[]) => any>(decorated: T): T {

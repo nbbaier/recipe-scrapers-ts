@@ -22,7 +22,9 @@ function stripTags(html: string): string {
     // Use cheerio to parse and extract text content
     // This properly handles all HTML edge cases
     const $ = cheerio.load(html);
-    return $('*').text().trim();
+    // Use $.root().text() instead of $('*').text() to avoid duplication
+    // $('*') selects ALL elements (html, body, etc.) causing text to appear multiple times
+    return $.root().text().trim();
   } catch {
     // Fallback: if cheerio fails to parse, return empty string
     // We prefer failing safely rather than using incomplete sanitization

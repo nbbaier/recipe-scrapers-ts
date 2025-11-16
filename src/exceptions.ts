@@ -14,9 +14,20 @@ export class RecipeScrapersException extends Error {
 }
 
 /**
+ * Exception raised when a fill plugin should try alternate data sources
+ */
+export class FillPluginException extends RecipeScrapersException {
+  constructor(message: string) {
+    super(message);
+    this.name = 'FillPluginException';
+    Object.setPrototypeOf(this, FillPluginException.prototype);
+  }
+}
+
+/**
  * Exception raised when schema.org data is not found or invalid
  */
-export class SchemaOrgException extends RecipeScrapersException {
+export class SchemaOrgException extends FillPluginException {
   constructor(message: string) {
     super(message);
     this.name = 'SchemaOrgException';
@@ -27,7 +38,7 @@ export class SchemaOrgException extends RecipeScrapersException {
 /**
  * Exception raised when OpenGraph data is not found or invalid
  */
-export class OpenGraphException extends RecipeScrapersException {
+export class OpenGraphException extends FillPluginException {
   constructor(message: string) {
     super(message);
     this.name = 'OpenGraphException';
@@ -65,17 +76,6 @@ export class NoSchemaFoundInWildMode extends RecipeScrapersException {
     super(message);
     this.name = 'NoSchemaFoundInWildMode';
     Object.setPrototypeOf(this, NoSchemaFoundInWildMode.prototype);
-  }
-}
-
-/**
- * Exception raised when a fill plugin should try alternate data sources
- */
-export class FillPluginException extends RecipeScrapersException {
-  constructor(message: string) {
-    super(message);
-    this.name = 'FillPluginException';
-    Object.setPrototypeOf(this, FillPluginException.prototype);
   }
 }
 

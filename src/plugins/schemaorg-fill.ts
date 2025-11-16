@@ -13,10 +13,10 @@ export class SchemaOrgFillPlugin extends PluginInterface {
   static override runOnHosts = ['*'];
   static override runOnMethods = [
     'author',
-    'site_name',
+    'siteName',
     'title',
     'category',
-    'total_time',
+    'totalTime',
     'yields',
     'image',
     'ingredients',
@@ -25,14 +25,14 @@ export class SchemaOrgFillPlugin extends PluginInterface {
     'links',
     'language',
     'nutrients',
-    'cooking_method',
+    'cookingMethod',
     'cuisine',
     'description',
-    'cook_time',
-    'prep_time',
+    'cookTime',
+    'prepTime',
     'keywords',
-    'ratings_count',
-    'dietary_restrictions',
+    'ratingsCount',
+    'dietaryRestrictions',
   ];
 
   // biome-ignore lint/suspicious/noExplicitAny: decorator pattern requires flexible type signature
