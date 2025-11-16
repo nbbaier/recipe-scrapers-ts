@@ -105,16 +105,41 @@ class ParityValidator {
   }
 
   private checkPythonAvailability(): void {
-    // Try python3 first (common on macOS/Linux), then python
-    try {
-      execSync('python3 --version', { stdio: 'pipe' });
-      this.pythonCommand = 'python3';
-    } catch {
+    // Allow users to specify Python command via environment variable
+    const envPython = process.env.PYTHON_COMMAND;
+    if (envPython) {
       try {
-        execSync('python --version', { stdio: 'pipe' });
-        this.pythonCommand = 'python';
+        execSync(`${envPython} --version`, { stdio: 'pipe' });
+        console.log(chalk.gray(`Using Python from PYTHON_COMMAND: ${envPython}`));
+        this.pythonCommand = envPython;
       } catch {
-        throw new Error('Python is not available. Install Python 3 to run parity validation.');
+        console.warn(chalk.yellow(`Warning: PYTHON_COMMAND="${envPython}" failed, trying defaults...`));
+      }
+    }
+
+    // Try common Python commands in order of preference:
+    // 1. uv run python (modern uv-based installations)
+    // 2. python3 (common on macOS/Linux)
+    // 3. python (Windows and some Linux)
+    if (!this.pythonCommand) {
+      const pythonCommands = ['uv run python', 'python3', 'python'];
+
+      for (const cmd of pythonCommands) {
+        try {
+          execSync(`${cmd} --version`, { stdio: 'pipe' });
+          console.log(chalk.gray(`Detected Python command: ${cmd}`));
+          this.pythonCommand = cmd;
+          break;
+        } catch {
+          // Try next command
+        }
+      }
+
+      if (!this.pythonCommand) {
+        throw new Error(
+          'Python not found. Please install Python 3 or set PYTHON_COMMAND environment variable.\n' +
+          'Tried: uv run python, python3, python'
+        );
       }
     }
 
@@ -124,7 +149,10 @@ class ParityValidator {
         stdio: 'pipe',
       });
     } catch {
-      throw new Error('Python recipe_scrapers not installed. Run: pip install -e ../');
+      throw new Error(
+        'Python recipe_scrapers not installed.\n' +
+        `Run: ${this.pythonCommand.includes('uv') ? 'uv pip install' : 'pip install'} -e ../`
+      );
     }
   }
 

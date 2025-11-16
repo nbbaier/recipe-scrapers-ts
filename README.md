@@ -75,9 +75,48 @@ bun run validate-parity
 # From the typescript directory
 bun install
 
-# Install Python version for comparison
+# Install Python version for comparison (choose one method)
 cd ..
+
+# Option 1: Using pip (traditional)
 pip install -e .
+
+# Option 2: Using uv (modern, faster)
+uv pip install -e .
+
+# Option 3: Custom Python installation
+# Set PYTHON_COMMAND environment variable (see below)
+```
+
+### Python Installation Options
+
+The comparison and validation scripts support multiple Python installations:
+
+1. **uv** (recommended for modern workflows) - Automatically detected if available
+2. **python3** - Standard on macOS/Linux
+3. **python** - Standard on Windows
+4. **Custom Python** - Set via `PYTHON_COMMAND` environment variable
+
+**Detection Order:**
+1. `PYTHON_COMMAND` environment variable (if set)
+2. `uv run python` (if uv is installed)
+3. `python3`
+4. `python`
+
+**Examples:**
+
+```bash
+# Use default auto-detection
+bun run compare -- allrecipes.com
+
+# Specify custom Python command
+PYTHON_COMMAND="python3.11" bun run compare -- allrecipes.com
+
+# Use uv explicitly (if not auto-detected)
+PYTHON_COMMAND="uv run python" bun run validate-parity
+
+# Use pyenv Python
+PYTHON_COMMAND="pyenv exec python" bun run compare -- allrecipes.com
 ```
 
 ### Available Scripts

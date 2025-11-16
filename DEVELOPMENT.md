@@ -23,7 +23,9 @@ bun install
 
 # Install Python version (for reference)
 cd ..
+# Use pip (traditional) or uv (modern)
 pip install -e .
+# OR: uv pip install -e .
 ```
 
 ### 2. Verify Setup

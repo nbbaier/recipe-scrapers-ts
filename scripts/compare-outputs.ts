@@ -29,20 +29,54 @@ class OutputComparer {
     this.domain = domain;
     this.testFile = testFile;
     this.pythonCommand = this.detectPythonCommand();
+    this.checkRecipeScrapersInstalled();
   }
 
   private detectPythonCommand(): string {
-    // Try python3 first (common on macOS/Linux), then python
-    try {
-      execSync('python3 --version', { stdio: 'pipe' });
-      return 'python3';
-    } catch {
+    // Allow users to specify Python command via environment variable
+    const envPython = process.env.PYTHON_COMMAND;
+    if (envPython) {
       try {
-        execSync('python --version', { stdio: 'pipe' });
-        return 'python';
+        execSync(`${envPython} --version`, { stdio: 'pipe' });
+        console.log(chalk.gray(`Using Python from PYTHON_COMMAND: ${envPython}`));
+        return envPython;
       } catch {
-        throw new Error('Python not found. Please install Python 3.');
+        console.warn(chalk.yellow(`Warning: PYTHON_COMMAND="${envPython}" failed, trying defaults...`));
       }
+    }
+
+    // Try common Python commands in order of preference:
+    // 1. uv run python (modern uv-based installations)
+    // 2. python3 (common on macOS/Linux)
+    // 3. python (Windows and some Linux)
+    const pythonCommands = ['uv run python', 'python3', 'python'];
+
+    for (const cmd of pythonCommands) {
+      try {
+        execSync(`${cmd} --version`, { stdio: 'pipe' });
+        console.log(chalk.gray(`Detected Python command: ${cmd}`));
+        return cmd;
+      } catch {
+        // Try next command
+      }
+    }
+
+    throw new Error(
+      'Python not found. Please install Python 3 or set PYTHON_COMMAND environment variable.\n' +
+      'Tried: uv run python, python3, python'
+    );
+  }
+
+  private checkRecipeScrapersInstalled(): void {
+    try {
+      execSync(`${this.pythonCommand} -c "import recipe_scrapers"`, {
+        stdio: 'pipe',
+      });
+    } catch {
+      throw new Error(
+        'Python recipe_scrapers not installed.\n' +
+        `Run: ${this.pythonCommand.includes('uv') ? 'uv pip install' : 'pip install'} -e ../`
+      );
     }
   }
 
