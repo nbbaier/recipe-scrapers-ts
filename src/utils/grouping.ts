@@ -1,5 +1,4 @@
-// cheerio is used for type annotations (cheerio.CheerioAPI, cheerio.Element)
-// @ts-ignore - TS6133: cheerio appears unused but is needed for type annotations
+// @ts-ignore - cheerio is used for type annotations only (cheerio.CheerioAPI, cheerio.Element)
 import * as cheerio from 'cheerio';
 import type { IngredientGroup } from '../types/recipe';
 import { normalizeString } from './strings';
