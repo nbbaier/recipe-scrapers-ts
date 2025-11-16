@@ -81,7 +81,7 @@ export function groupIngredients(
   }
   const foundIngredients = $(element);
   if (foundIngredients.length !== ingredientsList.length) {
-    throw new Error("Found " + foundIngredients.length + " grouped ingredients but was expecting to find " + ingredientsList.length + ".");
+    throw new Error(`Found ${foundIngredients.length} grouped ingredients but was expecting to find ${ingredientsList.length}.`);
   }
   const groupings = new Map<string | undefined, string[]>();
   let currentHeading: string | undefined;
