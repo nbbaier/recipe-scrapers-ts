@@ -29,6 +29,7 @@ export abstract class AbstractScraper {
    * Used by factory to determine if wild mode scraping is possible
    */
   hasSchema(): boolean {
+    // biome-ignore lint/suspicious/noExplicitAny: schema type is dynamic and can have various shapes
     return !!(this.schema && (this.schema as any).data);
   }
 
@@ -60,16 +61,16 @@ export abstract class AbstractScraper {
       for (let i = settings.PLUGINS.length - 1; i >= 0; i--) {
         const plugin = settings.PLUGINS[i];
         if (plugin.shouldRun(this.host(), methodName)) {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
+          // biome-ignore lint/suspicious/noExplicitAny: plugin.run requires flexible method type
           currentMethod = plugin.run(currentMethod as any);
         }
       }
 
       // Replace the method on the instance, binding 'this' to the current instance
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       (this as unknown as Record<string, unknown>)[methodName] =
         typeof currentMethod === 'function'
-          ? (currentMethod as Function).bind(this)
+          ? // biome-ignore lint/complexity/noBannedTypes: Function type needed for generic method binding
+            (currentMethod as Function).bind(this)
           : currentMethod;
     }
   }
@@ -393,7 +394,7 @@ export abstract class AbstractScraper {
           const fieldName = this.mapMethodToField(method as keyof AbstractScraper);
           jsonDict[fieldName] = result;
         }
-      } catch (error) {
+      } catch (_error) {
         // Skip fields that throw exceptions (data not available)
       }
     }

@@ -28,7 +28,9 @@ export class BestImagePlugin extends PluginInterface {
   private static readonly QUERY_WIDTH_PATTERN = /[?&](?:w|width)=(\d{3,5})/i;
   private static readonly QUERY_HEIGHT_PATTERN = /[?&](?:h|height)=(\d{3,5})/i;
 
+  // biome-ignore lint/suspicious/noExplicitAny: decorator pattern requires flexible type signature
   static override run<T extends (...args: any[]) => any>(decorated: T): T {
+    // biome-ignore lint/suspicious/noExplicitAny: decorator needs to preserve 'this' context of any type
     const wrapper = function (this: any, ...args: any[]) {
       if (settings.LOG_LEVEL <= 0) {
         // debug level
@@ -56,9 +58,11 @@ export class BestImagePlugin extends PluginInterface {
     return wrapper as T;
   }
 
+  // biome-ignore lint/suspicious/noExplicitAny: scraper and image can be of various types from different sources
   private static _collectCandidates(scraper: any, image: any): ImageCandidate[] {
     const candidates: Map<string, ImageCandidate> = new Map();
 
+    // biome-ignore lint/suspicious/noExplicitAny: entry can be string, array, or object with various shapes
     const register = (entry: any, source: string): void => {
       for (const normalized of this._normalizeEntries(entry)) {
         this._mergeCandidate(candidates, normalized, source);
@@ -79,6 +83,7 @@ export class BestImagePlugin extends PluginInterface {
     return Array.from(candidates.values());
   }
 
+  // biome-ignore lint/suspicious/noExplicitAny: entry can be string, array, object, or Set with various shapes
   private static *_normalizeEntries(entry: any): Generator<ImageCandidate> {
     if (!entry) {
       return;
@@ -126,6 +131,7 @@ export class BestImagePlugin extends PluginInterface {
   }
 
   private static _collectOpenGraphCandidates(
+    // biome-ignore lint/suspicious/noExplicitAny: scraper instance type varies by implementation
     scraper: any,
     candidates: Map<string, ImageCandidate>
   ): void {
@@ -231,6 +237,7 @@ export class BestImagePlugin extends PluginInterface {
     return Math.max(current, newVal);
   }
 
+  // biome-ignore lint/suspicious/noExplicitAny: value can be number, string, or object with nested values
   private static _parseDimension(value: any): number | null {
     if (value === null || value === undefined) {
       return null;

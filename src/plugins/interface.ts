@@ -31,6 +31,7 @@ export abstract class PluginInterface {
    * @param _decorated - The original method to wrap
    * @returns The wrapped method
    */
+  // biome-ignore lint/suspicious/noExplicitAny: decorator pattern requires flexible type signature
   static run<T extends (...args: any[]) => any>(_decorated: T): T {
     throw new Error('Plugin must implement run() method');
   }

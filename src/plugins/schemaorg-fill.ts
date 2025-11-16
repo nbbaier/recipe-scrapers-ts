@@ -35,7 +35,9 @@ export class SchemaOrgFillPlugin extends PluginInterface {
     'dietary_restrictions',
   ];
 
+  // biome-ignore lint/suspicious/noExplicitAny: decorator pattern requires flexible type signature
   static override run<T extends (...args: any[]) => any>(decorated: T): T {
+    // biome-ignore lint/suspicious/noExplicitAny: decorator needs to preserve 'this' context of any type
     const wrapper = function (this: any, ...args: any[]) {
       const className = this.constructor.name;
       const methodName = decorated.name;

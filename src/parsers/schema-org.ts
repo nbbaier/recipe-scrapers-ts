@@ -20,6 +20,7 @@ interface SchemaEntity {
   '@id'?: string;
   '@context'?: string;
   '@graph'?: SchemaEntity[] | SchemaEntity;
+  // biome-ignore lint/suspicious/noExplicitAny: Schema.org entities can contain arbitrary fields of any type
   [key: string]: any;
 }
 
@@ -82,7 +83,7 @@ export class SchemaOrg {
           const parsed = JSON.parse(content);
           jsonLdScripts.push(parsed);
         }
-      } catch (error) {
+      } catch (_error) {
         // Skip invalid JSON
       }
     });

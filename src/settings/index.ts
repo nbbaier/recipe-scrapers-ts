@@ -18,6 +18,7 @@ export interface Settings {
   SUPPRESS_EXCEPTIONS: boolean;
 
   /** Default values to return when exceptions are suppressed */
+  // biome-ignore lint/suspicious/noExplicitAny: return values can be of any type depending on the method
   ON_EXCEPTION_RETURN_VALUES: Record<string, any>;
 
   /** Logging level (0=debug, 1=info, 2=warn, 3=error) */
@@ -72,6 +73,7 @@ export function resetSettings(): void {
 /**
  * Deep merge helper for nested objects
  */
+// biome-ignore lint/suspicious/noExplicitAny: deep merge utility needs to work with arbitrary object types
 function deepMerge(target: any, source: any): any {
   const output = { ...target };
 
@@ -92,6 +94,7 @@ function deepMerge(target: any, source: any): any {
   return output;
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: type guard needs to check if item is an object of any type
 function isObject(item: any): boolean {
   return item && typeof item === 'object' && !Array.isArray(item);
 }
@@ -109,7 +112,7 @@ export function updateSettings(customSettings: Partial<Settings>): void {
     );
 
     // Remove from customSettings to avoid overwriting with shallow assign
-    const { ON_EXCEPTION_RETURN_VALUES, ...rest } = customSettings;
+    const { ON_EXCEPTION_RETURN_VALUES: _ON_EXCEPTION_RETURN_VALUES, ...rest } = customSettings;
     Object.assign(settings, rest);
   } else {
     Object.assign(settings, customSettings);

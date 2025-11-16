@@ -12,7 +12,9 @@ export class OpenGraphImageFetchPlugin extends PluginInterface {
   static override runOnHosts = ['*'];
   static override runOnMethods = ['image'];
 
+  // biome-ignore lint/suspicious/noExplicitAny: decorator pattern requires flexible type signature
   static override run<T extends (...args: any[]) => any>(decorated: T): T {
+    // biome-ignore lint/suspicious/noExplicitAny: decorator needs to preserve 'this' context of any type
     const wrapper = function (this: any, ...args: any[]) {
       if (settings.LOG_LEVEL <= 0) {
         // debug level
@@ -25,7 +27,7 @@ export class OpenGraphImageFetchPlugin extends PluginInterface {
 
       try {
         image = decorated.apply(this, args);
-      } catch (error) {
+      } catch (_error) {
         // Silently catch exception
       }
 

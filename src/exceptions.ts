@@ -94,8 +94,10 @@ export class RecipeSchemaNotFound extends SchemaOrgException {
  * Base exception for static value returns
  */
 export class StaticValueException extends RecipeScrapersException {
+  // biome-ignore lint/suspicious/noExplicitAny: returnValue can be of any type for fallback values
   returnValue: any;
 
+  // biome-ignore lint/suspicious/noExplicitAny: returnValue can be of any type for fallback values
   constructor(message: string, returnValue?: any) {
     super(message);
     this.name = 'StaticValueException';
@@ -108,6 +110,7 @@ export class StaticValueException extends RecipeScrapersException {
  * Exception raised when a field is not provided by the website
  */
 export class FieldNotProvidedByWebsiteException extends StaticValueException {
+  // biome-ignore lint/suspicious/noExplicitAny: returnValue can be of any type for fallback values
   constructor(message: string, returnValue?: any) {
     super(message, returnValue);
     this.name = 'FieldNotProvidedByWebsiteException';

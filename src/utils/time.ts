@@ -108,7 +108,7 @@ export function getMinutes(element: string | number | { text?: string } | null):
 
   const days = daysMatched ? parseFloat(daysMatched) : 0;
   let hours = 0;
-  if (hoursMatched && hoursMatched.trim()) {
+  if (hoursMatched?.trim()) {
     try {
       hours = extractFractional(hoursMatched);
     } catch {

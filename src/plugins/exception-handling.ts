@@ -23,7 +23,9 @@ export class ExceptionHandlingPlugin extends PluginInterface {
     'nutrients',
   ];
 
+  // biome-ignore lint/suspicious/noExplicitAny: decorator pattern requires flexible type signature
   static override run<T extends (...args: any[]) => any>(decorated: T): T {
+    // biome-ignore lint/suspicious/noExplicitAny: decorator needs to preserve 'this' context of any type
     const wrapper = function (this: any, ...args: any[]) {
       if (settings.SUPPRESS_EXCEPTIONS) {
         if (settings.LOG_LEVEL <= 0) {
