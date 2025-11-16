@@ -1,6 +1,7 @@
 {
   "name": "@recipe-scrapers/typescript",
   "version": "0.1.0",
+  "type": "module",
   "description": "TypeScript port of recipe-scrapers - Extract recipe data from cooking websites",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
