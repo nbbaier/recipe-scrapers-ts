@@ -25,7 +25,7 @@ export class NormalizeStringPlugin extends PluginInterface {
       }
 
       const result = decorated.apply(this, args);
-      return normalizeString(result);
+      return result == null ? result : normalizeString(result);
     };
 
     Object.defineProperty(wrapper, 'name', { value: decorated.name });

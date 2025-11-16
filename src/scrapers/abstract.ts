@@ -40,40 +40,29 @@ export abstract class AbstractScraper {
     this.bestImageSelection = bestImage ?? settings.BEST_IMAGE_SELECTION;
 
     // Attach plugins as instructed in settings.PLUGINS
-    // Only apply plugins once per class to avoid re-wrapping methods
-    const constructor = this.constructor as typeof AbstractScraper & {
-      pluginsInitialized?: boolean;
-    };
+    // Apply plugins per-instance to avoid prototype pollution
+    const methodNames = this._getMethodNames();
 
-    if (!constructor.pluginsInitialized) {
-      // Get all method names from the prototype
-      const methodNames = this._getMethodNames();
+    for (const methodName of methodNames) {
+      // Get the current method from the instance's prototype
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      let currentMethod = (Object.getPrototypeOf(this) as Record<string, unknown>)[methodName];
 
-      for (const methodName of methodNames) {
-        // Get the current method from the prototype
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        let currentMethod = (
-          constructor.prototype as unknown as Record<string, unknown>
-        )[methodName];
-
-        // Apply plugins in reverse order (outermost plugin first)
-        for (let i = settings.PLUGINS.length - 1; i >= 0; i--) {
-          const plugin = settings.PLUGINS[i];
-          if (plugin.shouldRun(this.host(), methodName)) {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
-            currentMethod = plugin.run(currentMethod as any);
-          }
+      // Apply plugins in reverse order (outermost plugin first)
+      for (let i = settings.PLUGINS.length - 1; i >= 0; i--) {
+        const plugin = settings.PLUGINS[i];
+        if (plugin.shouldRun(this.host(), methodName)) {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
+          currentMethod = plugin.run(currentMethod as any);
         }
-
-        // Replace the method on the prototype
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        (constructor.prototype as unknown as Record<string, unknown>)[
-          methodName
-        ] = currentMethod;
       }
 
-      // Mark this class as having plugins initialized
-      constructor.pluginsInitialized = true;
+      // Replace the method on the instance, binding 'this' to the current instance
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      (this as unknown as Record<string, unknown>)[methodName] =
+        typeof currentMethod === 'function'
+          ? (currentMethod as Function).bind(this)
+          : currentMethod;
     }
   }
 

@@ -65,7 +65,7 @@ export function resetSettings(): void {
   settings.PLUGINS = [...defaultSettings.PLUGINS];
   settings.BEST_IMAGE_SELECTION = defaultSettings.BEST_IMAGE_SELECTION;
   settings.SUPPRESS_EXCEPTIONS = defaultSettings.SUPPRESS_EXCEPTIONS;
-  settings.ON_EXCEPTION_RETURN_VALUES = JSON.parse(JSON.stringify(defaultSettings.ON_EXCEPTION_RETURN_VALUES));
+  settings.ON_EXCEPTION_RETURN_VALUES = structuredClone(defaultSettings.ON_EXCEPTION_RETURN_VALUES);
   settings.LOG_LEVEL = defaultSettings.LOG_LEVEL;
 }
 

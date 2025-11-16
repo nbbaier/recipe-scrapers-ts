@@ -20,24 +20,18 @@ function stripTags(html: string): string {
   // Remove HTML tags
   let result = html.replace(/<[^>]*>/g, '');
 
-  // Decode HTML entities
-  result = result
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
-    .replace(/&nbsp;/g, ' ');
-
-  // Second pass to handle double-encoded entities
-  result = result
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
-    .replace(/&nbsp;/g, ' ');
-
+  // Decode HTML entities (handle any level of encoding)
+  let prevResult;
+  do {
+    prevResult = result;
+    result = result
+      .replace(/&amp;/g, '&')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'")
+      .replace(/&nbsp;/g, ' ');
+  } while (result !== prevResult);
   return result;
 }
 
