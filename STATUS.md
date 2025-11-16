@@ -2,8 +2,8 @@
 
 - **Last Updated:** 2025-11-16
 - **Current Phase:** Phase 3 (Plugins & Factory) - **COMPLETE!** 🎉
-- **Overall Progress:** ~55% complete
-
+- **Overall Progress:** ~55% complete (by phases), ~25% complete (by LOC: ~2,948 / ~11,700)
+  - _Progress by phases completed; LOC-based progress shown for transparency._
 ---
 
 ## Quick Summary
