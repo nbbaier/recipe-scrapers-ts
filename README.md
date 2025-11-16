@@ -1,4 +1,4 @@
-# recipe-scrapers (TypeScript) 🚀
+# recipe-scrapers (TypeScript) 
 
 - **Status:** Core Architecture + Tests Complete! (Phase 3a)
 - **Progress:** ~60% complete
@@ -6,7 +6,7 @@
 
 TypeScript port of the popular [recipe-scrapers](https://github.com/hhursev/recipe-scrapers) Python library.
 
-## 🎉 Major Milestone: Core Architecture + Comprehensive Tests Complete!
+##  Major Milestone: Core Architecture + Comprehensive Tests Complete!
 
 The **entire core infrastructure** is now implemented, thoroughly tested, and functional! All utilities, parsers, the abstract scraper, plugin system, factory pattern, and settings are complete with **268 tests passing (0 failures)**.
 
@@ -18,7 +18,7 @@ This TypeScript port aims to provide the same comprehensive recipe scraping func
 
 ## Current Status
 
-**✅ Completed (Core Architecture & Tests - 100%)**
+** Completed (Core Architecture & Tests - 100%)**
 - [x] Project setup and tooling (TypeScript, Bun, Vitest, Biome)
 - [x] Type definitions (Recipe, IngredientGroup, Nutrients)
 - [x] **All 10 exception classes** (including plugin-specific exceptions)
@@ -39,17 +39,17 @@ This TypeScript port aims to provide the same comprehensive recipe scraping func
   - [x] 22+ Settings system tests
   - [x] 11 AbstractScraper tests
 
-**🚧 In Progress / Next**
+** In Progress / Next**
 - [ ] First 10 site-specific scrapers - **NEXT UP**
 - [ ] Parity validation (scripts exist but not functional)
 - [ ] Optional: Plugin-specific tests (currently tested indirectly)
 
-**❌ Not Started**
+** Not Started**
 - [ ] Remaining site-specific scrapers (508/518)
 - [ ] Complete documentation
 - [ ] Microdata/RDFa support (deferred, JSON-LD covers 90%+)
 
-**📊 Detailed Status:** See [STATUS.md](STATUS.md) for comprehensive progress tracking
+**Detailed Status:** See [STATUS.md](STATUS.md) for comprehensive progress tracking
 
 ## Quick Start (For Development)
 
@@ -139,31 +139,31 @@ PYTHON_COMMAND="pyenv exec python" bun run compare -- allrecipes.com
 - `bun run format` - Format code with Biome
 - `bun run type-check` - Type check without emitting
 - `bun run validate` - Run all checks (type, lint, test)
-- `bun run validate-parity` - ⚠️ Compare with Python (not functional yet)
-- `bun run compare` - ⚠️ Compare specific site (not functional yet)
+- `bun run validate-parity` -  Compare with Python (not functional yet)
+- `bun run compare` -  Compare specific site (not functional yet)
 
 ## Architecture
 
-The TypeScript port mirrors the Python structure (✅ = complete, ⚠️ = needs tests, ❌ = not started):
+The TypeScript port mirrors the Python structure ( = complete,  = needs tests,  = not started):
 
 ```
 typescript/
 ├── src/
-│   ├── exceptions.ts           # ✅ All 10 exception classes
+│   ├── exceptions.ts           #  All 10 exception classes
 │   ├── types/
-│   │   └── recipe.ts           # ✅ Complete type definitions
-│   ├── index.ts                # ✅ Main entry with exports
-│   ├── factory.ts              # ✅ Factory pattern, scraper registry
+│   │   └── recipe.ts           #  Complete type definitions
+│   ├── index.ts                #  Main entry with exports
+│   ├── factory.ts              #  Factory pattern, scraper registry
 │   ├── settings/
-│   │   └── index.ts            # ✅ Settings system
+│   │   └── index.ts            #  Settings system
 │   ├── scrapers/
-│   │   ├── abstract.ts         # ✅ Base scraper class (310 lines)
-│   │   └── sites/              # ❌ Site-specific scrapers (0/518)
+│   │   ├── abstract.ts         #  Base scraper class (310 lines)
+│   │   └── sites/              #  Site-specific scrapers (0/518)
 │   ├── parsers/
-│   │   ├── schema-org.ts       # ✅ Schema.org JSON-LD parser (642 lines)
-│   │   └── opengraph.ts        # ✅ OpenGraph parser (73 lines)
-│   ├── plugins/                # ✅ Complete plugin system (8 plugins)
-│   │   ├── interface.ts        # ✅ Base plugin interface
+│   │   ├── schema-org.ts       #  Schema.org JSON-LD parser (642 lines)
+│   │   └── opengraph.ts        #  OpenGraph parser (73 lines)
+│   ├── plugins/                #  Complete plugin system (8 plugins)
+│   │   ├── interface.ts        #  Base plugin interface
 │   │   ├── exception-handling.ts
 │   │   ├── best-image.ts
 │   │   ├── static-value-exception-handling.ts
@@ -172,22 +172,22 @@ typescript/
 │   │   ├── opengraph-image-fetch.ts
 │   │   ├── opengraph-fill.ts
 │   │   └── schemaorg-fill.ts
-│   └── utils/                  # ✅ All utility functions
-│       ├── fractions.ts        # ✅ Unicode fraction parsing
-│       ├── time.ts             # ✅ Duration/time parsing
-│       ├── strings.ts          # ✅ Normalization utilities
-│       ├── yields.ts           # ✅ Recipe yield parsing
-│       ├── url.ts              # ✅ URL utilities
-│       └── helpers.ts          # ✅ Helper utilities
+│   └── utils/                  #  All utility functions
+│       ├── fractions.ts        #  Unicode fraction parsing
+│       ├── time.ts             #  Duration/time parsing
+│       ├── strings.ts          #  Normalization utilities
+│       ├── yields.ts           #  Recipe yield parsing
+│       ├── url.ts              #  URL utilities
+│       └── helpers.ts          #  Helper utilities
 ├── tests/
 │   ├── helpers/
-│   │   └── test-data.ts        # ✅ Test data loading
+│   │   └── test-data.ts        #  Test data loading
 │   └── unit/
-│       ├── test-data.test.ts   # ✅ Helper tests
-│       └── utils/              # ✅ All utility tests (150 passing)
+│       ├── test-data.test.ts   #  Helper tests
+│       └── utils/              #  All utility tests (150 passing)
 └── scripts/
-    ├── compare-outputs.ts      # ⚠️ Scaffolded, not functional
-    └── validate-parity.ts      # ⚠️ Scaffolded, not functional
+    ├── compare-outputs.ts      #  Scaffolded, not functional
+    └── validate-parity.ts      #  Scaffolded, not functional
 ```
 
 ## Testing
@@ -269,10 +269,10 @@ export class AllRecipesScraper extends AbstractScraper {
 
 This TypeScript port is being developed **within** the Python repository to:
 
-✅ Easily reference Python implementations
-✅ Share test data (no duplication)
-✅ Validate parity side-by-side
-✅ Ensure true 1:1 functionality
+ Easily reference Python implementations
+ Share test data (no duplication)
+ Validate parity side-by-side
+ Ensure true 1:1 functionality
 
 Once complete and validated, it will be:
 
@@ -283,12 +283,12 @@ Once complete and validated, it will be:
 ## Roadmap
 
 ### Phase 0/1: Foundation (Current - ~5% Complete)
-- [x] Project setup and tooling ✅
-- [x] Type definitions ✅
-- [x] Exception classes ✅
-- [x] Test data helpers ✅
-- [ ] Core utilities 🚧 **NEXT**
-- [ ] Schema.org parser 🚧 **NEXT**
+- [x] Project setup and tooling 
+- [x] Type definitions 
+- [x] Exception classes 
+- [x] Test data helpers 
+- [ ] Core utilities  **NEXT**
+- [ ] Schema.org parser  **NEXT**
 
 ### Phase 2: Core Architecture (Not Started)
 - [ ] OpenGraph parser
@@ -315,7 +315,7 @@ Once complete and validated, it will be:
 
 ## Documentation
 
-- **[STATUS.md](STATUS.md)** ⭐ **START HERE** - Detailed current status and progress
+- **[STATUS.md](STATUS.md)**  **START HERE** - Detailed current status and progress
 - [TYPESCRIPT_PORT_PLAN.md](TYPESCRIPT_PORT_PLAN.md) - Overall strategy and requirements
 - [docs/archive/](docs/archive/) - Archived planning documents (for reference)
 - [Python Documentation](https://docs.recipe-scrapers.com) - Reference for API parity

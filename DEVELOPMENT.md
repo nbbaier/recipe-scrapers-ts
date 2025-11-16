@@ -128,13 +128,13 @@ bun run validate
 ```
 
 **Rules:**
-- ✅ Strict mode enabled (no `any` types)
-- ✅ All parameters and returns must be typed
-- ✅ Use `undefined` not `null` (except for parity with Python)
-- ✅ Prefer immutability (`const`, readonly)
-- ✅ Use ES2020+ features
-- ❌ No `any` types
-- ❌ No `@ts-ignore` comments (without good reason)
+-  Strict mode enabled (no `any` types)
+-  All parameters and returns must be typed
+-  Use `undefined` not `null` (except for parity with Python)
+-  Prefer immutability (`const`, readonly)
+-  Use ES2020+ features
+-  No `any` types
+-  No `@ts-ignore` comments (without good reason)
 
 ### 5. Running Tests
 
@@ -437,4 +437,4 @@ bun run clean          # Remove build artifacts
 6. Validate against Python (when possible)
 7. Submit PR
 
-Happy coding! 🚀
+Happy coding! 

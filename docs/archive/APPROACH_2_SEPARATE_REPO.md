@@ -813,10 +813,10 @@ Port of the popular [Python recipe-scrapers library](https://github.com/hhursev/
 ## Features
 
 - 🌐 Supports 518+ recipe websites
-- 📊 Schema.org parsing (JSON-LD, Microdata, RDFa)
+-  Schema.org parsing (JSON-LD, Microdata, RDFa)
 - 🔌 Plugin architecture for customization
 - 💪 Full TypeScript support
-- ✅ Comprehensive test coverage
+-  Comprehensive test coverage
 - 📦 Tree-shakeable ESM/CJS builds
 
 ## Installation
@@ -1172,36 +1172,36 @@ git commit -m "chore: sync test data"
 ### vs Approach 1 (Python Repo)
 
 **Advantages:**
-- ✅ Clean separation
-- ✅ Independent versioning
-- ✅ Standard repo structure
-- ✅ Easier to discover
+-  Clean separation
+-  Independent versioning
+-  Standard repo structure
+-  Easier to discover
 
 **Disadvantages:**
-- ❌ Test data duplication
-- ❌ Harder to reference Python code
-- ❌ More maintenance overhead
+-  Test data duplication
+-  Harder to reference Python code
+-  More maintenance overhead
 
 ### vs Approach 3 (Monorepo)
 
 **Advantages:**
-- ✅ Simpler tooling
-- ✅ Standard structure
-- ✅ Independent community
+-  Simpler tooling
+-  Standard structure
+-  Independent community
 
 **Disadvantages:**
-- ❌ No shared test data
-- ❌ More sync effort
+-  No shared test data
+-  More sync effort
 
 ### vs Approach 4 (Hybrid)
 
 **Advantages:**
-- ✅ Clean final state
-- ✅ Independent from start
+-  Clean final state
+-  Independent from start
 
 **Disadvantages:**
-- ❌ No easy reference during development
-- ❌ Test data sync from start
+-  No easy reference during development
+-  Test data sync from start
 
 ---
 

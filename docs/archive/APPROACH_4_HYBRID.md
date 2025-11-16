@@ -105,7 +105,7 @@ git push -u origin typescript-port
 
 We're actively developing a TypeScript port of recipe-scrapers in the `typescript/` directory.
 
-**Status:** 🚧 Under development
+**Status:**  Under development
 **Target:** 100% API parity with Python version
 **Documentation:** See [`typescript/README.md`](typescript/README.md)
 
@@ -376,17 +376,17 @@ print(json.dumps(scraper.to_json(), sort_keys=True))
 
   private printReport(): void {
     console.log('\n' + chalk.blue('='.repeat(60)));
-    console.log(chalk.blue('📊 Parity Validation Report'));
+    console.log(chalk.blue(' Parity Validation Report'));
     console.log(chalk.blue('='.repeat(60)));
     console.log(`Total tests: ${this.report.totalTests}`);
     console.log(chalk.green(`Passed: ${this.report.passed} (${this.report.passRate.toFixed(2)}%)`));
     console.log(chalk.red(`Failed: ${this.report.failed}`));
 
     if (this.report.passRate === 100) {
-      console.log(chalk.green.bold('\n🎉 100% PARITY ACHIEVED!'));
+      console.log(chalk.green.bold('\n 100% PARITY ACHIEVED!'));
       console.log(chalk.green('TypeScript port is ready for extraction.\n'));
     } else {
-      console.log(chalk.yellow(`\n⚠️  ${this.report.failed} tests need attention before extraction.\n`));
+      console.log(chalk.yellow(`\n  ${this.report.failed} tests need attention before extraction.\n`));
     }
 
     console.log(chalk.blue('='.repeat(60)) + '\n');
@@ -430,10 +430,10 @@ new ParityValidator().validate();
 
 ## Status
 
-✅ TypeScript port complete
-✅ 100% parity achieved
-✅ All tests passing
-✅ Ready for extraction
+ TypeScript port complete
+ 100% parity achieved
+ All tests passing
+ Ready for extraction
 
 ## Extraction Process
 
@@ -528,7 +528,7 @@ TypeScript port of the popular [Python recipe-scrapers library](https://github.c
 
 This TypeScript port was developed within the Python repository to ensure 100% parity. It has been extracted to its own repository for independent evolution while maintaining compatibility.
 
-**Parity Status:** ✅ 100% (as of v1.0.0)
+**Parity Status:**  100% (as of v1.0.0)
 
 [Rest of README...]
 ```
@@ -638,7 +638,7 @@ rm -rf "$TEMP_DIR"
 
 # Count files
 TEST_COUNT=$(find "$DEST_DIR" -name '*.json' | wc -l)
-echo "✅ Synced $TEST_COUNT test cases"
+echo " Synced $TEST_COUNT test cases"
 ```
 
 **Make executable:**
@@ -913,44 +913,44 @@ This branch (`typescript-archive`) preserves the historical state for reference.
 
 ### During Development (Phase A)
 
-✅ **Easy Python Reference**
+ **Easy Python Reference**
 - Python code is right there
 - Simple `cat ../recipe_scrapers/file.py`
 - Git blame shows Python history
 
-✅ **Shared Test Data**
+ **Shared Test Data**
 - No duplication
 - Same HTML/JSON for both
 - Automatic parity validation
 
-✅ **Validation**
+ **Validation**
 - Run both versions side-by-side
 - Compare outputs directly
 - Ensure true 1:1 parity
 
-✅ **Low Overhead**
+ **Low Overhead**
 - No sync setup needed
 - No multiple repos to manage
 - Simple development workflow
 
 ### After Extraction (Phase B)
 
-✅ **Clean Separation**
+ **Clean Separation**
 - Independent repositories
 - Standard structure
 - Clear ownership
 
-✅ **Independent Evolution**
+ **Independent Evolution**
 - TypeScript can evolve separately
 - Different release schedules
 - TypeScript-specific features
 
-✅ **Ecosystem Conventions**
+ **Ecosystem Conventions**
 - npm package in its own repo
 - Standard JavaScript project
 - Easy for contributors to understand
 
-✅ **Discoverability**
+ **Discoverability**
 - Own GitHub repo to star/fork
 - Separate npm package
 - Independent documentation
@@ -982,12 +982,12 @@ This branch (`typescript-archive`) preserves the historical state for reference.
 ### When to Trigger Extraction
 
 **Criteria:**
-1. ✅ 100% parity validation passes
-2. ✅ All 518 scrapers implemented
-3. ✅ Test coverage >90%
-4. ✅ Documentation complete
-5. ✅ Maintainers approve
-6. ✅ npm package name available
+1.  100% parity validation passes
+2.  All 518 scrapers implemented
+3.  Test coverage >90%
+4.  Documentation complete
+5.  Maintainers approve
+6.  npm package name available
 
 **Process:**
 1. Review checklist
@@ -1048,7 +1048,7 @@ New repository: [link]
 
 **Post-Extraction:**
 ```
-🎉 TypeScript Port Now Available!
+ TypeScript Port Now Available!
 
 We're excited to announce that recipe-scrapers is now available for TypeScript:
 
@@ -1103,35 +1103,35 @@ Thank you to everyone who contributed!
 ### vs Approach 1 (Permanent in Python Repo)
 
 **Advantages over Approach 1:**
-- ✅ Clean final state (separate repos)
-- ✅ Independent evolution
-- ✅ Better discoverability
+-  Clean final state (separate repos)
+-  Independent evolution
+-  Better discoverability
 
 **Shared with Approach 1:**
-- ✅ Easy Python reference during dev
-- ✅ Shared test data during dev
+-  Easy Python reference during dev
+-  Shared test data during dev
 
 ### vs Approach 2 (Separate from Start)
 
 **Advantages over Approach 2:**
-- ✅ Easier development (Python reference)
-- ✅ No test data sync during development
-- ✅ Validation easier
+-  Easier development (Python reference)
+-  No test data sync during development
+-  Validation easier
 
 **Shared with Approach 2:**
-- ✅ Final structure is same (separate repos)
-- ✅ Independent npm package
+-  Final structure is same (separate repos)
+-  Independent npm package
 
 ### vs Approach 3 (Monorepo)
 
 **Advantages over Approach 3:**
-- ✅ Simpler tooling (no Turborepo needed)
-- ✅ Standard final structure
-- ✅ Clear extraction path
+-  Simpler tooling (no Turborepo needed)
+-  Standard final structure
+-  Clear extraction path
 
 **Disadvantages vs Approach 3:**
-- ❌ No Turborepo caching
-- ❌ No coordinated releases (long-term)
+-  No Turborepo caching
+-  No coordinated releases (long-term)
 
 ---
 

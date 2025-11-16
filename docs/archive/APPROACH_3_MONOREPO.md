@@ -639,7 +639,7 @@ print(json.dumps(scraper.to_json()))
     const passRate = ((passed / total) * 100).toFixed(1);
 
     console.log('\n' + chalk.blue('='.repeat(50)));
-    console.log(chalk.blue('📊 Parity Validation Report'));
+    console.log(chalk.blue(' Parity Validation Report'));
     console.log(chalk.blue('='.repeat(50)));
     console.log(`Total tests: ${total}`);
     console.log(chalk.green(`Passed: ${passed} (${passRate}%)`));
@@ -1079,28 +1079,28 @@ This package is part of the recipe-scrapers monorepo and maintains 100% parity w
 ## Advantages of Monorepo Approach
 
 ### 1. Shared Infrastructure
-- ✅ Single source of truth for test data
-- ✅ Shared tooling configs
-- ✅ Coordinated CI/CD
-- ✅ Unified versioning
+-  Single source of truth for test data
+-  Shared tooling configs
+-  Coordinated CI/CD
+-  Unified versioning
 
 ### 2. Developer Experience
-- ✅ Easy to reference Python code
-- ✅ Both versions in same checkout
-- ✅ Turborepo accelerates builds with caching
-- ✅ Single command to build/test all
+-  Easy to reference Python code
+-  Both versions in same checkout
+-  Turborepo accelerates builds with caching
+-  Single command to build/test all
 
 ### 3. Parity Enforcement
-- ✅ Automated parity checks
-- ✅ Same test data for both
-- ✅ Can't drift apart easily
-- ✅ Coordinated releases
+-  Automated parity checks
+-  Same test data for both
+-  Can't drift apart easily
+-  Coordinated releases
 
 ### 4. Modern Tooling
-- ✅ Turborepo remote caching
-- ✅ Parallel execution
-- ✅ Dependency graph optimization
-- ✅ Best-in-class DX
+-  Turborepo remote caching
+-  Parallel execution
+-  Dependency graph optimization
+-  Best-in-class DX
 
 ---
 
@@ -1144,37 +1144,37 @@ This package is part of the recipe-scrapers monorepo and maintains 100% parity w
 ### vs Approach 1 (TypeScript in Python Repo)
 
 **Advantages:**
-- ✅ Better tooling (Turborepo)
-- ✅ Clearer package boundaries
-- ✅ Remote caching
-- ✅ Coordinated releases
+-  Better tooling (Turborepo)
+-  Clearer package boundaries
+-  Remote caching
+-  Coordinated releases
 
 **Disadvantages:**
-- ❌ More initial setup
-- ❌ Requires learning Turborepo/pnpm
+-  More initial setup
+-  Requires learning Turborepo/pnpm
 
 ### vs Approach 2 (Separate Repos)
 
 **Advantages:**
-- ✅ Shared test data (no sync needed)
-- ✅ Easy Python reference
-- ✅ Coordinated releases
-- ✅ Single repo to star/fork
+-  Shared test data (no sync needed)
+-  Easy Python reference
+-  Coordinated releases
+-  Single repo to star/fork
 
 **Disadvantages:**
-- ❌ More complex setup
-- ❌ Larger repo size
+-  More complex setup
+-  Larger repo size
 
 ### vs Approach 4 (Hybrid)
 
 **Advantages:**
-- ✅ Best long-term structure
-- ✅ No migration needed later
-- ✅ Shared infrastructure from start
+-  Best long-term structure
+-  No migration needed later
+-  Shared infrastructure from start
 
 **Disadvantages:**
-- ❌ No "simple start"
-- ❌ Commits more effort upfront
+-  No "simple start"
+-  Commits more effort upfront
 
 ---
 
