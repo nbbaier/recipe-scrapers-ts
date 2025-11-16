@@ -1,0 +1,86 @@
+/**
+ * SchemaOrgFillPlugin
+ *
+ * If a method is not implemented or throws a FillPluginException,
+ * attempt to return results from Schema.org data.
+ */
+
+import { FillPluginException, RecipeSchemaNotFound } from '../exceptions';
+import { settings } from '../settings';
+import { PluginInterface } from './interface';
+
+export class SchemaOrgFillPlugin extends PluginInterface {
+  static override runOnHosts = ['*'];
+  static override runOnMethods = [
+    'author',
+    'site_name',
+    'title',
+    'category',
+    'total_time',
+    'yields',
+    'image',
+    'ingredients',
+    'instructions',
+    'ratings',
+    'links',
+    'language',
+    'nutrients',
+    'cooking_method',
+    'cuisine',
+    'description',
+    'cook_time',
+    'prep_time',
+    'keywords',
+    'ratings_count',
+    'dietary_restrictions',
+  ];
+
+  static override run<T extends (...args: any[]) => any>(decorated: T): T {
+    const wrapper = function (this: any, ...args: any[]) {
+      const className = this.constructor.name;
+      const methodName = decorated.name;
+
+      if (settings.LOG_LEVEL <= 0) {
+        // debug level
+        console.debug(
+          `Decorating: ${className}.${methodName}() with SchemaOrgFillPlugin`
+        );
+      }
+
+      try {
+        return decorated.apply(this, args);
+      } catch (error) {
+        // Only handle FillPluginException and NotImplementedError
+        if (
+          error instanceof FillPluginException ||
+          (error instanceof Error && error.message.includes('not implemented'))
+        ) {
+          // Check if schema data exists
+          if (!this.schema?.data) {
+            throw new RecipeSchemaNotFound(
+              `No Schema.org data found at URL: ${this.url}`
+            );
+          }
+
+          // Try to get function from schema
+          const schemaMethod = this.schema?.[decorated.name];
+
+          if (schemaMethod) {
+            if (settings.LOG_LEVEL <= 1) {
+              // info level
+              console.info(
+                `${className}.${methodName}() not implemented but Schema.org available. Returning from Schema.org.`
+              );
+            }
+            return schemaMethod.apply(this.schema, args);
+          }
+        }
+
+        throw error;
+      }
+    };
+
+    Object.defineProperty(wrapper, 'name', { value: decorated.name });
+    return wrapper as T;
+  }
+}

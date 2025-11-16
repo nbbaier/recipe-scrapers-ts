@@ -67,3 +67,50 @@ export class NoSchemaFoundInWildMode extends RecipeScrapersException {
     Object.setPrototypeOf(this, NoSchemaFoundInWildMode.prototype);
   }
 }
+
+/**
+ * Exception raised when a fill plugin should try alternate data sources
+ */
+export class FillPluginException extends RecipeScrapersException {
+  constructor(message: string) {
+    super(message);
+    this.name = 'FillPluginException';
+    Object.setPrototypeOf(this, FillPluginException.prototype);
+  }
+}
+
+/**
+ * Exception raised when recipe schema.org data is not found
+ */
+export class RecipeSchemaNotFound extends SchemaOrgException {
+  constructor(message: string) {
+    super(message);
+    this.name = 'RecipeSchemaNotFound';
+    Object.setPrototypeOf(this, RecipeSchemaNotFound.prototype);
+  }
+}
+
+/**
+ * Base exception for static value returns
+ */
+export class StaticValueException extends RecipeScrapersException {
+  returnValue: any;
+
+  constructor(message: string, returnValue?: any) {
+    super(message);
+    this.name = 'StaticValueException';
+    this.returnValue = returnValue;
+    Object.setPrototypeOf(this, StaticValueException.prototype);
+  }
+}
+
+/**
+ * Exception raised when a field is not provided by the website
+ */
+export class FieldNotProvidedByWebsiteException extends StaticValueException {
+  constructor(message: string, returnValue?: any) {
+    super(message, returnValue);
+    this.name = 'FieldNotProvidedByWebsiteException';
+    Object.setPrototypeOf(this, FieldNotProvidedByWebsiteException.prototype);
+  }
+}
