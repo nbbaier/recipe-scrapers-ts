@@ -1,4 +1,3 @@
-#!/usr/bin/env ts-node
 /**
  * Compare Outputs Script
  *
@@ -11,13 +10,15 @@
  *   ts-node scripts/compare-outputs.ts allrecipes.com recipe.testhtml
  */
 
-import { execSync } from 'child_process';
-import { writeFileSync, unlinkSync } from 'fs';
-import { tmpdir } from 'os';
-import { join } from 'path';
+import { execSync } from 'node:child_process';
+import { unlinkSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import chalk from 'chalk';
 import * as diff from 'diff';
 import { getTestCases, loadTestHtml } from '../tests/helpers/test-data';
+
+type ScraperOutput = Record<string, unknown>;
 
 class OutputComparer {
   private domain: string;
@@ -60,7 +61,7 @@ class OutputComparer {
 
       // Filter to specific test file if provided
       const casesToCompare = this.testFile
-        ? testCases.filter(tc => tc.html === this.testFile)
+        ? testCases.filter((tc) => tc.html === this.testFile)
         : testCases;
 
       if (casesToCompare.length === 0) {
@@ -73,14 +74,17 @@ class OutputComparer {
       for (const testCase of casesToCompare) {
         await this.compareTestCase(testCase.html);
       }
-
-    } catch (error: any) {
-      console.error(chalk.red(`\n❌ Error: ${error.message}\n`));
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error(chalk.red(`\n❌ Error: ${error.message}\n`));
+      } else {
+        console.error(chalk.red(`\n❌ Unknown error\n`));
+      }
       process.exit(1);
     }
   }
 
-  private async compareTestCase(testFile: string): Promise<void> {
+  private compareTestCase(testFile: string): void {
     console.log(chalk.blue('─'.repeat(60)));
     console.log(chalk.bold(`Test File: ${testFile}`));
     console.log(chalk.blue('─'.repeat(60)));
@@ -99,22 +103,21 @@ class OutputComparer {
 
         // Compare outputs
         this.compareAndPrint(pythonOutput, tsOutput);
-
-      } catch (error: any) {
-        if (error.message.includes('not yet implemented')) {
+      } catch (error: unknown) {
+        if (error instanceof Error && error.message.includes('not yet implemented')) {
           console.log(chalk.yellow('⚠️  TypeScript scrapers not yet implemented\n'));
           this.printPythonOutput(pythonOutput);
         } else {
           throw error;
         }
       }
-
-    } catch (error: any) {
-      console.error(chalk.red(`\n❌ Error in test case: ${error.message}\n`));
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      console.error(chalk.red(`\n❌ Error in test case: ${message}\n`));
     }
   }
 
-  private runPythonScraper(testFile: string): any {
+  private runPythonScraper(testFile: string): ScraperOutput {
     const html = loadTestHtml(this.domain, testFile);
     const tmpFile = join(tmpdir(), `recipe-test-${Date.now()}.html`);
 
@@ -144,19 +147,20 @@ print(json.dumps(scraper.to_json(), indent=2, sort_keys=True, default=str))
       // Clean up temp file
       unlinkSync(tmpFile);
 
-      return JSON.parse(output);
-    } catch (error: any) {
+      return JSON.parse(output) as ScraperOutput;
+    } catch (error: unknown) {
       // Clean up temp file on error
       try {
         unlinkSync(tmpFile);
       } catch {
         // Ignore cleanup errors
       }
-      throw new Error(`Python scraper failed: ${error.message}`);
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      throw new Error(`Python scraper failed: ${message}`);
     }
   }
 
-  private runTypeScriptScraper(_testFile: string): any {
+  private runTypeScriptScraper(_testFile: string): ScraperOutput {
     // This will be implemented once we have scrapers
     // const html = loadTestHtml(this.domain, testFile);
 
@@ -168,7 +172,7 @@ print(json.dumps(scraper.to_json(), indent=2, sort_keys=True, default=str))
     throw new Error('TypeScript scrapers not yet implemented');
   }
 
-  private compareAndPrint(pythonOutput: any, typescriptOutput: any): void {
+  private compareAndPrint(pythonOutput: ScraperOutput, typescriptOutput: ScraperOutput): void {
     const pythonJson = JSON.stringify(pythonOutput, null, 2);
     const tsJson = JSON.stringify(typescriptOutput, null, 2);
 
@@ -201,14 +205,11 @@ print(json.dumps(scraper.to_json(), indent=2, sort_keys=True, default=str))
     this.compareFields(pythonOutput, typescriptOutput);
   }
 
-  private compareFields(python: any, typescript: any): void {
+  private compareFields(python: ScraperOutput, typescript: ScraperOutput): void {
     console.log(chalk.bold('\nField-by-Field Comparison:'));
     console.log(chalk.blue('─'.repeat(60)));
 
-    const allKeys = new Set([
-      ...Object.keys(python || {}),
-      ...Object.keys(typescript || {}),
-    ]);
+    const allKeys = new Set([...Object.keys(python || {}), ...Object.keys(typescript || {})]);
 
     for (const key of Array.from(allKeys).sort()) {
       const pyValue = python?.[key];
@@ -228,7 +229,7 @@ print(json.dumps(scraper.to_json(), indent=2, sort_keys=True, default=str))
     console.log('');
   }
 
-  private printPythonOutput(pythonOutput: any): void {
+  private printPythonOutput(pythonOutput: ScraperOutput): void {
     console.log(chalk.bold('\nPython Output (for reference):'));
     console.log(chalk.blue('─'.repeat(60)));
     console.log(JSON.stringify(pythonOutput, null, 2));

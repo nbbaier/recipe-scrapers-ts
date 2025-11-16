@@ -1,4 +1,5 @@
-#!/usr/bin/env ts-node
+#!/usr/bin/env bun
+
 /**
  * Parity Validation Script
  *
@@ -6,16 +7,30 @@
  * to the Python version for all test cases.
  *
  * Usage:
- *   npm run validate-parity
+ *   npm run validate-Parity
  *   ts-node scripts/validate-parity.ts
  *   ts-node scripts/validate-parity.ts --domain allrecipes.com
  */
 
-import { execSync } from 'child_process';
-import { writeFileSync } from 'fs';
-import { join } from 'path';
+import { execSync } from 'node:child_process';
+import { writeFileSync } from 'node:fs';
+import { join } from 'node:path';
 import chalk from 'chalk';
-import { getTestDomains, getTestCases, loadTestHtml, loadExpectedJson } from '../tests/helpers/test-data';
+import {
+  getTestCases,
+  getTestDomains,
+  // loadExpectedJson,
+  loadTestHtml,
+} from '../tests/helpers/test-data';
+
+type ScraperOutput = Record<string, unknown>;
+
+type FieldDifference = {
+  python: unknown;
+  typescript: unknown;
+};
+
+type Differences = Record<string, FieldDifference>;
 
 interface ValidationResult {
   domain: string;
@@ -34,7 +49,7 @@ interface ValidationReport {
   failures: Array<{
     domain: string;
     testFile: string;
-    differences: any;
+    differences: Differences;
   }>;
 }
 
@@ -82,8 +97,9 @@ class ParityValidator {
       if (this.report.failed > 0) {
         process.exit(1);
       }
-    } catch (error: any) {
-      console.error(chalk.red(`\n❌ Fatal error: ${error.message}`));
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      console.error(chalk.red(`\n❌ Fatal error: ${message}`));
       process.exit(1);
     }
   }
@@ -104,13 +120,15 @@ class ParityValidator {
 
     // Check if Python recipe_scrapers is installed
     try {
-      execSync(`${this.pythonCommand} -c "import recipe_scrapers"`, { stdio: 'pipe' });
+      execSync(`${this.pythonCommand} -c "import recipe_scrapers"`, {
+        stdio: 'pipe',
+      });
     } catch {
       throw new Error('Python recipe_scrapers not installed. Run: pip install -e ../');
     }
   }
 
-  private async validateDomain(domain: string): Promise<void> {
+  private validateDomain(domain: string): void {
     try {
       const testCases = getTestCases(domain);
 
@@ -137,19 +155,22 @@ class ParityValidator {
 
           // Temporary: Skip until scrapers are implemented
           this.report.skipped++;
-          console.log(chalk.yellow(`⊘ ${domain}/${testCase.html} (skipped - scrapers not yet implemented)`));
-
-        } catch (error: any) {
+          console.log(
+            chalk.yellow(`⊘ ${domain}/${testCase.html} (skipped - scrapers not yet implemented)`)
+          );
+        } catch (error: unknown) {
           this.report.failed++;
-          console.log(chalk.red(`✗ ${domain}/${testCase.html} - Error: ${error.message}`));
+          const message = error instanceof Error ? error.message : 'Unknown error';
+          console.log(chalk.red(`✗ ${domain}/${testCase.html} - Error: ${message}`));
         }
       }
-    } catch (error: any) {
-      console.log(chalk.yellow(`⚠ Skipping domain ${domain}: ${error.message}`));
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      console.log(chalk.yellow(`⚠ Skipping domain ${domain}: ${message}`));
     }
   }
 
-  private runPythonScraper(domain: string, testFile: string): any {
+  private runPythonScraper(domain: string, testFile: string): ScraperOutput {
     const html = loadTestHtml(domain, testFile);
     const { writeFileSync, unlinkSync } = require('fs');
     const { tmpdir } = require('os');
@@ -181,22 +202,23 @@ print(json.dumps(scraper.to_json(), sort_keys=True, default=str))
       // Clean up temp file
       unlinkSync(tmpFilePath);
 
-      return JSON.parse(output);
-    } catch (error: any) {
+      return JSON.parse(output) as ScraperOutput;
+    } catch (error: unknown) {
       // Clean up temp file on error
       try {
         unlinkSync(tmpFilePath);
       } catch {
         // Ignore cleanup errors
       }
-      throw new Error(`Python scraper failed: ${error.message}`);
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      throw new Error(`Python scraper failed: ${message}`);
     }
   }
 
-  private runTypeScriptScraper(domain: string, testFile: string): any {
+  private runTypeScriptScraper(domain: string, testFile: string): ScraperOutput {
     // This will be implemented once we have scrapers
     // For now, return empty object
-    const html = loadTestHtml(domain, testFile);
+    const _html = loadTestHtml(domain, testFile);
 
     // Once scrapeHtml is implemented:
     // const { scrapeHtml } = require('../dist');
@@ -206,23 +228,25 @@ print(json.dumps(scraper.to_json(), sort_keys=True, default=str))
     throw new Error('TypeScript scrapers not yet implemented');
   }
 
-  private areEqual(a: any, b: any): boolean {
+  private areEqual(a: ScraperOutput, b: ScraperOutput): boolean {
     return JSON.stringify(this.normalize(a)) === JSON.stringify(this.normalize(b));
   }
 
-  private normalize(obj: any): any {
+  private normalize(obj: unknown): unknown {
     // Sort keys, normalize whitespace, handle nulls/undefined
     if (Array.isArray(obj)) {
-      return obj.map(item => this.normalize(item));
+      return obj.map((item) => this.normalize(item));
     }
     if (typeof obj === 'object' && obj !== null) {
-      const normalized: any = {};
-      Object.keys(obj).sort().forEach(key => {
-        const value = obj[key];
-        if (value !== null && value !== undefined) {
-          normalized[key] = this.normalize(value);
-        }
-      });
+      const normalized: Record<string, unknown> = {};
+      Object.keys(obj)
+        .sort()
+        .forEach((key) => {
+          const value = (obj as Record<string, unknown>)[key];
+          if (value !== null && value !== undefined) {
+            normalized[key] = this.normalize(value);
+          }
+        });
       return normalized;
     }
     if (typeof obj === 'string') {
@@ -231,12 +255,9 @@ print(json.dumps(scraper.to_json(), sort_keys=True, default=str))
     return obj;
   }
 
-  private findDifferences(python: any, typescript: any): any {
-    const differences: any = {};
-    const allKeys = new Set([
-      ...Object.keys(python || {}),
-      ...Object.keys(typescript || {}),
-    ]);
+  private findDifferences(python: ScraperOutput, typescript: ScraperOutput): Differences {
+    const differences: Differences = {};
+    const allKeys = new Set([...Object.keys(python || {}), ...Object.keys(typescript || {})]);
 
     for (const key of allKeys) {
       const pyValue = python?.[key];
@@ -253,8 +274,8 @@ print(json.dumps(scraper.to_json(), sort_keys=True, default=str))
     return differences;
   }
 
-  private printDifferences(differences: any): void {
-    for (const [key, { python, typescript }] of Object.entries<any>(differences)) {
+  private printDifferences(differences: Differences): void {
+    for (const [key, { python, typescript }] of Object.entries(differences)) {
       console.log(chalk.gray(`    ${key}:`));
       console.log(chalk.gray(`      Python:     ${JSON.stringify(python)}`));
       console.log(chalk.gray(`      TypeScript: ${JSON.stringify(typescript)}`));
@@ -272,18 +293,24 @@ print(json.dumps(scraper.to_json(), sort_keys=True, default=str))
     console.log(chalk.blue('📊 Parity Validation Report'));
     console.log(chalk.blue('='.repeat(60)));
     console.log(`Total tests:   ${this.report.totalTests}`);
-    console.log(chalk.green(`Passed:        ${this.report.passed} (${this.report.passRate.toFixed(2)}%)`));
+    console.log(
+      chalk.green(`Passed:        ${this.report.passed} (${this.report.passRate.toFixed(2)}%)`)
+    );
     console.log(chalk.red(`Failed:        ${this.report.failed}`));
     console.log(chalk.yellow(`Skipped:       ${this.report.skipped}`));
 
     if (this.report.skipped === this.report.totalTests) {
-      console.log(chalk.yellow('\n⚠️  All tests skipped - TypeScript scrapers not yet implemented.'));
+      console.log(
+        chalk.yellow('\n⚠️  All tests skipped - TypeScript scrapers not yet implemented.')
+      );
       console.log(chalk.cyan('This script will validate parity once scrapers are built.\n'));
     } else if (this.report.passRate === 100) {
       console.log(chalk.green.bold('\n🎉 100% PARITY ACHIEVED!'));
       console.log(chalk.green('TypeScript port is ready for extraction.\n'));
     } else if (this.report.failed > 0) {
-      console.log(chalk.yellow(`\n⚠️  ${this.report.failed} tests need attention before extraction.\n`));
+      console.log(
+        chalk.yellow(`\n⚠️  ${this.report.failed} tests need attention before extraction.\n`)
+      );
     }
 
     console.log(chalk.blue('='.repeat(60)) + '\n');
