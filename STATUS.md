@@ -2,7 +2,7 @@
 
 - **Last Updated:** 2025-11-16
 - **Current Phase:** Phase 4 (Site Scrapers) - **IN PROGRESS** 🚧
-- **Overall Progress:** ~62% complete (by phases), ~27% complete (by LOC: ~3,338 / ~11,700)
+- **Overall Progress:** ~62% complete (by phases), ~28% complete (by LOC: ~3,338 / ~11,850)
   - _Progress by phases completed; LOC-based progress shown for transparency._
 ---
 

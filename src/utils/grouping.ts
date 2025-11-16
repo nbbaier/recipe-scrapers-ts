@@ -1,3 +1,5 @@
+// cheerio is used for type annotations (cheerio.CheerioAPI, cheerio.Element)
+// @ts-ignore - TS6133: cheerio appears unused but is needed for type annotations
 import * as cheerio from 'cheerio';
 import type { IngredientGroup } from '../types/recipe';
 import { normalizeString } from './strings';
@@ -52,7 +54,6 @@ function bestMatch(testString: string, targetStrings: string[]): string {
 export function groupIngredients(
   ingredientsList: string[], $: cheerio.CheerioAPI, groupHeading?: string, groupElement?: string
 ): IngredientGroup[] {
-  void __cheerio__;
   let heading = groupHeading;
   let element = groupElement;
   if (!heading || !element) {
