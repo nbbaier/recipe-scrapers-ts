@@ -19,7 +19,7 @@ This TypeScript port aims to provide the same comprehensive recipe scraping func
 ## Current Status
 
 **✅ Completed (Core Architecture - 100%)**
-- [x] Project setup and tooling (TypeScript, Jest, ESLint, Prettier)
+- [x] Project setup and tooling (TypeScript, Bun, Vitest, Biome)
 - [x] Type definitions (Recipe, IngredientGroup, Nutrients)
 - [x] **All 10 exception classes** (including plugin-specific exceptions)
 - [x] Test data helpers (access to shared Python test data)
@@ -50,31 +50,30 @@ This TypeScript port aims to provide the same comprehensive recipe scraping func
 cd typescript
 
 # Install dependencies
-npm install
+bun install
 
 # Run tests
-npm test
+bun test
 
 # Build
-npm run build
+bun run build
 
 # Validate parity with Python version
-npm run validate-parity
+bun run validate-parity
 ```
 
 ## Development Setup
 
 ### Prerequisites
 
-- Node.js >= 18.0.0
-- npm or pnpm
+- **Bun** >= 1.0.0 (https://bun.sh)
 - Python 3.9+ (for parity validation)
 
 ### Installation
 
 ```bash
 # From the typescript directory
-npm install
+bun install
 
 # Install Python version for comparison
 cd ..
@@ -83,18 +82,19 @@ pip install -e .
 
 ### Available Scripts
 
-- `npm run build` - Build TypeScript to JavaScript
-- `npm run dev` - Build in watch mode
-- `npm test` - Run tests (utility tests fully passing)
-- `npm run test:watch` - Run tests in watch mode
-- `npm run test:coverage` - Run tests with coverage
-- `npm run lint` - Lint code
-- `npm run lint:fix` - Lint and fix
-- `npm run format` - Format code with Prettier
-- `npm run type-check` - Type check without emitting
-- `npm run validate` - Run all checks (type, lint, test)
-- `npm run validate-parity` - ⚠️ Compare with Python (not functional yet)
-- `npm run compare` - ⚠️ Compare specific site (not functional yet)
+- `bun run build` - Build TypeScript to JavaScript
+- `bun run dev` - Build in watch mode
+- `bun test` - Run tests (utility tests fully passing)
+- `bun run test:watch` - Run tests in watch mode
+- `bun run test:coverage` - Run tests with coverage
+- `bun run test:ui` - Run tests with UI
+- `bun run lint` - Lint code with Biome
+- `bun run lint:fix` - Lint and fix with Biome
+- `bun run format` - Format code with Biome
+- `bun run type-check` - Type check without emitting
+- `bun run validate` - Run all checks (type, lint, test)
+- `bun run validate-parity` - ⚠️ Compare with Python (not functional yet)
+- `bun run compare` - ⚠️ Compare specific site (not functional yet)
 
 ## Architecture
 
@@ -150,13 +150,16 @@ Tests use the same test data as the Python version (located in `../tests/test_da
 
 ```bash
 # Run all tests
-npm test
+bun test
 
 # Run specific test file
-npm test -- scrapers/allrecipes.test.ts
+bun test scrapers/allrecipes.test.ts
 
 # Run with coverage
-npm run test:coverage
+bun run test:coverage
+
+# Run with UI
+bun run test:ui
 ```
 
 ## Parity Validation (Not Yet Functional)
@@ -165,10 +168,10 @@ Once the core implementation is complete, we will maintain 100% parity through a
 
 ```bash
 # Validate all scrapers against Python version (COMING SOON)
-npm run validate-parity
+bun run validate-parity
 
 # Compare specific domain (COMING SOON)
-npm run compare -- allrecipes.com
+bun run compare -- allrecipes.com
 ```
 
 The scripts are scaffolded but not yet functional, as there's no scraper implementation to validate.
@@ -211,9 +214,9 @@ export class AllRecipesScraper extends AbstractScraper {
 ### Code Style
 
 - **TypeScript:** Strict mode enabled
-- **Formatting:** Prettier (runs on commit)
-- **Linting:** ESLint with TypeScript rules
-- **Tests:** Jest
+- **Formatting:** Biome
+- **Linting:** Biome
+- **Tests:** Vitest (Jest-compatible API)
 - **Coverage:** Minimum 90%
 
 ## Relationship to Python Version

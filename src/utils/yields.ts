@@ -51,11 +51,7 @@ export const RECIPE_YIELD_TYPES: Array<[string, string]> = [
 /**
  * Formats a count with appropriate singular/plural label
  */
-function formatCountLabel(
-  count: number,
-  singular: string,
-  plural: string
-): string {
+function formatCountLabel(count: number, singular: string, plural: string): string {
   // Format as integer if the number is whole, otherwise keep decimals
   const formatted = Number.isInteger(count) ? count.toString() : count.toString();
   return `${formatted} ${count === 1 ? singular : plural}`;
@@ -78,9 +74,7 @@ function formatCountLabel(
  * getYields("12 servings") // Returns: "12 servings"
  * getYields("8 muffins") // Returns: "8 muffins"
  */
-export function getYields(
-  element: string | { getText?: () => string } | null
-): string {
+export function getYields(element: string | { getText?: () => string } | null): string {
   if (element === null || element === undefined) {
     throw new Error('Element cannot be null or undefined');
   }
@@ -129,9 +123,7 @@ export function getYields(
   // Look for specific yield types (dozen, batch, cookies, etc.)
   for (const [singular, plural] of RECIPE_YIELD_TYPES) {
     if (serveTextLower.includes(singular) || serveTextLower.includes(plural)) {
-      const matchLength = serveTextLower.includes(singular)
-        ? singular.length
-        : plural.length;
+      const matchLength = serveTextLower.includes(singular) ? singular.length : plural.length;
 
       // Use the longest match (e.g., "hamburger bun" over "bun")
       // For equal lengths, first match wins (matches Python behavior)

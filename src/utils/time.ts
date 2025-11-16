@@ -28,9 +28,7 @@ const TIME_REGEX =
  * getMinutes("2.5 hours") // Returns: 150
  * getMinutes("12-15 minutes") // Returns: 15 (uses max value)
  */
-export function getMinutes(
-  element: string | number | { text?: string } | null
-): number | null {
+export function getMinutes(element: string | number | { text?: string } | null): number | null {
   if (element === null || element === undefined) {
     throw new Error('Element cannot be null or undefined');
   }

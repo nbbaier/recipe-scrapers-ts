@@ -30,9 +30,7 @@ export class ExceptionHandlingPlugin extends PluginInterface {
           // debug level
           const className = this.constructor.name;
           const methodName = decorated.name;
-          console.debug(
-            `Decorating: ${className}.${methodName}() with ExceptionHandlingPlugin`
-          );
+          console.debug(`Decorating: ${className}.${methodName}() with ExceptionHandlingPlugin`);
         }
 
         try {

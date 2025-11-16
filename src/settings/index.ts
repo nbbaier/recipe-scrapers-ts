@@ -74,9 +74,9 @@ export function resetSettings(): void {
  */
 function deepMerge(target: any, source: any): any {
   const output = { ...target };
-  
+
   if (isObject(target) && isObject(source)) {
-    Object.keys(source).forEach(key => {
+    Object.keys(source).forEach((key) => {
       if (isObject(source[key])) {
         if (!(key in target)) {
           output[key] = source[key];
@@ -88,7 +88,7 @@ function deepMerge(target: any, source: any): any {
       }
     });
   }
-  
+
   return output;
 }
 
@@ -107,7 +107,7 @@ export function updateSettings(customSettings: Partial<Settings>): void {
       settings.ON_EXCEPTION_RETURN_VALUES,
       customSettings.ON_EXCEPTION_RETURN_VALUES
     );
-    
+
     // Remove from customSettings to avoid overwriting with shallow assign
     const { ON_EXCEPTION_RETURN_VALUES, ...rest } = customSettings;
     Object.assign(settings, rest);
@@ -127,7 +127,7 @@ export function configureDefaultPlugins(plugins: (typeof PluginInterface)[]): vo
     console.warn('configureDefaultPlugins() has already been called. Ignoring subsequent call.');
     return;
   }
-  
+
   settings.PLUGINS = [...plugins];
   defaultSettings.PLUGINS = [...plugins];
   pluginsConfigured = true;

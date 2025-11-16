@@ -2,9 +2,9 @@
  * Tests for AbstractScraper
  */
 
-import { AbstractScraper } from '../../../src/scrapers/abstract';
-import { updateSettings, resetSettings } from '../../../src/settings';
 import { PluginInterface } from '../../../src/plugins/interface';
+import { AbstractScraper } from '../../../src/scrapers/abstract';
+import { resetSettings, updateSettings } from '../../../src/settings';
 
 // Test implementation of AbstractScraper
 class TestScraper extends AbstractScraper {

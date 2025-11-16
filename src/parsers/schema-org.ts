@@ -7,14 +7,8 @@
  */
 
 import * as cheerio from 'cheerio';
-import {
-  normalizeString,
-  csvToTags,
-  formatDietName,
-  getMinutes,
-  getYields,
-} from '../utils';
 import { SchemaOrgException } from '../exceptions';
+import { csvToTags, formatDietName, getMinutes, getYields, normalizeString } from '../utils';
 
 const SCHEMA_ORG_HOST = 'schema.org';
 
@@ -134,10 +128,7 @@ export class SchemaOrg {
         recipe = item;
       }
       // Check if item is a WebPage with mainEntity that's a recipe
-      else if (
-        this.containsSchemaType(item, 'WebPage') &&
-        item.mainEntity
-      ) {
+      else if (this.containsSchemaType(item, 'WebPage') && item.mainEntity) {
         recipe = item.mainEntity;
       }
       // Search in @graph
@@ -172,18 +163,13 @@ export class SchemaOrg {
     }
 
     const types = Array.isArray(itemType) ? itemType : [itemType];
-    return types.some((type) =>
-      type.toLowerCase().includes(schemaType.toLowerCase())
-    );
+    return types.some((type) => type.toLowerCase().includes(schemaType.toLowerCase()));
   }
 
   /**
    * Finds an entity of a specific type in the schema data
    */
-  private findEntity(
-    item: SchemaEntity,
-    schemaType: string
-  ): SchemaEntity | undefined {
+  private findEntity(item: SchemaEntity, schemaType: string): SchemaEntity | undefined {
     // Check if the item itself matches
     if (this.containsSchemaType(item, schemaType)) {
       return item;
@@ -300,14 +286,10 @@ export class SchemaOrg {
    */
   totalTime(): number | null {
     const hasTimeData =
-      'totalTime' in this.data ||
-      'prepTime' in this.data ||
-      'cookTime' in this.data;
+      'totalTime' in this.data || 'prepTime' in this.data || 'cookTime' in this.data;
 
     if (!hasTimeData) {
-      throw new SchemaOrgException(
-        'Cooking time information not found in SchemaOrg'
-      );
+      throw new SchemaOrgException('Cooking time information not found in SchemaOrg');
     }
 
     const totalTime = this.readDurationField('totalTime');
@@ -390,11 +372,7 @@ export class SchemaOrg {
     // Check if it's an absolute URL
     if (
       typeof image === 'string' &&
-      !(
-        image.startsWith('http://') ||
-        image.startsWith('https://') ||
-        image.startsWith('//')
-      )
+      !(image.startsWith('http://') || image.startsWith('https://') || image.startsWith('//'))
     ) {
       // Relative URLs are not supported; return empty string
       return '';
@@ -407,8 +385,7 @@ export class SchemaOrg {
    * Extracts recipe ingredients
    */
   ingredients(): string[] {
-    let ingredients =
-      this.data.recipeIngredient || this.data.ingredients || [];
+    let ingredients = this.data.recipeIngredient || this.data.ingredients || [];
 
     // Flatten nested arrays
     if (Array.isArray(ingredients) && Array.isArray(ingredients[0])) {
@@ -424,9 +401,7 @@ export class SchemaOrg {
       return [];
     }
 
-    return ingredients
-      .filter((ing) => ing)
-      .map((ing) => normalizeString(String(ing)));
+    return ingredients.filter((ing) => ing).map((ing) => normalizeString(String(ing)));
   }
 
   /**
@@ -500,8 +475,7 @@ export class SchemaOrg {
    * Extracts recipe instructions
    */
   instructions(): string {
-    let instructions =
-      this.data.recipeInstructions || this.data.RecipeInstructions || '';
+    let instructions = this.data.recipeInstructions || this.data.RecipeInstructions || '';
 
     // Flatten nested arrays
     if (Array.isArray(instructions) && Array.isArray(instructions[0])) {
@@ -512,11 +486,7 @@ export class SchemaOrg {
     }
 
     // Handle dict with itemListElement
-    if (
-      typeof instructions === 'object' &&
-      !Array.isArray(instructions) &&
-      instructions !== null
-    ) {
+    if (typeof instructions === 'object' && !Array.isArray(instructions) && instructions !== null) {
       instructions = instructions.itemListElement;
     }
 
@@ -526,9 +496,7 @@ export class SchemaOrg {
       for (const item of instructions) {
         instructionsGist.push(...this.extractHowToInstructionsText(item));
       }
-      return instructionsGist
-        .map((instruction) => normalizeString(instruction))
-        .join('\n');
+      return instructionsGist.map((instruction) => normalizeString(instruction)).join('\n');
     }
 
     return typeof instructions === 'string' ? instructions : '';
@@ -538,8 +506,7 @@ export class SchemaOrg {
    * Extracts recipe rating
    */
   ratings(): number {
-    let ratings =
-      this.data.aggregateRating || this.findEntity(this.data, 'AggregateRating');
+    let ratings = this.data.aggregateRating || this.findEntity(this.data, 'AggregateRating');
 
     // Resolve rating reference
     if (ratings && typeof ratings === 'object') {
@@ -565,8 +532,7 @@ export class SchemaOrg {
    * Extracts recipe ratings count
    */
   ratingsCount(): number | null {
-    let ratings =
-      this.data.aggregateRating || this.findEntity(this.data, 'AggregateRating');
+    let ratings = this.data.aggregateRating || this.findEntity(this.data, 'AggregateRating');
 
     // Resolve rating reference
     if (ratings && typeof ratings === 'object') {

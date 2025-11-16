@@ -4,8 +4,7 @@ This guide provides detailed instructions for contributing to the TypeScript por
 
 ## Prerequisites
 
-- **Node.js** >= 18.0.0
-- **npm** or **pnpm**
+- **Bun** >= 1.0.0 (https://bun.sh)
 - **Python** 3.9+ (for reference and parity validation)
 - **Git**
 
@@ -20,7 +19,7 @@ cd recipe-scrapers
 
 # Install TypeScript dependencies
 cd typescript
-npm install
+bun install
 
 # Install Python version (for reference)
 cd ..
@@ -33,13 +32,13 @@ pip install -e .
 cd typescript
 
 # Type check
-npm run type-check
+bun run type-check
 
 # Run tests
-npm test
+bun test
 
 # Build
-npm run build
+bun run build
 ```
 
 All three commands should complete successfully.
@@ -107,23 +106,23 @@ describe('parseDuration', () => {
 
 ### 4. Code Style
 
-We use strict TypeScript with automated formatting:
+We use strict TypeScript with Biome for linting and formatting:
 
 ```bash
 # Check types
-npm run type-check
+bun run type-check
 
-# Lint
-npm run lint
+# Lint and format check
+bun run lint
 
-# Auto-fix linting issues
-npm run lint:fix
+# Auto-fix linting and formatting issues
+bun run lint:fix
 
 # Format code
-npm run format
+bun run format
 
 # Run all checks
-npm run validate
+bun run validate
 ```
 
 **Rules:**
@@ -139,19 +138,24 @@ npm run validate
 
 ```bash
 # Run all tests
-npm test
+bun test
 
 # Run specific test file
-npm test utils/duration.test.ts
+bun test utils/duration.test.ts
 
 # Run tests in watch mode
-npm run test:watch
+bun run test:watch
 
 # Run with coverage
-npm run test:coverage
+bun run test:coverage
+
+# Run with UI
+bun run test:ui
 ```
 
 **Target coverage:** 90%+ for all new code
+
+**Test Framework:** Vitest (Jest-compatible API)
 
 ## Implementation Priorities
 
@@ -268,10 +272,10 @@ Once we have scrapers implemented, we can validate parity:
 
 ```bash
 # Compare all scrapers with Python
-npm run validate-parity
+bun run validate-parity
 
 # Compare specific domain
-npm run compare -- allrecipes.com
+bun run compare -- allrecipes.com
 ```
 
 These scripts will:
@@ -404,20 +408,21 @@ Check with maintainers before adding new dependencies.
 - **Test data:** Browse `../tests/test_data/`
 - **Issues:** File issues in the main repository mentioning "TypeScript port"
 
-## Quick Reference: npm Scripts
+## Quick Reference: Bun Scripts
 
 ```bash
-npm run build          # Build TypeScript → JavaScript
-npm run dev            # Build in watch mode
-npm test               # Run tests
-npm run test:watch     # Run tests in watch mode
-npm run test:coverage  # Run tests with coverage report
-npm run lint           # Check code style
-npm run lint:fix       # Auto-fix code style issues
-npm run format         # Format code with Prettier
-npm run type-check     # TypeScript type checking
-npm run validate       # Run all checks (type, lint, test)
-npm run clean          # Remove build artifacts
+bun run build          # Build TypeScript → JavaScript
+bun run dev            # Build in watch mode
+bun test               # Run tests
+bun run test:watch     # Run tests in watch mode
+bun run test:coverage  # Run tests with coverage report
+bun run test:ui        # Run tests with UI
+bun run lint           # Check code style with Biome
+bun run lint:fix       # Auto-fix code style issues with Biome
+bun run format         # Format code with Biome
+bun run type-check     # TypeScript type checking
+bun run validate       # Run all checks (type, lint, test)
+bun run clean          # Remove build artifacts
 ```
 
 ## Next Steps

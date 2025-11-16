@@ -20,19 +20,14 @@ export class OpenGraphFillPlugin extends PluginInterface {
 
       if (settings.LOG_LEVEL <= 0) {
         // debug level
-        console.debug(
-          `Decorating: ${className}.${methodName}() with OpenGraphFillPlugin`
-        );
+        console.debug(`Decorating: ${className}.${methodName}() with OpenGraphFillPlugin`);
       }
 
       try {
         return decorated.apply(this, args);
       } catch (error) {
         // Only handle FillPluginException and NotImplementedError
-        if (
-          error instanceof FillPluginException ||
-          error instanceof NotImplementedError
-        ) {
+        if (error instanceof FillPluginException || error instanceof NotImplementedError) {
           // Try to get function from opengraph
           const opengraphMethod = this.opengraph?.[decorated.name];
 

@@ -34,9 +34,7 @@ export class BestImagePlugin extends PluginInterface {
         // debug level
         const className = this.constructor.name;
         const methodName = decorated.name;
-        console.debug(
-          `Decorating: ${className}.${methodName}() with BestImagePlugin`
-        );
+        console.debug(`Decorating: ${className}.${methodName}() with BestImagePlugin`);
       }
 
       const image = decorated.apply(this, args);
@@ -94,8 +92,7 @@ export class BestImagePlugin extends PluginInterface {
     }
 
     if (typeof entry === 'object' && !(entry instanceof Set)) {
-      const url =
-        entry.url || entry['@id'] || entry.contentUrl || entry.contentURL;
+      const url = entry.url || entry['@id'] || entry.contentUrl || entry.contentURL;
       let urlString: string | undefined;
 
       if (Array.isArray(url)) {
@@ -108,12 +105,8 @@ export class BestImagePlugin extends PluginInterface {
         return;
       }
 
-      const width = this._parseDimension(
-        entry.width || entry.pixelWidth || entry.contentWidth
-      );
-      const height = this._parseDimension(
-        entry.height || entry.pixelHeight || entry.contentHeight
-      );
+      const width = this._parseDimension(entry.width || entry.pixelWidth || entry.contentWidth);
+      const height = this._parseDimension(entry.height || entry.pixelHeight || entry.contentHeight);
 
       yield {
         url: urlString.trim(),
@@ -151,22 +144,14 @@ export class BestImagePlugin extends PluginInterface {
     const metas = $('meta').toArray();
     for (const meta of metas) {
       const $meta = $(meta);
-      const prop = (
-        $meta.attr('property') ||
-        $meta.attr('name') ||
-        ''
-      ).toLowerCase();
+      const prop = ($meta.attr('property') || $meta.attr('name') || '').toLowerCase();
       const content = $meta.attr('content');
 
       if (!content) {
         continue;
       }
 
-      if (
-        prop === 'og:image' ||
-        prop === 'og:image:url' ||
-        prop === 'og:image:secure_url'
-      ) {
+      if (prop === 'og:image' || prop === 'og:image:url' || prop === 'og:image:secure_url') {
         // Start a new image entry
         const url = String(content).trim();
         ogImageData.push({ url, width: null, height: null });
@@ -192,8 +177,8 @@ export class BestImagePlugin extends PluginInterface {
           candidates,
           {
             url: imageData.url,
-            width: imageData.width,
-            height: imageData.height,
+            width: imageData.width ?? null,
+            height: imageData.height ?? null,
           },
           'opengraph'
         );
@@ -240,10 +225,7 @@ export class BestImagePlugin extends PluginInterface {
     existing.sources.add(source);
   }
 
-  private static _maxDimension(
-    current: number | null,
-    newVal: number | null
-  ): number | null {
+  private static _maxDimension(current: number | null, newVal: number | null): number | null {
     if (current === null) return newVal;
     if (newVal === null) return current;
     return Math.max(current, newVal);
@@ -286,9 +268,7 @@ export class BestImagePlugin extends PluginInterface {
     return null;
   }
 
-  private static _selectBestCandidate(
-    candidates: ImageCandidate[]
-  ): string | null {
+  private static _selectBestCandidate(candidates: ImageCandidate[]): string | null {
     let bestCandidate: ImageCandidate | null = null;
     let bestScore: [number, number, number] = [-1, 0, 0];
 
@@ -297,9 +277,7 @@ export class BestImagePlugin extends PluginInterface {
       if (
         score[0] > bestScore[0] ||
         (score[0] === bestScore[0] && score[1] > bestScore[1]) ||
-        (score[0] === bestScore[0] &&
-          score[1] === bestScore[1] &&
-          score[2] > bestScore[2])
+        (score[0] === bestScore[0] && score[1] === bestScore[1] && score[2] > bestScore[2])
       ) {
         bestCandidate = candidate;
         bestScore = score;
@@ -309,9 +287,7 @@ export class BestImagePlugin extends PluginInterface {
     return bestCandidate?.url || null;
   }
 
-  private static _scoreCandidate(
-    candidate: ImageCandidate
-  ): [number, number, number] {
+  private static _scoreCandidate(candidate: ImageCandidate): [number, number, number] {
     const [width, height] = this._ensureDimensions(candidate);
 
     let area = 0;
@@ -331,9 +307,7 @@ export class BestImagePlugin extends PluginInterface {
     return [area, secure, order];
   }
 
-  private static _ensureDimensions(
-    candidate: ImageCandidate
-  ): [number | null, number | null] {
+  private static _ensureDimensions(candidate: ImageCandidate): [number | null, number | null] {
     let { width, height } = candidate;
 
     if (width && height) {
@@ -351,9 +325,7 @@ export class BestImagePlugin extends PluginInterface {
     return [width, height];
   }
 
-  private static _extractDimensionsFromUrl(
-    url: string
-  ): [number, number] | null {
+  private static _extractDimensionsFromUrl(url: string): [number, number] | null {
     if (!url) {
       return null;
     }

@@ -5,12 +5,12 @@
  * Plugins wrap scraper methods to add cross-cutting functionality.
  */
 
-export { PluginInterface } from './interface';
-export { ExceptionHandlingPlugin } from './exception-handling';
 export { BestImagePlugin } from './best-image';
-export { StaticValueExceptionHandlingPlugin } from './static-value-exception-handling';
+export { ExceptionHandlingPlugin } from './exception-handling';
 export { HTMLTagStripperPlugin } from './html-tag-stripper';
+export { PluginInterface } from './interface';
 export { NormalizeStringPlugin } from './normalize-string';
-export { OpenGraphImageFetchPlugin } from './opengraph-image-fetch';
 export { OpenGraphFillPlugin } from './opengraph-fill';
+export { OpenGraphImageFetchPlugin } from './opengraph-image-fetch';
 export { SchemaOrgFillPlugin } from './schemaorg-fill';
+export { StaticValueExceptionHandlingPlugin } from './static-value-exception-handling';

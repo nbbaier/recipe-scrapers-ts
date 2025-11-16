@@ -17,10 +17,7 @@
  * changeKeys({ "@type": "Recipe" }, k => k.replace("@", ""))
  * // Returns: { "type": "Recipe" }
  */
-export function changeKeys<T>(
-  obj: T,
-  convert: (key: string) => string
-): T {
+export function changeKeys<T>(obj: T, convert: (key: string) => string): T {
   if (obj === null || obj === undefined) {
     return obj;
   }
@@ -38,9 +35,7 @@ export function changeKeys<T>(
   }
 
   if (obj instanceof Set) {
-    return new Set(
-      Array.from(obj).map((item) => changeKeys(item, convert))
-    ) as T;
+    return new Set(Array.from(obj).map((item) => changeKeys(item, convert))) as T;
   }
 
   return obj;

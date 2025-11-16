@@ -22,7 +22,7 @@ function stripTags(html: string): string {
     // Use cheerio to parse and extract text content
     // This properly handles all HTML edge cases
     const $ = cheerio.load(html);
-    return $.text().trim();
+    return $('*').text().trim();
   } catch {
     // Fallback: if cheerio fails to parse, return empty string
     // We prefer failing safely rather than using incomplete sanitization
@@ -40,9 +40,7 @@ export class HTMLTagStripperPlugin extends PluginInterface {
         // debug level
         const className = this.constructor.name;
         const methodName = decorated.name;
-        console.debug(
-          `Decorating: ${className}.${methodName}() with HTMLTagStripperPlugin`
-        );
+        console.debug(`Decorating: ${className}.${methodName}() with HTMLTagStripperPlugin`);
       }
 
       const result = decorated.apply(this, args);

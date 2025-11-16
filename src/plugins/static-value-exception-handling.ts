@@ -5,15 +5,11 @@
  * that a field is not provided by the website.
  */
 
-import {
-  FieldNotProvidedByWebsiteException,
-  StaticValueException,
-} from '../exceptions';
+import { FieldNotProvidedByWebsiteException, StaticValueException } from '../exceptions';
 import { PluginInterface } from './interface';
 
 export class StaticValueExceptionHandlingPlugin extends PluginInterface {
-  static readonly BUG_REPORT_LINK =
-    'https://github.com/hhursev/recipe-scrapers/issues';
+  static readonly BUG_REPORT_LINK = 'https://github.com/hhursev/recipe-scrapers/issues';
 
   static override runOnHosts = ['*'];
   static override runOnMethods = [

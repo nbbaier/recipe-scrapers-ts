@@ -18,9 +18,7 @@ export class OpenGraphImageFetchPlugin extends PluginInterface {
         // debug level
         const className = this.constructor.name;
         const methodName = decorated.name;
-        console.debug(
-          `Decorating: ${className}.${methodName}() with OpenGraphImageFetchPlugin`
-        );
+        console.debug(`Decorating: ${className}.${methodName}() with OpenGraphImageFetchPlugin`);
       }
 
       let image: string | null = null;

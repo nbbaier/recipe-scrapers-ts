@@ -5,8 +5,8 @@
  * This removes extra whitespace and cleans up text.
  */
 
-import { normalizeString } from '../utils/strings';
 import { settings } from '../settings';
+import { normalizeString } from '../utils/strings';
 import { PluginInterface } from './interface';
 
 export class NormalizeStringPlugin extends PluginInterface {
@@ -19,9 +19,7 @@ export class NormalizeStringPlugin extends PluginInterface {
         // debug level
         const className = this.constructor.name;
         const methodName = decorated.name;
-        console.debug(
-          `Decorating: ${className}.${methodName}() with NormalizeStringPlugin`
-        );
+        console.debug(`Decorating: ${className}.${methodName}() with NormalizeStringPlugin`);
       }
 
       const result = decorated.apply(this, args);

@@ -2,7 +2,7 @@
  * Tests for string utilities
  */
 
-import { normalizeString, csvToTags, formatDietName } from '../../../src/utils/strings';
+import { csvToTags, formatDietName, normalizeString } from '../../../src/utils/strings';
 
 describe('normalizeString', () => {
   it('should remove HTML tags', () => {
@@ -55,9 +55,7 @@ describe('normalizeString', () => {
   it('should handle complex real-world examples', () => {
     expect(normalizeString('<p>Test&nbsp;&nbsp;Recipe</p>')).toBe('Test Recipe');
     // &lt;div&gt; unescapes to <div>, which is then removed as an HTML tag
-    expect(normalizeString('&lt;div&gt;Hello&amp;Goodbye&lt;/div&gt;')).toBe(
-      'Hello&Goodbye'
-    );
+    expect(normalizeString('&lt;div&gt;Hello&amp;Goodbye&lt;/div&gt;')).toBe('Hello&Goodbye');
   });
 
   it('should handle empty strings', () => {
@@ -79,11 +77,7 @@ describe('csvToTags', () => {
   });
 
   it('should lowercase tags when requested', () => {
-    expect(csvToTags('Italian, Pasta, Dinner', true)).toEqual([
-      'italian',
-      'pasta',
-      'dinner',
-    ]);
+    expect(csvToTags('Italian, Pasta, Dinner', true)).toEqual(['italian', 'pasta', 'dinner']);
   });
 
   it('should preserve case when not lowercasing (keeping first occurrence)', () => {
@@ -106,9 +100,7 @@ describe('csvToTags', () => {
 describe('formatDietName', () => {
   it('should format Schema.org diet URLs', () => {
     expect(formatDietName('http://schema.org/VeganDiet')).toBe('Vegan Diet');
-    expect(formatDietName('https://schema.org/GlutenFreeDiet')).toBe(
-      'Gluten Free Diet'
-    );
+    expect(formatDietName('https://schema.org/GlutenFreeDiet')).toBe('Gluten Free Diet');
   });
 
   it('should format diet names without URLs', () => {

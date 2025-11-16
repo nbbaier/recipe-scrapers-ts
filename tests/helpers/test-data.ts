@@ -2,7 +2,7 @@
  * Helper functions for accessing shared test data from Python repository
  */
 
-import { readFileSync, readdirSync, existsSync } from 'fs';
+import { existsSync, readdirSync, readFileSync } from 'fs';
 import { join } from 'path';
 
 /**

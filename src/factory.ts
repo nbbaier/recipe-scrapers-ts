@@ -4,12 +4,9 @@
  * Provides scraper selection and instantiation based on URL domain.
  */
 
+import { NoSchemaFoundInWildMode, WebsiteNotImplementedError } from './exceptions';
 import { AbstractScraper } from './scrapers/abstract';
 import { getHostName } from './utils/url';
-import {
-  WebsiteNotImplementedError,
-  NoSchemaFoundInWildMode,
-} from './exceptions';
 
 /**
  * Generic Schema.org-based scraper for wild mode (unsupported domains)
@@ -170,9 +167,7 @@ request on our bugtracker.`;
     return schemaScraper;
   }
 
-  throw new NoSchemaFoundInWildMode(
-    `No Schema.org data found at URL: ${url}`
-  );
+  throw new NoSchemaFoundInWildMode(`No Schema.org data found at URL: ${url}`);
 }
 
 /**
@@ -181,10 +176,7 @@ request on our bugtracker.`;
  * @param hostname - Domain name (e.g., 'allrecipes.com')
  * @param scraperClass - Scraper class to use for this domain
  */
-export function registerScraper(
-  hostname: string,
-  scraperClass: ScraperConstructor
-): void {
+export function registerScraper(hostname: string, scraperClass: ScraperConstructor): void {
   SCRAPERS[hostname] = scraperClass;
 }
 

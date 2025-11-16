@@ -93,8 +93,7 @@ describe('changeKeys', () => {
 
     it('should convert to camelCase', () => {
       const input = { 'first-name': 'John', 'last-name': 'Doe' };
-      const toCamelCase = (key: string) =>
-        key.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
+      const toCamelCase = (key: string) => key.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
       const result = changeKeys(input, toCamelCase);
       expect(result).toEqual({ firstName: 'John', lastName: 'Doe' });
     });
@@ -176,20 +175,8 @@ describe('getEquipment', () => {
   });
 
   it('should handle real-world equipment lists', () => {
-    const input = [
-      'Large bowl',
-      'Whisk',
-      'Baking sheet',
-      'Large bowl',
-      'Oven',
-      'Whisk',
-    ];
-    expect(getEquipment(input)).toEqual([
-      'Large bowl',
-      'Whisk',
-      'Baking sheet',
-      'Oven',
-    ]);
+    const input = ['Large bowl', 'Whisk', 'Baking sheet', 'Large bowl', 'Oven', 'Whisk'];
+    expect(getEquipment(input)).toEqual(['Large bowl', 'Whisk', 'Baking sheet', 'Oven']);
   });
 });
 

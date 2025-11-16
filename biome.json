@@ -1,7 +1,9 @@
 {
   "$schema": "https://biomejs.dev/schemas/2.3.4/schema.json",
-  "vcs": { "enabled": false, "clientKind": "git", "useIgnoreFile": false },
-  "files": { "includes": ["**", "!!**/dist"] },
+  "vcs": { "enabled": false, "clientKind": "git", "useIgnoreFile": true },
+  "files": {
+    "ignoreUnknown": false
+  },
   "formatter": {
     "enabled": true,
     "formatWithErrors": false,
@@ -97,8 +99,7 @@
         "useAwait": "error",
         "useGetterReturn": "error"
       }
-    },
-    "includes": ["**", "**/dist", "**/node_modules", "**/*.config.js", "**/coverage"]
+    }
   },
   "javascript": {
     "formatter": {
@@ -120,35 +121,6 @@
     }
   },
   "overrides": [
-    {
-      "includes": ["*.ts", "*.tsx", "*.mts", "*.cts"],
-      "linter": {
-        "rules": {
-          "complexity": { "noArguments": "error" },
-          "correctness": {
-            "noConstAssign": "off",
-            "noGlobalObjectCalls": "off",
-            "noInvalidConstructorSuper": "off",
-            "noSetterReturn": "off",
-            "noUndeclaredVariables": "off",
-            "noUnreachable": "off",
-            "noUnreachableSuper": "off"
-          },
-          "style": { "useConst": "error" },
-          "suspicious": {
-            "noDuplicateClassMembers": "off",
-            "noDuplicateObjectKeys": "off",
-            "noDuplicateParameters": "off",
-            "noFunctionAssign": "off",
-            "noImportAssign": "off",
-            "noRedeclare": "off",
-            "noUnsafeNegation": "off",
-            "noVar": "error",
-            "useGetterReturn": "off"
-          }
-        }
-      }
-    },
     {
       "includes": ["*.ts", "*.tsx", "*.mts", "*.cts"],
       "linter": {

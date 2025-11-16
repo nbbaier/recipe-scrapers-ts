@@ -2,7 +2,7 @@
  * Tests for fraction utilities
  */
 
-import { FRACTIONS, extractFractional } from '../../../src/utils/fractions';
+import { extractFractional, FRACTIONS } from '../../../src/utils/fractions';
 
 describe('FRACTIONS constant', () => {
   it('should contain all common Unicode fractions', () => {

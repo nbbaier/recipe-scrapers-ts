@@ -2,11 +2,7 @@
  * Tests for URL parsing utilities
  */
 
-import {
-  urlPathToDict,
-  getHostName,
-  getUrlSlug,
-} from '../../../src/utils/url';
+import { getHostName, getUrlSlug, urlPathToDict } from '../../../src/utils/url';
 
 describe('urlPathToDict', () => {
   it('should parse complete URLs', () => {
@@ -92,9 +88,7 @@ describe('urlPathToDict', () => {
   });
 
   it('should handle recipe website URLs', () => {
-    const result = urlPathToDict(
-      'https://www.allrecipes.com/recipe/12345/chocolate-cake/'
-    );
+    const result = urlPathToDict('https://www.allrecipes.com/recipe/12345/chocolate-cake/');
     expect(result?.schema).toBe('https');
     expect(result?.host).toBe('www.allrecipes.com');
     expect(result?.path).toBe('/recipe/12345/chocolate-cake/');
@@ -113,9 +107,7 @@ describe('getHostName', () => {
   });
 
   it('should preserve subdomains that are not www', () => {
-    expect(getHostName('https://subdomain.example.com')).toBe(
-      'subdomain.example.com'
-    );
+    expect(getHostName('https://subdomain.example.com')).toBe('subdomain.example.com');
     expect(getHostName('https://api.example.com')).toBe('api.example.com');
   });
 
@@ -125,15 +117,9 @@ describe('getHostName', () => {
   });
 
   it('should handle recipe website URLs', () => {
-    expect(getHostName('https://www.allrecipes.com/recipe/12345/')).toBe(
-      'allrecipes.com'
-    );
-    expect(getHostName('https://www.foodnetwork.com/recipes')).toBe(
-      'foodnetwork.com'
-    );
-    expect(getHostName('https://cooking.nytimes.com/recipes/12345')).toBe(
-      'cooking.nytimes.com'
-    );
+    expect(getHostName('https://www.allrecipes.com/recipe/12345/')).toBe('allrecipes.com');
+    expect(getHostName('https://www.foodnetwork.com/recipes')).toBe('foodnetwork.com');
+    expect(getHostName('https://cooking.nytimes.com/recipes/12345')).toBe('cooking.nytimes.com');
   });
 
   it('should handle simple hostnames', () => {
@@ -144,9 +130,7 @@ describe('getHostName', () => {
 
 describe('getUrlSlug', () => {
   it('should extract last path segment', () => {
-    expect(getUrlSlug('https://example.com/recipes/chocolate-cake')).toBe(
-      'chocolate-cake'
-    );
+    expect(getUrlSlug('https://example.com/recipes/chocolate-cake')).toBe('chocolate-cake');
     expect(getUrlSlug('https://example.com/path/to/resource')).toBe('resource');
   });
 
@@ -165,12 +149,10 @@ describe('getUrlSlug', () => {
   });
 
   it('should handle recipe URLs', () => {
-    expect(
-      getUrlSlug('https://www.allrecipes.com/recipe/12345/chocolate-cake')
-    ).toBe('chocolate-cake');
-    expect(getUrlSlug('https://example.com/recipes/vanilla-cupcakes')).toBe(
-      'vanilla-cupcakes'
+    expect(getUrlSlug('https://www.allrecipes.com/recipe/12345/chocolate-cake')).toBe(
+      'chocolate-cake'
     );
+    expect(getUrlSlug('https://example.com/recipes/vanilla-cupcakes')).toBe('vanilla-cupcakes');
   });
 
   it('should handle single-segment paths', () => {

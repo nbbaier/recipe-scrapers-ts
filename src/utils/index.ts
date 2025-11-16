@@ -6,26 +6,8 @@
  * URL handling, and more.
  */
 
-// String utilities
-export { normalizeString, csvToTags, formatDietName } from './strings';
-
 // Fraction utilities
-export { FRACTIONS, extractFractional } from './fractions';
-
-// Time utilities
-export { getMinutes } from './time';
-
-// Yield utilities
-export { RECIPE_YIELD_TYPES, getYields } from './yields';
-
-// URL utilities
-export {
-  urlPathToDict,
-  getHostName,
-  getUrlSlug,
-  type UrlComponents,
-} from './url';
-
+export { extractFractional, FRACTIONS } from './fractions';
 // Helper utilities
 export {
   changeKeys,
@@ -33,3 +15,17 @@ export {
   NUTRITION_KEYS,
   type NutritionKey,
 } from './helpers';
+// String utilities
+export { csvToTags, formatDietName, normalizeString } from './strings';
+// Time utilities
+export { getMinutes } from './time';
+
+// URL utilities
+export {
+  getHostName,
+  getUrlSlug,
+  type UrlComponents,
+  urlPathToDict,
+} from './url';
+// Yield utilities
+export { getYields, RECIPE_YIELD_TYPES } from './yields';

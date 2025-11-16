@@ -2,14 +2,14 @@
  * Tests for test data helper functions
  */
 
+import { existsSync } from 'fs';
 import {
-  loadTestHtml,
-  loadExpectedJson,
+  getTestCases,
   getTestDataPath,
   getTestDomains,
-  getTestCases,
+  loadExpectedJson,
+  loadTestHtml,
 } from '../helpers/test-data';
-import { existsSync } from 'fs';
 
 describe('Test Data Helpers', () => {
   describe('getTestDomains', () => {
