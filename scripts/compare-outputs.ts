@@ -194,16 +194,18 @@ print(json.dumps(scraper.to_json(), indent=2, sort_keys=True, default=str))
     }
   }
 
-  private runTypeScriptScraper(_testFile: string): ScraperOutput {
-    // This will be implemented once we have scrapers
-    // const html = loadTestHtml(this.domain, testFile);
+  private runTypeScriptScraper(testFile: string): ScraperOutput {
+    const html = loadTestHtml(this.domain, testFile);
 
-    // Once scrapeHtml is implemented:
-    // const { scrapeHtml } = require('../dist');
-    // const scraper = scrapeHtml(html, `https://${this.domain}/`);
-    // return scraper.toJson();
+    // Import the built scrapeHtml function
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const { scrapeHtml } = require('../dist/index.cjs');
 
-    throw new Error('TypeScript scrapers not yet implemented');
+    // Create scraper instance
+    const scraper = scrapeHtml(html, `https://${this.domain}/`, { supportedOnly: true });
+
+    // Get JSON output
+    return scraper.toJson() as ScraperOutput;
   }
 
   private compareAndPrint(pythonOutput: ScraperOutput, typescriptOutput: ScraperOutput): void {

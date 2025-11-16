@@ -81,7 +81,12 @@ export class SchemaOrg {
         const content = $(element).html();
         if (content) {
           const parsed = JSON.parse(content);
-          jsonLdScripts.push(parsed);
+          // Handle both array and object formats
+          if (Array.isArray(parsed)) {
+            jsonLdScripts.push(...parsed);
+          } else {
+            jsonLdScripts.push(parsed);
+          }
         }
       } catch (_error) {
         // Skip invalid JSON

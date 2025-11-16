@@ -7,7 +7,7 @@
  */
 
 import * as cheerio from 'cheerio';
-import { ElementNotFoundInHtml } from '../exceptions';
+import { ElementNotFoundInHtml, NotImplementedError } from '../exceptions';
 import { OpenGraph } from '../parsers/opengraph';
 import { SchemaOrg } from '../parsers/schema-org';
 import { settings } from '../settings';
@@ -132,7 +132,7 @@ export abstract class AbstractScraper {
    * Override in subclass or will be filled by SchemaOrgFillPlugin
    */
   author(): string | undefined {
-    throw new Error('author() must be implemented in subclass or provided by SchemaOrgFillPlugin');
+    throw new NotImplementedError('This should be implemented');
   }
 
   /**
@@ -140,7 +140,7 @@ export abstract class AbstractScraper {
    * Override in subclass or will be filled by SchemaOrgFillPlugin
    */
   siteName(): string {
-    throw new Error('This should be implemented');
+    throw new NotImplementedError('This should be implemented');
   }
 
   /**
@@ -148,7 +148,7 @@ export abstract class AbstractScraper {
    * Override in subclass or will be filled by SchemaOrgFillPlugin
    */
   title(): string {
-    throw new Error('This should be implemented');
+    throw new NotImplementedError('This should be implemented');
   }
 
   /**
@@ -156,7 +156,7 @@ export abstract class AbstractScraper {
    * Override in subclass or will be filled by SchemaOrgFillPlugin
    */
   category(): string | undefined {
-    throw new Error('This should be implemented');
+    throw new NotImplementedError('This should be implemented');
   }
 
   /**
@@ -164,7 +164,7 @@ export abstract class AbstractScraper {
    * Override in subclass or will be filled by SchemaOrgFillPlugin
    */
   yields(): string {
-    throw new Error('This should be implemented');
+    throw new NotImplementedError('This should be implemented');
   }
 
   /**
@@ -172,7 +172,7 @@ export abstract class AbstractScraper {
    * Override in subclass or will be filled by SchemaOrgFillPlugin
    */
   description(): string {
-    throw new Error('This should be implemented');
+    throw new NotImplementedError('This should be implemented');
   }
 
   /**
@@ -180,7 +180,7 @@ export abstract class AbstractScraper {
    * Override in subclass or will be filled by SchemaOrgFillPlugin
    */
   ingredients(): string[] {
-    throw new Error('This should be implemented');
+    throw new NotImplementedError('This should be implemented');
   }
 
   /**
@@ -188,7 +188,7 @@ export abstract class AbstractScraper {
    * Override in subclass or will be filled by SchemaOrgFillPlugin
    */
   instructions(): string {
-    throw new Error('This should be implemented');
+    throw new NotImplementedError('This should be implemented');
   }
 
   /**
@@ -196,7 +196,7 @@ export abstract class AbstractScraper {
    * Override in subclass or will be filled by SchemaOrgFillPlugin
    */
   totalTime(): number | null {
-    throw new Error('This should be implemented');
+    throw new NotImplementedError('This should be implemented');
   }
 
   /**
@@ -204,7 +204,7 @@ export abstract class AbstractScraper {
    * Override in subclass or will be filled by SchemaOrgFillPlugin
    */
   cookTime(): number | null {
-    throw new Error('This should be implemented');
+    throw new NotImplementedError('This should be implemented');
   }
 
   /**
@@ -212,7 +212,7 @@ export abstract class AbstractScraper {
    * Override in subclass or will be filled by SchemaOrgFillPlugin
    */
   prepTime(): number | null {
-    throw new Error('This should be implemented');
+    throw new NotImplementedError('This should be implemented');
   }
 
   /**
@@ -220,7 +220,7 @@ export abstract class AbstractScraper {
    * Override in subclass or will be filled by SchemaOrgFillPlugin
    */
   ratings(): number | null {
-    throw new Error('This should be implemented');
+    throw new NotImplementedError('This should be implemented');
   }
 
   /**
@@ -228,7 +228,7 @@ export abstract class AbstractScraper {
    * Override in subclass or will be filled by SchemaOrgFillPlugin
    */
   ratingsCount(): number | null {
-    throw new Error('This should be implemented');
+    throw new NotImplementedError('This should be implemented');
   }
 
   /**
@@ -236,7 +236,7 @@ export abstract class AbstractScraper {
    * Override in subclass or will be filled by SchemaOrgFillPlugin
    */
   cuisine(): string {
-    throw new Error('This should be implemented');
+    throw new NotImplementedError('This should be implemented');
   }
 
   /**
@@ -244,7 +244,7 @@ export abstract class AbstractScraper {
    * Override in subclass or will be filled by SchemaOrgFillPlugin
    */
   cookingMethod(): string {
-    throw new Error('This should be implemented');
+    throw new NotImplementedError('This should be implemented');
   }
 
   /**
@@ -252,7 +252,7 @@ export abstract class AbstractScraper {
    * Override in subclass or will be filled by SchemaOrgFillPlugin
    */
   image(): string {
-    throw new Error('This should be implemented');
+    throw new NotImplementedError('This should be implemented');
   }
 
   /**
@@ -260,7 +260,7 @@ export abstract class AbstractScraper {
    * Override in subclass or will be filled by SchemaOrgFillPlugin
    */
   keywords(): string[] {
-    throw new Error('This should be implemented');
+    throw new NotImplementedError('This should be implemented');
   }
 
   /**
@@ -268,7 +268,7 @@ export abstract class AbstractScraper {
    * Override in subclass or will be filled by SchemaOrgFillPlugin
    */
   dietaryRestrictions(): string[] {
-    throw new Error('This should be implemented');
+    throw new NotImplementedError('This should be implemented');
   }
 
   /**
@@ -276,7 +276,7 @@ export abstract class AbstractScraper {
    * Override in subclass or will be filled by SchemaOrgFillPlugin
    */
   nutrients(): Record<string, string> {
-    throw new Error('This should be implemented');
+    throw new NotImplementedError('This should be implemented');
   }
 
   /**
@@ -284,7 +284,7 @@ export abstract class AbstractScraper {
    * Override in subclass or will be filled by SchemaOrgFillPlugin
    */
   equipment(): string[] {
-    throw new Error('This should be implemented');
+    throw new NotImplementedError('This should be implemented');
   }
 
   /**
