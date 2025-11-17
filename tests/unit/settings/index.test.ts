@@ -14,11 +14,13 @@ import {
 
 // Mock plugin for testing
 class MockPlugin extends PluginInterface {
+	// biome-ignore lint/suspicious/noExplicitAny: test plugin requires flexible signatures
 	static override run<T extends (...args: any[]) => any>(decorated: T): T {
 		return decorated; // Pass-through for testing
 	}
 }
 class AnotherMockPlugin extends PluginInterface {
+	// biome-ignore lint/suspicious/noExplicitAny: test plugin requires flexible signatures
 	static override run<T extends (...args: any[]) => any>(decorated: T): T {
 		return decorated; // Pass-through for testing
 	}

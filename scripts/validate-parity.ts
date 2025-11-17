@@ -33,13 +33,6 @@ type FieldDifference = {
 
 type Differences = Record<string, FieldDifference>;
 
-interface ValidationResult {
-	domain: string;
-	testFile: string;
-	passed: boolean;
-	errors?: string[];
-}
-
 interface ValidationReport {
 	timestamp: string;
 	totalTests: number;

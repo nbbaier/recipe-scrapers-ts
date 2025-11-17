@@ -13,6 +13,7 @@ export interface PluginConfig {
 	runOnMethods?: string[];
 }
 
+// biome-ignore lint/complexity/noStaticOnlyClass: intentional plugin pattern using static methods for decorator functionality
 export abstract class PluginInterface {
 	/**
 	 * Hosts this plugin should run on
@@ -31,6 +32,7 @@ export abstract class PluginInterface {
 	 * @param _decorated - The original method to wrap
 	 * @returns The wrapped method
 	 */
+	// biome-ignore lint/suspicious/noExplicitAny: decorator pattern requires flexible type signatures
 	static run<T extends (...args: any[]) => any>(_decorated: T): T {
 		throw new Error("Plugin must implement run() method");
 	}
@@ -39,6 +41,7 @@ export abstract class PluginInterface {
 	 * Check if plugin should run for given host and method
 	 */
 	static shouldRun(host: string, method: string): boolean {
+		// biome-ignore lint/suspicious/noExplicitAny: type casting needed for plugin class reference
 		const pluginClass = PluginInterface as any;
 		return shouldRunPlugin(pluginClass, host, method);
 	}

@@ -27,6 +27,7 @@ interface SchemaEntity {
 	"@context"?: string;
 	"@graph"?: SchemaEntity[] | SchemaEntity;
 
+	// biome-ignore lint/suspicious/noExplicitAny: Schema.org entities can have arbitrary properties
 	[key: string]: any;
 }
 

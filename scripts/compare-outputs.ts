@@ -327,12 +327,14 @@ print(json.dumps(scraper.to_json(), indent=2, sort_keys=True, default=str))
 				if (pyValue.length !== tsValue.length) return null;
 
 				// Check if only difference is purpose: null vs missing purpose
+				// biome-ignore lint/suspicious/noExplicitAny: ingredient group structure is dynamic
 				const pyWithoutPurpose = pyValue.map((group: any) => {
 					if (typeof group !== "object" || group === null) return group;
 					const copy = { ...group };
 					delete copy.purpose;
 					return copy;
 				});
+				// biome-ignore lint/suspicious/noExplicitAny: ingredient group structure is dynamic
 				const tsWithoutPurpose = tsValue.map((group: any) => {
 					if (typeof group !== "object" || group === null) return group;
 					const copy = { ...group };
@@ -343,6 +345,7 @@ print(json.dumps(scraper.to_json(), indent=2, sort_keys=True, default=str))
 				if (this.deepEqual(pyWithoutPurpose, tsWithoutPurpose)) {
 					// Check if Python has purpose:null and TypeScript has purpose:undefined
 					const pyHasPurposeNull = pyValue.some(
+						// biome-ignore lint/suspicious/noExplicitAny: ingredient group structure is dynamic
 						(g: any) =>
 							typeof g === "object" &&
 							g !== null &&
@@ -350,6 +353,7 @@ print(json.dumps(scraper.to_json(), indent=2, sort_keys=True, default=str))
 							g.purpose === null,
 					);
 					const tsHasPurposeUndefined = tsValue.every(
+						// biome-ignore lint/suspicious/noExplicitAny: ingredient group structure is dynamic
 						(g: any) =>
 							typeof g === "object" &&
 							g !== null &&

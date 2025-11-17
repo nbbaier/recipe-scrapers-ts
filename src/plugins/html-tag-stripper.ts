@@ -36,7 +36,9 @@ export class HTMLTagStripperPlugin extends PluginInterface {
 	static override runOnHosts = ["*"];
 	static override runOnMethods = ["title", "instructions", "ingredients"];
 
+	// biome-ignore lint/suspicious/noExplicitAny: decorator pattern requires flexible type signatures
 	static override run<T extends (...args: any[]) => any>(decorated: T): T {
+		// biome-ignore lint/suspicious/noExplicitAny: decorator pattern requires flexible type signatures
 		const wrapper = function (this: any, ...args: any[]) {
 			if (settings.LOG_LEVEL <= 0) {
 				// debug level

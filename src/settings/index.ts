@@ -18,7 +18,7 @@ export interface Settings {
 	SUPPRESS_EXCEPTIONS: boolean;
 
 	/** Default values to return when exceptions are suppressed */
-
+	// biome-ignore lint/suspicious/noExplicitAny: exception return values can be of any type
 	ON_EXCEPTION_RETURN_VALUES: Record<string, any>;
 
 	/** Logging level (0=debug, 1=info, 2=warn, 3=error) */
@@ -75,7 +75,7 @@ export function resetSettings(): void {
 /**
  * Deep merge helper for nested objects
  */
-
+// biome-ignore lint/suspicious/noExplicitAny: generic merge function for arbitrary objects
 function deepMerge(target: any, source: any): any {
 	const output = { ...target };
 
@@ -96,6 +96,7 @@ function deepMerge(target: any, source: any): any {
 	return output;
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: type checking function for arbitrary values
 function isObject(item: any): boolean {
 	return item && typeof item === "object" && !Array.isArray(item);
 }
