@@ -42,7 +42,7 @@ export abstract class PluginInterface {
 	 */
 	static shouldRun(host: string, method: string): boolean {
 		// biome-ignore lint/suspicious/noExplicitAny: type casting needed for plugin class reference
-		const pluginClass = PluginInterface as any;
+		const pluginClass = this as any;
 		return shouldRunPlugin(pluginClass, host, method);
 	}
 }
