@@ -19,8 +19,7 @@ export class FoodNetworkScraper extends AbstractScraper {
 	 * Author from copyrightNotice field or fallback to schema author
 	 */
 	author(): string | undefined {
-		// biome-ignore lint/suspicious/noExplicitAny: accessing internal data property
-		const schemaData = (this.schema as any).data;
+		const schemaData = this.schema.getRawData();
 		if (schemaData?.copyrightNotice) {
 			return schemaData.copyrightNotice as string;
 		}

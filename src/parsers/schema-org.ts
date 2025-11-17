@@ -679,4 +679,14 @@ export class SchemaOrg {
 		const joined = formattedDiets.join(", ");
 		return csvToTags(joined);
 	}
+
+	/**
+	 * Returns the raw Schema.org data
+	 * Useful for accessing custom or non-standard fields
+	 *
+	 * @returns The raw schema data object
+	 */
+	getRawData(): SchemaEntity {
+		return this.data;
+	}
 }

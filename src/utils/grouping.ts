@@ -1,4 +1,4 @@
-// @ts-expect-error - cheerio is used for type annotations only (cheerio.CheerioAPI, cheerio.Element)
+// @ts-expect-error - TypeScript's noUnusedLocals check doesn't recognize namespace type imports as "used" when only accessed as cheerio.Type in type positions (known TS limitation)
 import type * as cheerio from "cheerio";
 import type { IngredientGroup } from "../types/recipe";
 import { normalizeString } from "./strings";
