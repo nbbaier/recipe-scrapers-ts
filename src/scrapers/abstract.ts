@@ -62,7 +62,7 @@ export abstract class AbstractScraper {
 			// Apply plugins in reverse order (outermost plugin first)
 			for (let i = settings.PLUGINS.length - 1; i >= 0; i--) {
 				const plugin = settings.PLUGINS[i];
-				if (plugin.shouldRun.call(plugin, this.host(), methodName)) {
+				if (plugin.shouldRun(this.host(), methodName)) {
 					// biome-ignore lint/suspicious/noExplicitAny: plugin run method accepts any function signature
 					currentMethod = plugin.run(currentMethod as any);
 				}
