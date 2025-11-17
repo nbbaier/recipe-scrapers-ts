@@ -6,10 +6,10 @@
  * All recipe data is extracted via the SchemaOrgFillPlugin.
  */
 
-import { AbstractScraper } from '../abstract';
+import { AbstractScraper } from "../abstract";
 
 export class SeriousEatsScraper extends AbstractScraper {
-  host(): string {
-    return 'seriouseats.com';
-  }
+	host(): string {
+		return "seriouseats.com";
+	}
 }

@@ -14,71 +14,71 @@
  * // Returns: "Hello World"
  */
 export function normalizeString(input: string): string {
-  // Recursively unescape HTML entities until no more changes occur
-  let prev: string | null = null;
-  let unescaped = input;
-  while (prev !== unescaped) {
-    prev = unescaped;
-    unescaped = unescapeHtml(unescaped);
-  }
+	// Recursively unescape HTML entities until no more changes occur
+	let prev: string | null = null;
+	let unescaped = input;
+	while (prev !== unescaped) {
+		prev = unescaped;
+		unescaped = unescapeHtml(unescaped);
+	}
 
-  // Remove HTML tags
-  const noHtmlString = unescaped.replace(/<[^>]*>/g, '');
+	// Remove HTML tags
+	const noHtmlString = unescaped.replace(/<[^>]*>/g, "");
 
-  // Replace special characters and whitespace
-  let cleaned = noHtmlString
-    .replace(/\xc2\xa0/g, ' ') // Non-breaking space (encoded)
-    .replace(/\xa0/g, ' ') // Non-breaking space
-    .replace(/\u200b/g, '') // Zero-width space
-    .replace(/\r\n/g, ' ') // Windows line endings
-    .replace(/\n/g, ' ') // Unix line endings
-    .replace(/\t/g, ' ') // Tabs
-    .replace(/u0026#039;/g, "'") // Encoded apostrophe
-    .trim();
+	// Replace special characters and whitespace
+	let cleaned = noHtmlString
+		.replace(/\xc2\xa0/g, " ") // Non-breaking space (encoded)
+		.replace(/\xa0/g, " ") // Non-breaking space
+		.replace(/\u200b/g, "") // Zero-width space
+		.replace(/\r\n/g, " ") // Windows line endings
+		.replace(/\n/g, " ") // Unix line endings
+		.replace(/\t/g, " ") // Tabs
+		.replace(/u0026#039;/g, "'") // Encoded apostrophe
+		.trim();
 
-  // Only replace '((' and '))' if both are present in the string
-  if (cleaned.includes('((') && cleaned.includes('))')) {
-    cleaned = cleaned.replace(/\(\(/g, '(').replace(/\)\)/g, ')');
-  }
+	// Only replace '((' and '))' if both are present in the string
+	if (cleaned.includes("((") && cleaned.includes("))")) {
+		cleaned = cleaned.replace(/\(\(/g, "(").replace(/\)\)/g, ")");
+	}
 
-  // Collapse multiple spaces into single space
-  cleaned = cleaned.replace(/\s+/g, ' ');
+	// Collapse multiple spaces into single space
+	cleaned = cleaned.replace(/\s+/g, " ");
 
-  return cleaned.trim();
+	return cleaned.trim();
 }
 
 /**
  * Helper function to unescape HTML entities
  */
 function unescapeHtml(text: string): string {
-  const htmlEntities: Record<string, string> = {
-    '&amp;': '&',
-    '&lt;': '<',
-    '&gt;': '>',
-    '&quot;': '"',
-    '&#39;': "'",
-    '&#x27;': "'",
-    '&apos;': "'",
-    '&nbsp;': ' ',
-  };
+	const htmlEntities: Record<string, string> = {
+		"&amp;": "&",
+		"&lt;": "<",
+		"&gt;": ">",
+		"&quot;": '"',
+		"&#39;": "'",
+		"&#x27;": "'",
+		"&apos;": "'",
+		"&nbsp;": " ",
+	};
 
-  // Replace named entities
-  let result = text;
-  for (const [entity, char] of Object.entries(htmlEntities)) {
-    result = result.replace(new RegExp(entity, 'g'), char);
-  }
+	// Replace named entities
+	let result = text;
+	for (const [entity, char] of Object.entries(htmlEntities)) {
+		result = result.replace(new RegExp(entity, "g"), char);
+	}
 
-  // Replace numeric entities (decimal)
-  result = result.replace(/&#(\d+);/g, (_match, dec) => {
-    return String.fromCharCode(parseInt(dec, 10));
-  });
+	// Replace numeric entities (decimal)
+	result = result.replace(/&#(\d+);/g, (_match, dec) => {
+		return String.fromCharCode(parseInt(dec, 10));
+	});
 
-  // Replace numeric entities (hexadecimal)
-  result = result.replace(/&#x([0-9a-fA-F]+);/g, (_match, hex) => {
-    return String.fromCharCode(parseInt(hex, 16));
-  });
+	// Replace numeric entities (hexadecimal)
+	result = result.replace(/&#x([0-9a-fA-F]+);/g, (_match, hex) => {
+		return String.fromCharCode(parseInt(hex, 16));
+	});
 
-  return result;
+	return result;
 }
 
 /**
@@ -97,19 +97,19 @@ function unescapeHtml(text: string): string {
  * // Returns: ["italian", "pasta", "dinner"]
  */
 export function csvToTags(csv: string, lowercase: boolean = false): string[] {
-  const rawTags = csv.split(',');
-  const seen = new Set<string>();
-  const tags: string[] = [];
+	const rawTags = csv.split(",");
+	const seen = new Set<string>();
+	const tags: string[] = [];
 
-  for (const rawTag of rawTags) {
-    const tag = rawTag.trim();
-    if (tag && !seen.has(tag.toLowerCase())) {
-      seen.add(tag.toLowerCase());
-      tags.push(lowercase ? tag.toLowerCase() : tag);
-    }
-  }
+	for (const rawTag of rawTags) {
+		const tag = rawTag.trim();
+		if (tag && !seen.has(tag.toLowerCase())) {
+			seen.add(tag.toLowerCase());
+			tags.push(lowercase ? tag.toLowerCase() : tag);
+		}
+	}
 
-  return tags;
+	return tags;
 }
 
 /**
@@ -127,40 +127,40 @@ export function csvToTags(csv: string, lowercase: boolean = false): string[] {
  * // Returns: "Gluten Free Diet"
  */
 export function formatDietName(dietInput: string): string | null {
-  const replacements: Record<string, string> = {
-    // schema.org/RestrictedDiet
-    DiabeticDiet: 'Diabetic Diet',
-    GlutenFreeDiet: 'Gluten Free Diet',
-    HalalDiet: 'Halal Diet',
-    HinduDiet: 'Hindu Diet',
-    KosherDiet: 'Kosher Diet',
-    LowCalorieDiet: 'Low Calorie Diet',
-    LowFatDiet: 'Low Fat Diet',
-    LowLactoseDiet: 'Low Lactose Diet',
-    LowSaltDiet: 'Low Salt Diet',
-    VeganDiet: 'Vegan Diet',
-    VegetarianDiet: 'Vegetarian Diet',
-  };
+	const replacements: Record<string, string> = {
+		// schema.org/RestrictedDiet
+		DiabeticDiet: "Diabetic Diet",
+		GlutenFreeDiet: "Gluten Free Diet",
+		HalalDiet: "Halal Diet",
+		HinduDiet: "Hindu Diet",
+		KosherDiet: "Kosher Diet",
+		LowCalorieDiet: "Low Calorie Diet",
+		LowFatDiet: "Low Fat Diet",
+		LowLactoseDiet: "Low Lactose Diet",
+		LowSaltDiet: "Low Salt Diet",
+		VeganDiet: "Vegan Diet",
+		VegetarianDiet: "Vegetarian Diet",
+	};
 
-  let diet = dietInput;
+	let diet = dietInput;
 
-  // Extract diet name from Schema.org URL
-  if (diet.includes('schema.org/')) {
-    diet = diet.split('schema.org/').pop() || '';
-  }
+	// Extract diet name from Schema.org URL
+	if (diet.includes("schema.org/")) {
+		diet = diet.split("schema.org/").pop() || "";
+	}
 
-  // Exclude results that are just "schema.org/" (empty after split)
-  if (diet.trim() === '') {
-    return null;
-  }
+	// Exclude results that are just "schema.org/" (empty after split)
+	if (diet.trim() === "") {
+		return null;
+	}
 
-  // Check for known diet replacements
-  for (const [key, value] of Object.entries(replacements)) {
-    if (diet.includes(key)) {
-      return value;
-    }
-  }
+	// Check for known diet replacements
+	for (const [key, value] of Object.entries(replacements)) {
+		if (diet.includes(key)) {
+			return value;
+		}
+	}
 
-  // Return as-is if no replacement found
-  return diet;
+	// Return as-is if no replacement found
+	return diet;
 }

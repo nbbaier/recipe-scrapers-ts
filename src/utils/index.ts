@@ -7,28 +7,26 @@
  */
 
 // Fraction utilities
-export { extractFractional, FRACTIONS } from './fractions';
+export { extractFractional, FRACTIONS } from "./fractions";
+// Grouping utilities
+export { groupIngredients } from "./grouping";
 // Helper utilities
 export {
-  changeKeys,
-  getEquipment,
-  NUTRITION_KEYS,
-  type NutritionKey,
-} from './helpers';
+	changeKeys,
+	getEquipment,
+	NUTRITION_KEYS,
+	type NutritionKey,
+} from "./helpers";
 // String utilities
-export { csvToTags, formatDietName, normalizeString } from './strings';
+export { csvToTags, formatDietName, normalizeString } from "./strings";
 // Time utilities
-export { getMinutes } from './time';
-
+export { getMinutes } from "./time";
 // URL utilities
 export {
-  getHostName,
-  getUrlSlug,
-  type UrlComponents,
-  urlPathToDict,
-} from './url';
+	getHostName,
+	getUrlSlug,
+	type UrlComponents,
+	urlPathToDict,
+} from "./url";
 // Yield utilities
-export { getYields, RECIPE_YIELD_TYPES } from './yields';
-
-// Grouping utilities
-export { groupIngredients } from './grouping';
+export { getYields, RECIPE_YIELD_TYPES } from "./yields";

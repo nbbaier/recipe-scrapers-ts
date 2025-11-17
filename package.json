@@ -1,76 +1,80 @@
 {
-  "name": "@recipe-scrapers/typescript",
-  "version": "0.1.0",
-  "type": "module",
-  "description": "TypeScript port of recipe-scrapers - Extract recipe data from cooking websites",
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "types": "dist/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
-    }
-  },
-  "files": ["dist", "README.md"],
-  "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts --clean --sourcemap",
-    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage",
-    "test:ui": "vitest --ui",
-    "lint": "biome check .",
-    "lint:fix": "biome check --write .",
-    "format": "biome format --write .",
-    "format:check": "biome format .",
-    "type-check": "tsc --noEmit",
-    "validate": "bun run type-check && bun run lint && bun run test",
-    "validate-parity": "bun run build && bun run scripts/validate-parity.ts",
-    "compare": "bun run scripts/compare-outputs.ts",
-    "clean": "rm -rf dist coverage *.tsbuildinfo"
-  },
-  "keywords": [
-    "recipe",
-    "scraper",
-    "parser",
-    "cooking",
-    "schema.org",
-    "structured-data",
-    "typescript"
-  ],
-  "author": "",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/hhursev/recipe-scrapers.git",
-    "directory": "typescript"
-  },
-  "bugs": {
-    "url": "https://github.com/hhursev/recipe-scrapers/issues"
-  },
-  "engines": {
-    "node": ">=18.0.0"
-  },
-  "dependencies": {
-    "cheerio": "^1.0.0-rc.12",
-    "jsonld": "^8.3.2",
-    "luxon": "^3.4.4"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "2.3.4",
-    "@types/bun": "^1.3.2",
-    "@types/cheerio": "^0.22.35",
-    "@types/diff": "^7.0.2",
-    "@types/luxon": "^3.3.7",
-    "@types/node": "^24.10.0",
-    "@vitest/coverage-v8": "^2.1.8",
-    "@vitest/ui": "^2.1.8",
-    "chalk": "^4.1.2",
-    "diff": "^5.1.0",
-    "tsup": "^8.0.1",
-    "typescript": "^5.3.3",
-    "vitest": "^2.1.8"
-  }
+	"name": "@recipe-scrapers/typescript",
+	"version": "0.1.0",
+	"type": "module",
+	"description": "TypeScript port of recipe-scrapers - Extract recipe data from cooking websites",
+	"main": "dist/index.js",
+	"module": "dist/index.mjs",
+	"types": "dist/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.mjs",
+			"require": "./dist/index.js"
+		}
+	},
+	"files": [
+		"dist",
+		"README.md"
+	],
+	"scripts": {
+		"build": "tsup src/index.ts --format cjs,esm --dts --clean --sourcemap",
+		"build:quiet": "tsup src/index.ts --format cjs,esm --dts --clean --sourcemap --silent",
+		"dev": "tsup src/index.ts --format cjs,esm --dts --watch",
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"test:coverage": "vitest run --coverage",
+		"test:ui": "vitest --ui",
+		"lint": "biome check .",
+		"lint:fix": "biome check --write .",
+		"format": "biome format --write .",
+		"format:check": "biome format .",
+		"type-check": "tsc --noEmit",
+		"check": "bun run type-check && bun run lint && bun run test",
+		"validate-parity": "bun run build:quiet && bun run scripts/validate-parity.ts",
+		"compare": "bun run scripts/compare-outputs.ts",
+		"clean": "rm -rf dist coverage *.tsbuildinfo"
+	},
+	"keywords": [
+		"recipe",
+		"scraper",
+		"parser",
+		"cooking",
+		"schema.org",
+		"structured-data",
+		"typescript"
+	],
+	"author": "",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/hhursev/recipe-scrapers.git",
+		"directory": "typescript"
+	},
+	"bugs": {
+		"url": "https://github.com/hhursev/recipe-scrapers/issues"
+	},
+	"engines": {
+		"node": ">=18.0.0"
+	},
+	"dependencies": {
+		"cheerio": "^1.0.0-rc.12",
+		"jsonld": "^8.3.2",
+		"luxon": "^3.4.4"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.3.5",
+		"@types/bun": "^1.3.2",
+		"@types/cheerio": "^0.22.35",
+		"@types/diff": "^7.0.2",
+		"@types/luxon": "^3.3.7",
+		"@types/node": "^24.10.0",
+		"@vitest/coverage-v8": "^2.1.8",
+		"@vitest/ui": "^2.1.8",
+		"chalk": "^4.1.2",
+		"diff": "^5.1.0",
+		"tsup": "^8.0.1",
+		"typescript": "^5.3.3",
+		"vitest": "^2.1.8"
+	}
 }

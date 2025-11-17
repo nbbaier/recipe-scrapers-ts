@@ -18,27 +18,29 @@
  * // Returns: { "type": "Recipe" }
  */
 export function changeKeys<T>(obj: T, convert: (key: string) => string): T {
-  if (obj === null || obj === undefined) {
-    return obj;
-  }
+	if (obj === null || obj === undefined) {
+		return obj;
+	}
 
-  if (Array.isArray(obj)) {
-    return obj.map((item) => changeKeys(item, convert)) as T;
-  }
+	if (Array.isArray(obj)) {
+		return obj.map((item) => changeKeys(item, convert)) as T;
+	}
 
-  if (typeof obj === 'object' && obj.constructor === Object) {
-    const result: Record<string, unknown> = {};
-    for (const [key, value] of Object.entries(obj)) {
-      result[convert(key)] = changeKeys(value, convert);
-    }
-    return result as T;
-  }
+	if (typeof obj === "object" && obj.constructor === Object) {
+		const result: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(obj)) {
+			result[convert(key)] = changeKeys(value, convert);
+		}
+		return result as T;
+	}
 
-  if (obj instanceof Set) {
-    return new Set(Array.from(obj).map((item) => changeKeys(item, convert))) as T;
-  }
+	if (obj instanceof Set) {
+		return new Set(
+			Array.from(obj).map((item) => changeKeys(item, convert)),
+		) as T;
+	}
 
-  return obj;
+	return obj;
 }
 
 /**
@@ -52,37 +54,37 @@ export function changeKeys<T>(obj: T, convert: (key: string) => string): T {
  * // Returns: ["Oven", "Bowl", "Spoon"]
  */
 export function getEquipment(equipmentItems: string[]): string[] {
-  // Use object keys to maintain order while removing duplicates
-  // (Objects in modern JS maintain insertion order)
-  const seen: Record<string, boolean> = {};
-  const result: string[] = [];
+	// Use object keys to maintain order while removing duplicates
+	// (Objects in modern JS maintain insertion order)
+	const seen: Record<string, boolean> = {};
+	const result: string[] = [];
 
-  for (const item of equipmentItems) {
-    if (!seen[item]) {
-      seen[item] = true;
-      result.push(item);
-    }
-  }
+	for (const item of equipmentItems) {
+		if (!seen[item]) {
+			seen[item] = true;
+			result.push(item);
+		}
+	}
 
-  return result;
+	return result;
 }
 
 /**
  * List of nutrition field keys used in Schema.org Recipe nutrition information
  */
 export const NUTRITION_KEYS = [
-  'servingSize',
-  'calories',
-  'fatContent',
-  'saturatedFatContent',
-  'unsaturatedFatContent',
-  'transFatContent',
-  'carbohydrateContent',
-  'sugarContent',
-  'proteinContent',
-  'sodiumContent',
-  'fiberContent',
-  'cholesterolContent',
+	"servingSize",
+	"calories",
+	"fatContent",
+	"saturatedFatContent",
+	"unsaturatedFatContent",
+	"transFatContent",
+	"carbohydrateContent",
+	"sugarContent",
+	"proteinContent",
+	"sodiumContent",
+	"fiberContent",
+	"cholesterolContent",
 ] as const;
 
 /**

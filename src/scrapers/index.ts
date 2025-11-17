@@ -2,4 +2,4 @@
  * Recipe scrapers
  */
 
-export { AbstractScraper } from './abstract';
+export { AbstractScraper } from "./abstract";
