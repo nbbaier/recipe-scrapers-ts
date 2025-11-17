@@ -17,7 +17,7 @@ export class SchemaOrgFillPlugin extends PluginInterface {
 	static override runOnHosts = ["*"];
 	static override runOnMethods = [
 		"author",
-		"siteName",
+		"site_name",
 		"title",
 		"category",
 		"totalTime",
