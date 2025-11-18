@@ -31,8 +31,11 @@
 		"format:check": "biome format .",
 		"type-check": "tsc --noEmit",
 		"check": "bun run type-check && bun run lint && bun run test",
-		"validate-parity": "bun run build:quiet && bun run scripts/validate-parity.ts",
-		"compare": "bun run scripts/compare-outputs.ts",
+		"test:scrapers": "bun run build:quiet && bun scripts/test-scrapers.ts",
+		"validate-parity": "bun run build:quiet && bun scripts/validate-parity.ts",
+		"compare": "bun scripts/compare-outputs.ts",
+		"migrate": "bun scripts/migrate-scraper.ts",
+		"register": "bun scripts/fix-sites-index.ts && bun scripts/update-factory.ts",
 		"clean": "rm -rf dist coverage *.tsbuildinfo"
 	},
 	"keywords": [
