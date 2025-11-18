@@ -144,7 +144,7 @@ export class ${tsClassName} extends AbstractScraper {
 		const equipmentItems = this.$(".wprm-recipe-equipment-name")
 			.map((_, elem) => {
 				const text = this.$(elem).text();
-				return text ? normalizeString(text.replace(/\\*$/, "")) : "";
+				return text ? normalizeString(text.replace(/\*$/, "")) : "";
 			})
 			.get()
 			.filter(Boolean);
