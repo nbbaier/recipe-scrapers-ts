@@ -1,8 +1,8 @@
 # TypeScript Port Status
 
-- **Last Updated:** 2025-11-16
-- **Current Phase:** Phase 4 (Site Scrapers) - **IN PROGRESS** 
-- **Overall Progress:** ~62% complete (by phases), ~28% complete (by LOC: ~3,338 / ~11,850)
+- **Last Updated:** 2025-11-18
+- **Current Phase:** Phase 4 (Site Scrapers) - **IN PROGRESS**
+- **Overall Progress:** ~65% complete (by phases), ~35% complete (by LOC: ~4,000 / ~11,850)
   - _Progress by phases completed; LOC-based progress shown for transparency._
 ---
 
@@ -32,9 +32,9 @@
   - 22+ Settings system tests  **NEW!**
   - 11 AbstractScraper tests
 
-### What's Not Implemented 
+### What's Not Implemented
 
-- **Remaining 508 site-specific scrapers** - Phase 4 (in progress, 10/518 complete!)
+- **Remaining 468 site-specific scrapers** - Phase 4 (in progress, 50/518 complete! 🎉)
 - Plugin-specific tests (plugins work, but need dedicated test files)
 - Parity validation scripts (scaffolded but not yet functional)
 - Microdata/RDFa support (deferred, JSON-LD covers 90%+)
@@ -100,29 +100,34 @@
 **Test Coverage:** 94.71% statements, 93.04% branches, 89.47% functions
 **Tests:** 150 passing (all utility tests complete)
 
-### 4. Site-Specific Scrapers (10/518 Complete)  **NEW!**
+### 4. Site-Specific Scrapers (50/518 Complete) 🎉 **MAJOR UPDATE!**
 
-- **Priority scrapers** ( 10/10 COMPLETE!):
-  -  allrecipes.com - Minimal scraper (relies on Schema.org)
-  -  foodnetwork.com - Custom author/siteName extraction
-  -  seriouseats.com - Minimal scraper (relies on Schema.org)
-  -  bbcgoodfood.com - Ingredient grouping support
-  -  bonappetit.com - Override totalTime() to return null
-  -  epicurious.com - Custom author extraction from HTML
-  -  delish.com - Ingredient grouping support
-  -  simplyrecipes.com - Custom instructions parsing
-  -  tasty.co - Ingredient grouping support
-  -  thepioneerwoman.com - Ingredient grouping + custom instructions
+- **Batch 1 - Initial 10 scrapers** (✅ COMPLETE):
+  -  allrecipes.com, bbcgoodfood.com, bonappetit.com, delish.com, epicurious.com
+  -  foodnetwork.com, seriouseats.com, simplyrecipes.com, tasty.co, thepioneerwoman.com
 
-- **Remaining:** 508 scrapers
+- **Batch 2 - Next 40 scrapers** (✅ COMPLETE!):  **NEW!**
+  -  allthehealthythings.com, ambitiouskitchen.com, americastestkitchen.com
+  -  averiecooks.com, bakerbynature.com, bellyfull.net, bettycrocker.com
+  -  budgetbytes.com, cafedelites.com, closetcooking.com, cookieandkate.com
+  -  cookinglight.com, countryliving.com, culinaryhill.com, damndelicious.net
+  -  dinneratthezoo.com, dinnerthendessert.com, eatingbirdfood.com
+  -  eatingwell.com, feastingathome.com, fifteenspatulas.com, food52.com
+  -  foodandwine.com, gimmesomeoven.com, halfbakedharvest.com, jamieoliver.com
+  -  joshuaweissman.com, justataste.com, justbento.com, marthastewart.com
+  -  minimalistbaker.com, mybakingaddiction.com, pinchofyum.com
+  -  recipetineats.com, sallysbakingaddiction.com, skinnytaste.com
+  -  southernliving.com, tasteofhome.com, thekitchn.com, therecipecritic.com
 
-**Status:** First 10 priority scrapers implemented and registered with factory! All build successfully and tests pass (268 passing).
+- **Remaining:** 468 scrapers
+
+**Status:** 50 scrapers implemented and registered with factory! All build successfully and tests pass (268 passing). Automated migration script created for rapid porting.
 
 **Implementation Patterns:**
-- Minimal scrapers (3): Just extend AbstractScraper and define host()
-- Custom field overrides (3): Override specific methods like author(), totalTime()
-- Ingredient grouping (4): Use groupIngredients() utility for sectioned ingredients
-- Custom parsing (2): Override instructions() with custom HTML parsing
+- Minimal scrapers (33): Just extend AbstractScraper and define host()
+- WPRM-based scrapers (2): Add equipment() method for WordPress Recipe Maker plugin
+- Custom field overrides (15): Override specific methods like author(), totalTime(), yields(), etc.
+- Automated migration: Created migrate-scraper.ts tool for automatic Python → TypeScript conversion
 
 ### 5. Testing Infrastructure (85% Complete)  **MAJOR UPDATE!**
 
@@ -397,10 +402,10 @@ typescript/
 | Core (abstract, parsers, factory) | ~1,200 | ~1,400 | **~1,232** | **100%**  |
 | Plugins + Settings | ~800 | ~950 | **~936** | **100%**  |
 | Utilities (inc. grouping) | ~450 | ~500 | **~900** | **100%**  |
-| Site scrapers (518) | ~8,000 | ~9,000 | **~270** (10 scrapers) | **~2%** (10/518)  **NEW!** |
-| **Total** | **~10,450** | **~11,850** | **~3,338** | **~28%** |
+| Site scrapers (518) | ~8,000 | ~9,000 | **~1,000** (50 scrapers) | **~10%** (50/518) 🎉 **NEW!** |
+| **Total** | **~10,450** | **~11,850** | **~4,068** | **~35%** |
 
-**Progress:** Core architecture 100% complete! First 10 site scrapers implemented! ~3,338 lines of production code.
+**Progress:** Core architecture 100% complete! **50 site scrapers implemented!** ~4,068 lines of production code. Automated migration tooling created.
 
 ### Test Coverage  **UPDATED!**
 

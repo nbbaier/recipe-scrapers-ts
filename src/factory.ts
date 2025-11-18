@@ -119,29 +119,110 @@ export const SCRAPERS: Record<string, ScraperConstructor> = {};
 // Import site-specific scrapers
 import {
 	AllRecipesScraper,
+	AllTheHealthyThingsScraper,
+	AmbitiousKitchenScraper,
+	AmericasTestKitchenScraper,
+	AverieCooksScraper,
+	BakerByNatureScraper,
 	BBCGoodFoodScraper,
+	BellyFullScraper,
+	BettyCrockerScraper,
 	BonAppetitScraper,
+	BudgetBytesScraper,
+	CafeDelitesScraper,
+	ClosetCookingScraper,
+	CookieAndKateScraper,
+	CookingLightScraper,
+	CountryLivingScraper,
+	CulinaryHillScraper,
+	DamnDeliciousScraper,
 	DelishScraper,
+	DinnerAtTheZooScraper,
+	DinnerThenDessertScraper,
+	EatingBirdFoodScraper,
+	EatingWellScraper,
 	EpicuriousScraper,
+	FeastingAtHomeScraper,
+	FifteenSpatulasScraper,
+	Food52Scraper,
+	FoodAndWineScraper,
 	FoodNetworkScraper,
+	GimmeSomeOvenScraper,
+	HalfBakedHarvestScraper,
+	JamieOliverScraper,
+	JoshuaWeissmanScraper,
+	JustATasteScraper,
+	JustBentoScraper,
+	MarthaStewartScraper,
+	MinimalistbakerScraper,
+	MyBakingAddictionScraper,
+	PinchOfYumScraper,
+	RecipeTinEatsScraper,
+	SallysBakingAddictionScraper,
 	SeriousEatsScraper,
 	SimplyRecipesScraper,
+	SkinnyTasteScraper,
+	SouthernLivingScraper,
+	TasteOfHomeScraper,
 	TastyScraper,
+	TheKitchnScraper,
 	ThePioneerWomanScraper,
+	TheRecipeCriticScraper,
 } from "./scrapers/sites";
 
 // Register all site-specific scrapers
 registerScraper("allrecipes.com", AllRecipesScraper);
+registerScraper("allthehealthythings.com", AllTheHealthyThingsScraper);
+registerScraper("ambitiouskitchen.com", AmbitiousKitchenScraper);
+registerScraper("americastestkitchen.com", AmericasTestKitchenScraper);
+registerScraper("averiecooks.com", AverieCooksScraper);
+registerScraper("bakerbynature.com", BakerByNatureScraper);
 registerScraper("bbcgoodfood.com", BBCGoodFoodScraper);
+registerScraper("bellyfull.net", BellyFullScraper);
+registerScraper("bettycrocker.com", BettyCrockerScraper);
 registerScraper("bonappetit.com", BonAppetitScraper);
+registerScraper("budgetbytes.com", BudgetBytesScraper);
+registerScraper("cafedelites.com", CafeDelitesScraper);
+registerScraper("closetcooking.com", ClosetCookingScraper);
+registerScraper("cookieandkate.com", CookieAndKateScraper);
+registerScraper("cookinglight.com", CookingLightScraper);
+registerScraper("countryliving.com", CountryLivingScraper);
+registerScraper("culinaryhill.com", CulinaryHillScraper);
+registerScraper("damndelicious.net", DamnDeliciousScraper);
 registerScraper("delish.com", DelishScraper);
+registerScraper("dinneratthezoo.com", DinnerAtTheZooScraper);
+registerScraper("dinnerthendessert.com", DinnerThenDessertScraper);
+registerScraper("eatingbirdfood.com", EatingBirdFoodScraper);
+registerScraper("eatingwell.com", EatingWellScraper);
 registerScraper("epicurious.com", EpicuriousScraper);
-registerScraper("foodnetwork.com", FoodNetworkScraper);
+registerScraper("feastingathome.com", FeastingAtHomeScraper);
+registerScraper("fifteenspatulas.com", FifteenSpatulasScraper);
+registerScraper("food52.com", Food52Scraper);
+registerScraper("foodandwine.com", FoodAndWineScraper);
 registerScraper("foodnetwork.co.uk", FoodNetworkScraper);
+registerScraper("foodnetwork.com", FoodNetworkScraper);
+registerScraper("gimmesomeoven.com", GimmeSomeOvenScraper);
+registerScraper("halfbakedharvest.com", HalfBakedHarvestScraper);
+registerScraper("jamieoliver.com", JamieOliverScraper);
+registerScraper("joshuaweissman.com", JoshuaWeissmanScraper);
+registerScraper("justataste.com", JustATasteScraper);
+registerScraper("justbento.com", JustBentoScraper);
+registerScraper("marthastewart.com", MarthaStewartScraper);
+registerScraper("minimalistbaker.com", MinimalistbakerScraper);
+registerScraper("mybakingaddiction.com", MyBakingAddictionScraper);
+registerScraper("pinchofyum.com", PinchOfYumScraper);
+registerScraper("recipetineats.com", RecipeTinEatsScraper);
+registerScraper("sallysbakingaddiction.com", SallysBakingAddictionScraper);
 registerScraper("seriouseats.com", SeriousEatsScraper);
 registerScraper("simplyrecipes.com", SimplyRecipesScraper);
+registerScraper("skinnytaste.com", SkinnyTasteScraper);
+registerScraper("southernliving.com", SouthernLivingScraper);
+registerScraper("tasteofhome.com", TasteOfHomeScraper);
 registerScraper("tasty.co", TastyScraper);
+registerScraper("thekitchn.com", TheKitchnScraper);
 registerScraper("thepioneerwoman.com", ThePioneerWomanScraper);
+registerScraper("therecipecritic.com", TheRecipeCriticScraper);
+
 
 /**
  * Options for scrapeHtml function
