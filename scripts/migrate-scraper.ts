@@ -30,9 +30,10 @@ interface ParsedScraper {
   methods: string[];
   fullContent: string;
   imports: string[];
+  pythonFilename: string;
 }
 
-function parsePythonScraper(filepath: string): ParsedScraper | null {
+function parsePythonScraper(filepath: string, pythonFilename: string): ParsedScraper | null {
   if (!existsSync(filepath)) {
     console.error(`❌ File not found: ${filepath}`);
     return null;
@@ -96,11 +97,12 @@ function parsePythonScraper(filepath: string): ParsedScraper | null {
     methods,
     fullContent: content,
     imports,
+    pythonFilename,
   };
 }
 
 function generateMinimalScraper(parsed: ParsedScraper): string {
-  const { tsClassName, host, className } = parsed;
+  const { tsClassName, host, className, pythonFilename } = parsed;
 
   return `/**
  * ${className} scraper
@@ -120,7 +122,7 @@ export class ${tsClassName} extends AbstractScraper {
 }
 
 function generateWprmScraper(parsed: ParsedScraper): string {
-  const { tsClassName, host, className } = parsed;
+  const { tsClassName, host, className, pythonFilename } = parsed;
 
   return `/**
  * ${className} scraper
@@ -156,12 +158,12 @@ export class ${tsClassName} extends AbstractScraper {
 }
 
 function generateScraperWithMethods(parsed: ParsedScraper): string {
-  const { tsClassName, host, className, methods } = parsed;
+  const { tsClassName, host, className, methods, pythonFilename } = parsed;
 
   const methodStubs = methods.map(method => {
     return `\t/**
 \t * TODO: Implement custom ${method}() logic
-\t * Check Python implementation in recipe_scrapers/${className.toLowerCase()}.py
+\t * Check Python implementation in recipe_scrapers/${pythonFilename}.py
 \t */
 \t// ${method}(): ReturnType {
 \t// \treturn undefined;
@@ -222,7 +224,7 @@ function migrateScraper(scraperName: string): boolean {
   }
 
   // Parse Python scraper
-  const parsed = parsePythonScraper(pythonPath);
+  const parsed = parsePythonScraper(pythonPath, scraperName);
   if (!parsed) {
     return false;
   }
