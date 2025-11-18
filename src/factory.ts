@@ -223,7 +223,6 @@ registerScraper("thekitchn.com", TheKitchnScraper);
 registerScraper("thepioneerwoman.com", ThePioneerWomanScraper);
 registerScraper("therecipecritic.com", TheRecipeCriticScraper);
 
-
 /**
  * Options for scrapeHtml function
  */

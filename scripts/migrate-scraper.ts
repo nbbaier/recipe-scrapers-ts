@@ -8,103 +8,109 @@
  *   bun scripts/migrate-scraper.ts --batch budgetbytes,pinchofyum,minimalistbaker
  */
 
-import { readFileSync, writeFileSync, existsSync } from 'fs';
-import { join } from 'path';
+import { existsSync, readFileSync, writeFileSync } from "fs";
+import { join } from "path";
 
 // Patterns to detect in Python code
 const PATTERNS = {
-  className: /class\s+(\w+)\((.*?)\):/,
-  host: /@classmethod\s+def\s+host\(cls\):\s+return\s+"([^"]+)"/s,
-  hostAlt: /@classmethod\s+def\s+host\(cls\):\s+return\s+'([^']+)'/s,
-  method: /def\s+(\w+)\(self.*?\):/g,
-  wprm: /WPRMMixin/,
-  imports: /from\s+\._(\w+)\s+import\s+(.*)/g,
+	className: /class\s+(\w+)\((.*?)\):/,
+	host: /@classmethod\s+def\s+host\(cls\):\s+return\s+"([^"]+)"/s,
+	hostAlt: /@classmethod\s+def\s+host\(cls\):\s+return\s+'([^']+)'/s,
+	method: /def\s+(\w+)\(self.*?\):/g,
+	wprm: /WPRMMixin/,
+	imports: /from\s+\._(\w+)\s+import\s+(.*)/g,
 };
 
 interface ParsedScraper {
-  className: string;
-  tsClassName: string;
-  host: string;
-  hasWprm: boolean;
-  baseclasses: string[];
-  methods: string[];
-  fullContent: string;
-  imports: string[];
-  pythonFilename: string;
+	className: string;
+	tsClassName: string;
+	host: string;
+	hasWprm: boolean;
+	baseclasses: string[];
+	methods: string[];
+	fullContent: string;
+	imports: string[];
+	pythonFilename: string;
 }
 
-function parsePythonScraper(filepath: string, pythonFilename: string): ParsedScraper | null {
-  if (!existsSync(filepath)) {
-    console.error(`❌ File not found: ${filepath}`);
-    return null;
-  }
+function parsePythonScraper(
+	filepath: string,
+	pythonFilename: string,
+): ParsedScraper | null {
+	if (!existsSync(filepath)) {
+		console.error(`❌ File not found: ${filepath}`);
+		return null;
+	}
 
-  const content = readFileSync(filepath, 'utf-8');
+	const content = readFileSync(filepath, "utf-8");
 
-  // Extract class name
-  const classMatch = content.match(PATTERNS.className);
-  if (!classMatch) {
-    console.error('❌ Could not find class definition');
-    return null;
-  }
+	// Extract class name
+	const classMatch = content.match(PATTERNS.className);
+	if (!classMatch) {
+		console.error("❌ Could not find class definition");
+		return null;
+	}
 
-  const className = classMatch[1];
-  const baseclasses = classMatch[2].split(',').map(b => b.trim()).filter(Boolean);
+	const className = classMatch[1];
+	const baseclasses = classMatch[2]
+		.split(",")
+		.map((b) => b.trim())
+		.filter(Boolean);
 
-  // Extract host
-  let hostMatch = content.match(PATTERNS.host);
-  if (!hostMatch) {
-    hostMatch = content.match(PATTERNS.hostAlt);
-  }
+	// Extract host
+	let hostMatch = content.match(PATTERNS.host);
+	if (!hostMatch) {
+		hostMatch = content.match(PATTERNS.hostAlt);
+	}
 
-  if (!hostMatch) {
-    console.error('❌ Could not find host() method');
-    return null;
-  }
+	if (!hostMatch) {
+		console.error("❌ Could not find host() method");
+		return null;
+	}
 
-  const host = hostMatch[1];
+	const host = hostMatch[1];
 
-  // Check for WPRM mixin
-  const hasWprm = PATTERNS.wprm.test(content);
+	// Check for WPRM mixin
+	const hasWprm = PATTERNS.wprm.test(content);
 
-  // Extract method names (excluding host and __init__)
-  const methods: string[] = [];
-  let methodMatch;
-  const methodRegex = new RegExp(PATTERNS.method);
+	// Extract method names (excluding host and __init__)
+	const methods: string[] = [];
+	let methodMatch;
+	const methodRegex = new RegExp(PATTERNS.method);
 
-  while ((methodMatch = methodRegex.exec(content)) !== null) {
-    const methodName = methodMatch[1];
-    if (methodName !== 'host' && !methodName.startsWith('_')) {
-      methods.push(methodName);
-    }
-  }
+	while ((methodMatch = methodRegex.exec(content)) !== null) {
+		const methodName = methodMatch[1];
+		if (methodName !== "host" && !methodName.startsWith("_")) {
+			methods.push(methodName);
+		}
+	}
 
-  // Extract imports
-  const imports: string[] = [];
-  let importMatch;
-  const importRegex = new RegExp(PATTERNS.imports);
+	// Extract imports
+	const imports: string[] = [];
+	let importMatch;
+	const importRegex = new RegExp(PATTERNS.imports);
 
-  while ((importMatch = importRegex.exec(content)) !== null) {
-    imports.push(importMatch[0]);
-  }
+	while ((importMatch = importRegex.exec(content)) !== null) {
+		imports.push(importMatch[0]);
+	}
 
-  return {
-    className,
-    tsClassName: `${className}Scraper`,
-    host,
-    hasWprm,
-    baseclasses,
-    methods,
-    fullContent: content,
-    imports,
-    pythonFilename,
-  };
+	return {
+		className,
+		tsClassName: `${className}Scraper`,
+		host,
+		hasWprm,
+		baseclasses,
+		methods,
+		fullContent: content,
+		imports,
+		pythonFilename,
+	};
 }
 
 function generateMinimalScraper(parsed: ParsedScraper): string {
-  const { tsClassName, host, className, pythonFilename } = parsed;
+	const { tsClassName, host, className, pythonFilename } = parsed;
 
-  return `/**
+	return `/**
  * ${className} scraper
  * https://${host}/
  *
@@ -122,9 +128,9 @@ export class ${tsClassName} extends AbstractScraper {
 }
 
 function generateWprmScraper(parsed: ParsedScraper): string {
-  const { tsClassName, host, className, pythonFilename } = parsed;
+	const { tsClassName, host, className, pythonFilename } = parsed;
 
-  return `/**
+	return `/**
  * ${className} scraper
  * https://${host}/
  *
@@ -146,7 +152,7 @@ export class ${tsClassName} extends AbstractScraper {
 		const equipmentItems = this.$(".wprm-recipe-equipment-name")
 			.map((_, elem) => {
 				const text = this.$(elem).text();
-				return text ? normalizeString(text.replace(/\*$/, "")) : "";
+				return text ? normalizeString(text.replace(/*$/, "")) : "";
 			})
 			.get()
 			.filter(Boolean);
@@ -158,19 +164,21 @@ export class ${tsClassName} extends AbstractScraper {
 }
 
 function generateScraperWithMethods(parsed: ParsedScraper): string {
-  const { tsClassName, host, className, methods, pythonFilename } = parsed;
+	const { tsClassName, host, className, methods, pythonFilename } = parsed;
 
-  const methodStubs = methods.map(method => {
-    return `\t/**
+	const methodStubs = methods
+		.map((method) => {
+			return `\t/**
 \t * TODO: Implement custom ${method}() logic
 \t * Check Python implementation in recipe_scrapers/${pythonFilename}.py
 \t */
 \t// ${method}(): ReturnType {
 \t// \treturn undefined;
 \t// }`;
-  }).join('\n\n');
+		})
+		.join("\n\n");
 
-  return `/**
+	return `/**
  * ${className} scraper
  * https://${host}/
  *
@@ -191,105 +199,123 @@ ${methodStubs}
 }
 
 function generateTypescriptScraper(parsed: ParsedScraper): string {
-  // If it has custom methods, generate with stubs
-  if (parsed.methods.length > 0) {
-    console.log(`⚠️  Has ${parsed.methods.length} custom method(s): ${parsed.methods.join(', ')}`);
-    console.log('   Generating with TODO stubs - manual review required');
-    return generateScraperWithMethods(parsed);
-  }
+	// If it has custom methods, generate with stubs
+	if (parsed.methods.length > 0) {
+		console.log(
+			`⚠️  Has ${parsed.methods.length} custom method(s): ${parsed.methods.join(", ")}`,
+		);
+		console.log("   Generating with TODO stubs - manual review required");
+		return generateScraperWithMethods(parsed);
+	}
 
-  // If it uses WPRM mixin
-  if (parsed.hasWprm) {
-    console.log('📦 Uses WPRMMixin - generating with equipment() method');
-    return generateWprmScraper(parsed);
-  }
+	// If it uses WPRM mixin
+	if (parsed.hasWprm) {
+		console.log("📦 Uses WPRMMixin - generating with equipment() method");
+		return generateWprmScraper(parsed);
+	}
 
-  // Otherwise, minimal scraper
-  console.log('✅ Minimal scraper - relies on Schema.org');
-  return generateMinimalScraper(parsed);
+	// Otherwise, minimal scraper
+	console.log("✅ Minimal scraper - relies on Schema.org");
+	return generateMinimalScraper(parsed);
 }
 
 function migrateScraper(scraperName: string): boolean {
-  console.log(`\n🔄 Migrating ${scraperName}...`);
+	console.log(`\n🔄 Migrating ${scraperName}...`);
 
-  // Determine paths
-  const pythonPath = join(process.cwd(), '..', 'recipe_scrapers', `${scraperName}.py`);
-  const tsPath = join(process.cwd(), 'src', 'scrapers', 'sites', `${scraperName}.ts`);
+	// Determine paths
+	const pythonPath = join(
+		process.cwd(),
+		"..",
+		"recipe_scrapers",
+		`${scraperName}.py`,
+	);
+	const tsPath = join(
+		process.cwd(),
+		"src",
+		"scrapers",
+		"sites",
+		`${scraperName}.ts`,
+	);
 
-  // Check if already exists
-  if (existsSync(tsPath)) {
-    console.log(`⚠️  TypeScript scraper already exists: ${tsPath}`);
-    console.log('   Skipping...');
-    return false;
-  }
+	// Check if already exists
+	if (existsSync(tsPath)) {
+		console.log(`⚠️  TypeScript scraper already exists: ${tsPath}`);
+		console.log("   Skipping...");
+		return false;
+	}
 
-  // Parse Python scraper
-  const parsed = parsePythonScraper(pythonPath, scraperName);
-  if (!parsed) {
-    return false;
-  }
+	// Parse Python scraper
+	const parsed = parsePythonScraper(pythonPath, scraperName);
+	if (!parsed) {
+		return false;
+	}
 
-  console.log(`   Class: ${parsed.className}`);
-  console.log(`   Host: ${parsed.host}`);
+	console.log(`   Class: ${parsed.className}`);
+	console.log(`   Host: ${parsed.host}`);
 
-  // Generate TypeScript code
-  const tsCode = generateTypescriptScraper(parsed);
+	// Generate TypeScript code
+	const tsCode = generateTypescriptScraper(parsed);
 
-  // Write file
-  writeFileSync(tsPath, tsCode, 'utf-8');
-  console.log(`✅ Created: ${tsPath}`);
+	// Write file
+	writeFileSync(tsPath, tsCode, "utf-8");
+	console.log(`✅ Created: ${tsPath}`);
 
-  return true;
+	return true;
 }
 
 function updateSiteScrapersIndex(scraperNames: string[]): void {
-  const indexPath = join(process.cwd(), 'src', 'scrapers', 'sites', 'index.ts');
+	const indexPath = join(process.cwd(), "src", "scrapers", "sites", "index.ts");
 
-  // Read existing scrapers
-  const existingContent = existsSync(indexPath) ? readFileSync(indexPath, 'utf-8') : '';
-  const existingExports = new Set<string>();
+	// Read existing scrapers
+	const existingContent = existsSync(indexPath)
+		? readFileSync(indexPath, "utf-8")
+		: "";
+	const existingExports = new Set<string>();
 
-  // Parse existing exports
-  const exportRegex = /export \{ (\w+) \} from ["']\.\/(\w+)["'];/g;
-  let match;
-  while ((match = exportRegex.exec(existingContent)) !== null) {
-    existingExports.add(match[2]); // filename
-  }
+	// Parse existing exports
+	const exportRegex = /export \{ (\w+) \} from ["']\.\/(\w+)["'];/g;
+	let match;
+	while ((match = exportRegex.exec(existingContent)) !== null) {
+		existingExports.add(match[2]); // filename
+	}
 
-  // Add new scrapers
-  for (const name of scraperNames) {
-    existingExports.add(name);
-  }
+	// Add new scrapers
+	for (const name of scraperNames) {
+		existingExports.add(name);
+	}
 
-  // Generate new index file
-  const sortedScrapers = Array.from(existingExports).sort();
-  const exports = sortedScrapers.map(name => {
-    // Convert filename to class name (e.g., allrecipes -> AllRecipesScraper)
-    const className = name
-      .split(/[-_]/)
-      .map(part => part.charAt(0).toUpperCase() + part.slice(1))
-      .join('') + 'Scraper';
+	// Generate new index file
+	const sortedScrapers = Array.from(existingExports).sort();
+	const exports = sortedScrapers.map((name) => {
+		// Convert filename to class name (e.g., allrecipes -> AllRecipesScraper)
+		const className =
+			name
+				.split(/[-_]/)
+				.map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+				.join("") + "Scraper";
 
-    return `export { ${className} } from "./${name}";`;
-  });
+		return `export { ${className} } from "./${name}";`;
+	});
 
-  const newContent = `/**
+	const newContent = `/**
  * Site-specific scrapers
  * Auto-generated exports - do not edit manually
  */
 
-${exports.join('\n')}
+${exports.join("\n")}
 `;
 
-  writeFileSync(indexPath, newContent, 'utf-8');
-  console.log(`\n✅ Updated sites/index.ts with ${sortedScrapers.length} scraper(s)`);
+	writeFileSync(indexPath, newContent, "utf-8");
+	console.log(
+		`\n✅ Updated sites/index.ts with ${sortedScrapers.length} scraper(s)`,
+	);
 }
 
 function main() {
-  const args = process.argv.slice(2);
+	const args = process.argv.slice(2);
 
-  if (args.length === 0 || args[0] === '--help' || args[0] === '-h') {
-    console.log(`
+	if (args.length === 0 || args[0] === "--help" || args[0] === "-h") {
+		console.log(`
 🔄 Python to TypeScript Scraper Migration Tool
 
 Usage:
@@ -310,53 +336,55 @@ Notes:
   - TypeScript files are written to: src/scrapers/sites/
   - sites/index.ts is automatically updated with exports
 `);
-    process.exit(0);
-  }
+		process.exit(0);
+	}
 
-  let scrapers: string[] = [];
+	let scrapers: string[] = [];
 
-  if (args[0] === '--batch' || args[0] === '-b') {
-    if (!args[1]) {
-      console.error('❌ --batch requires comma-separated scraper names');
-      process.exit(1);
-    }
-    scrapers = args[1].split(',').map(s => s.trim());
-  } else {
-    scrapers = args;
-  }
+	if (args[0] === "--batch" || args[0] === "-b") {
+		if (!args[1]) {
+			console.error("❌ --batch requires comma-separated scraper names");
+			process.exit(1);
+		}
+		scrapers = args[1].split(",").map((s) => s.trim());
+	} else {
+		scrapers = args;
+	}
 
-  console.log(`📦 Migrating ${scrapers.length} scraper(s)...`);
+	console.log(`📦 Migrating ${scrapers.length} scraper(s)...`);
 
-  const successful: string[] = [];
-  const failed: string[] = [];
+	const successful: string[] = [];
+	const failed: string[] = [];
 
-  for (const scraper of scrapers) {
-    if (migrateScraper(scraper)) {
-      successful.push(scraper);
-    } else {
-      failed.push(scraper);
-    }
-  }
+	for (const scraper of scrapers) {
+		if (migrateScraper(scraper)) {
+			successful.push(scraper);
+		} else {
+			failed.push(scraper);
+		}
+	}
 
-  // Update index file
-  if (successful.length > 0) {
-    updateSiteScrapersIndex(successful);
-  }
+	// Update index file
+	if (successful.length > 0) {
+		updateSiteScrapersIndex(successful);
+	}
 
-  // Summary
-  console.log('\n' + '='.repeat(60));
-  console.log(`✅ Successfully migrated: ${successful.length}`);
-  if (failed.length > 0) {
-    console.log(`❌ Failed: ${failed.length}`);
-    console.log(`   ${failed.join(', ')}`);
-  }
-  console.log('='.repeat(60));
+	// Summary
+	console.log("\n" + "=".repeat(60));
+	console.log(`✅ Successfully migrated: ${successful.length}`);
+	if (failed.length > 0) {
+		console.log(`❌ Failed: ${failed.length}`);
+		console.log(`   ${failed.join(", ")}`);
+	}
+	console.log("=".repeat(60));
 
-  console.log('\n📝 Next steps:');
-  console.log('1. Review generated scrapers (especially those with custom methods)');
-  console.log('2. Register scrapers in src/factory.ts');
-  console.log('3. Run: bun run build');
-  console.log('4. Run: bun test');
+	console.log("\n📝 Next steps:");
+	console.log(
+		"1. Review generated scrapers (especially those with custom methods)",
+	);
+	console.log("2. Register scrapers in src/factory.ts");
+	console.log("3. Run: bun run build");
+	console.log("4. Run: bun test");
 }
 
 main();

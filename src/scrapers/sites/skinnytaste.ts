@@ -5,8 +5,8 @@
  * Uses WordPress Recipe Maker (WPRM) plugin for equipment extraction
  */
 
-import { AbstractScraper } from "../abstract";
 import { getEquipment, normalizeString } from "../../utils";
+import { AbstractScraper } from "../abstract";
 
 export class SkinnyTasteScraper extends AbstractScraper {
 	host(): string {
