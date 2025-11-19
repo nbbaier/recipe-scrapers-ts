@@ -7,10 +7,11 @@
  * to the Python version for all test cases.
  *
  * Usage:
- *   npm run validate-Parity
- *   bun run validate-parity                                      // validate all domains
- *   bun run validate-parity -- --domains allrecipes.com           // validate specific domain
- *   bun run validate-parity -- --domains allrecipes.com food.com // validate specific domains
+ *   npm run validate-parity
+ *   bun run validate-parity                                        // validate all domains
+ *   bun run validate-parity -- --implemented-only                  // validate only implemented scrapers
+ *   bun run validate-parity -- --domains allrecipes.com            // validate specific domain
+ *   bun run validate-parity -- --domains allrecipes.com food.com   // validate multiple specific domains
  */
 
 import { execSync } from "node:child_process";
