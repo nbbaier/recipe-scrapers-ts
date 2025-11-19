@@ -142,8 +142,10 @@ import {
 	EatingBirdFoodScraper,
 	EatingWellScraper,
 	EpicuriousScraper,
+	FarmToJarScraper,
 	FeastingAtHomeScraper,
 	FifteenSpatulasScraper,
+	FineDiningLoversScraper,
 	Food52Scraper,
 	FoodAndWineScraper,
 	FoodNetworkScraper,
@@ -195,8 +197,10 @@ registerScraper("dinnerthendessert.com", DinnerThenDessertScraper);
 registerScraper("eatingbirdfood.com", EatingBirdFoodScraper);
 registerScraper("eatingwell.com", EatingWellScraper);
 registerScraper("epicurious.com", EpicuriousScraper);
+registerScraper("farmtojar.com", FarmToJarScraper);
 registerScraper("feastingathome.com", FeastingAtHomeScraper);
 registerScraper("fifteenspatulas.com", FifteenSpatulasScraper);
+registerScraper("finedininglovers.com", FineDiningLoversScraper);
 registerScraper("food52.com", Food52Scraper);
 registerScraper("foodandwine.com", FoodAndWineScraper);
 registerScraper("foodnetwork.co.uk", FoodNetworkScraper);
