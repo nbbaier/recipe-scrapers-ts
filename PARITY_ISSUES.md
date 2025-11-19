@@ -34,6 +34,7 @@ ratings(): number | null {
 ```
 
 **Impact:** Fields like `ratings`, `category`, `yields` etc. show differences
+
 **Fix:** Modify `toJson()` to explicitly convert `undefined` → `null` before serialization
 
 ---
@@ -61,7 +62,9 @@ ingredients(): string[] {
 **Output:** `["ingredient1", "ingredient2", "ingredient3"]` (array)
 
 **Impact:** Major - affects many test cases
+
 **Affected Sites:** cookinglight.com, and likely others with custom overrides
+
 **Fix:** Add custom overrides in TypeScript scrapers to return string where Python does
 
 ---
@@ -95,6 +98,7 @@ ingredients(): string[] {
 ```
 
 **Impact:** Major - affects instruction text comparison
+
 **Fix:** Preserve section headers in TypeScript Schema.org parser
 
 ---
@@ -127,6 +131,7 @@ ingredients(): string[] {
 ```
 
 **Impact:** Major - affects ingredient group parsing
+
 **Fix:** Ensure IngredientGroup serialization matches Python output format
 
 ---
@@ -139,6 +144,7 @@ ingredients(): string[] {
 **TypeScript:** `{}` (field omitted)
 
 **Impact:** Minor - cosmetic difference
+
 **Fix:** Same as issue #1 - convert `undefined` → `null`
 
 ---
