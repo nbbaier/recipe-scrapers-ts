@@ -27,7 +27,11 @@ export class NormalizeStringPlugin extends PluginInterface {
 			}
 
 			const result = decorated.apply(this, args);
-			return result == null ? result : normalizeString(result);
+			// TEMPORARY DEBUG LOGGING
+			console.log(`[NormalizeStringPlugin] decorated.name="${decorated.name}", received:`, result);
+			const normalized = result == null ? result : normalizeString(result);
+			console.log(`[NormalizeStringPlugin] returning:`, normalized);
+			return normalized;
 		};
 
 		Object.defineProperty(wrapper, "name", { value: decorated.name });

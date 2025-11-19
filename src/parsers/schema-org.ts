@@ -61,7 +61,7 @@ type HowToSchemaItem = string | HowToStep | HowToSection;
  */
 export class SchemaOrg {
 	// private format: string | null = null;  // Reserved for future use (microdata/RDFa)
-	private data: SchemaEntity = {};
+	public data: SchemaEntity = {};
 	private people: Record<string, SchemaEntity> = {};
 	private ratingsData: Record<string, SchemaEntity> = {};
 	private websiteName: string | null = null;

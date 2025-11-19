@@ -51,13 +51,20 @@ export class HTMLTagStripperPlugin extends PluginInterface {
 
 			const result = decorated.apply(this, args);
 
+			// TEMPORARY DEBUG LOGGING
+			console.log(`[HTMLTagStripperPlugin] decorated.name="${decorated.name}", received:`, result);
+
 			// Handle array results
 			if (Array.isArray(result)) {
-				return result.map((item) => stripTags(item));
+				const stripped = result.map((item) => stripTags(item));
+				console.log(`[HTMLTagStripperPlugin] returning (array):`, stripped);
+				return stripped;
 			}
 
 			// Handle string results
-			return stripTags(result);
+			const stripped = stripTags(result);
+			console.log(`[HTMLTagStripperPlugin] returning:`, stripped);
+			return stripped;
 		};
 
 		Object.defineProperty(wrapper, "name", { value: decorated.name });
