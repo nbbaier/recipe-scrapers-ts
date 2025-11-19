@@ -200,7 +200,6 @@ registerScraper("fifteenspatulas.com", FifteenSpatulasScraper);
 registerScraper("food52.com", Food52Scraper);
 registerScraper("foodandwine.com", FoodAndWineScraper);
 registerScraper("foodnetwork.co.uk", FoodNetworkScraper);
-registerScraper("foodnetwork.com", FoodNetworkScraper);
 registerScraper("gimmesomeoven.com", GimmeSomeOvenScraper);
 registerScraper("halfbakedharvest.com", HalfBakedHarvestScraper);
 registerScraper("jamieoliver.com", JamieOliverScraper);
@@ -222,6 +221,7 @@ registerScraper("tasty.co", TastyScraper);
 registerScraper("thekitchn.com", TheKitchnScraper);
 registerScraper("thepioneerwoman.com", ThePioneerWomanScraper);
 registerScraper("therecipecritic.com", TheRecipeCriticScraper);
+
 
 /**
  * Options for scrapeHtml function
