@@ -50,10 +50,12 @@ interface ValidationReport {
 class ParityValidator {
 	private report: ValidationReport;
 	private specificDomain?: string;
+	private implementedOnly: boolean;
 	private pythonCommand: string;
 
-	constructor(specificDomain?: string) {
+	constructor(specificDomain?: string, implementedOnly = false) {
 		this.specificDomain = specificDomain;
+		this.implementedOnly = implementedOnly;
 		this.pythonCommand = "python"; // Will be set in checkPythonAvailability
 		this.report = {
 			timestamp: new Date().toISOString(),
@@ -73,6 +75,8 @@ class ParityValidator {
 			console.log(
 				chalk.cyan(`Validating specific domain: ${this.specificDomain}\n`),
 			);
+		} else if (this.implementedOnly) {
+			console.log(chalk.cyan("Validating only implemented scrapers\n"));
 		}
 
 		try {
@@ -83,7 +87,14 @@ class ParityValidator {
 				? [this.specificDomain]
 				: getTestDomains();
 
+			// Import isSupported from built library
+			// eslint-disable-next-line @typescript-eslint/no-var-requires
+			const { isSupported } = require("../dist/index.cjs");
+
 			for (const domain of domains) {
+				if (this.implementedOnly && !isSupported(`https://${domain}/`)) {
+					continue;
+				}
 				await this.validateDomain(domain);
 			}
 
@@ -300,9 +311,128 @@ print(json.dumps(scraper.to_json(), sort_keys=True, default=str))
 	}
 
 	private areEqual(a: ScraperOutput, b: ScraperOutput): boolean {
-		return (
-			JSON.stringify(this.normalize(a)) === JSON.stringify(this.normalize(b))
-		);
+		const differences = this.findDifferences(a, b);
+		return Object.keys(differences).length === 0;
+	}
+
+	/**
+	 * Deep equality check that handles:
+	 * - Objects with different key ordering
+	 * - Arrays (order matters)
+	 * - Nested structures
+	 * - null vs undefined (considered different)
+	 */
+	private deepEqual(a: unknown, b: unknown): boolean {
+		// Strict equality check (handles primitives, null, undefined, same reference)
+		if (a === b) return true;
+
+		// Type mismatch
+		if (typeof a !== typeof b) return false;
+
+		// null check (null === null handled above, but null !== undefined)
+		if (a === null || b === null) return false;
+
+		// Array comparison (order matters)
+		if (Array.isArray(a) && Array.isArray(b)) {
+			if (a.length !== b.length) return false;
+			return a.every((item, index) => this.deepEqual(item, b[index]));
+		}
+
+		// Object comparison (key order doesn't matter)
+		if (typeof a === "object" && typeof b === "object") {
+			const aKeys = Object.keys(a as Record<string, unknown>).sort();
+			const bKeys = Object.keys(b as Record<string, unknown>).sort();
+
+			// Different number of keys
+			if (aKeys.length !== bKeys.length) return false;
+
+			// Different key names
+			if (!aKeys.every((key, i) => key === bKeys[i])) return false;
+
+			// Compare values for each key
+			return aKeys.every((key) =>
+				this.deepEqual(
+					(a as Record<string, unknown>)[key],
+					(b as Record<string, unknown>)[key],
+				),
+			);
+		}
+
+		// All other cases (shouldn't reach here if types match)
+		return false;
+	}
+
+	/**
+	 * Check if difference is cosmetic (doesn't affect functionality)
+	 */
+	private isCosmeticDifference(
+		key: string,
+		pyValue: unknown,
+		tsValue: unknown,
+	): string | null {
+		// Handle ingredient_groups.purpose: null vs undefined
+		if (key === "ingredient_groups") {
+			if (Array.isArray(pyValue) && Array.isArray(tsValue)) {
+				// Same length check
+				if (pyValue.length !== tsValue.length) return null;
+
+				// Check if only difference is purpose: null vs missing purpose
+				// biome-ignore lint/suspicious/noExplicitAny: ingredient group structure is dynamic
+				const pyWithoutPurpose = pyValue.map((group: any) => {
+					if (typeof group !== "object" || group === null) return group;
+					const copy = { ...group };
+					delete copy.purpose;
+					return copy;
+				});
+				// biome-ignore lint/suspicious/noExplicitAny: ingredient group structure is dynamic
+				const tsWithoutPurpose = tsValue.map((group: any) => {
+					if (typeof group !== "object" || group === null) return group;
+					const copy = { ...group };
+					delete copy.purpose;
+					return copy;
+				});
+
+				if (this.deepEqual(pyWithoutPurpose, tsWithoutPurpose)) {
+					// Check if Python has purpose:null and TypeScript has purpose:undefined
+					const pyHasPurposeNull = pyValue.some(
+						// biome-ignore lint/suspicious/noExplicitAny: ingredient group structure is dynamic
+						(g: any) =>
+							typeof g === "object" &&
+							g !== null &&
+							Object.hasOwn(g, "purpose") &&
+							g.purpose === null,
+					);
+					const tsHasPurposeUndefined = tsValue.every(
+						// biome-ignore lint/suspicious/noExplicitAny: ingredient group structure is dynamic
+						(g: any) =>
+							typeof g === "object" &&
+							g !== null &&
+							Object.hasOwn(g, "purpose") &&
+							g.purpose === undefined,
+					);
+
+					if (pyHasPurposeNull && tsHasPurposeUndefined) {
+						return 'Python serializes "purpose": null, TypeScript omits "purpose": undefined';
+					}
+				}
+			}
+		}
+
+		// Handle nutrients: same values, different key order
+		if (key === "nutrients") {
+			if (
+				typeof pyValue === "object" &&
+				pyValue !== null &&
+				typeof tsValue === "object" &&
+				tsValue !== null
+			) {
+				if (this.deepEqual(pyValue, tsValue)) {
+					return "Same values, different key ordering (cosmetic)";
+				}
+			}
+		}
+
+		return null;
 	}
 
 	private normalize(obj: unknown): unknown {
@@ -342,11 +472,15 @@ print(json.dumps(scraper.to_json(), sort_keys=True, default=str))
 			const pyValue = python?.[key];
 			const tsValue = typescript?.[key];
 
-			if (JSON.stringify(pyValue) !== JSON.stringify(tsValue)) {
-				differences[key] = {
-					python: pyValue,
-					typescript: tsValue,
-				};
+			if (!this.deepEqual(pyValue, tsValue)) {
+				// Check if it's a cosmetic difference
+				const cosmeticReason = this.isCosmeticDifference(key, pyValue, tsValue);
+				if (!cosmeticReason) {
+					differences[key] = {
+						python: pyValue,
+						typescript: tsValue,
+					};
+				}
 			}
 		}
 
@@ -417,17 +551,23 @@ print(json.dumps(scraper.to_json(), sort_keys=True, default=str))
 
 // CLI
 const args = process.argv.slice(2);
+const implementedOnly = args.includes("--implemented-only");
 const domainIndex = args.indexOf("--domains");
-const domains = domainIndex >= 0 ? args.slice(domainIndex + 1) : undefined;
+
+// Parse domains, filtering out flags if needed
+let domains: string[] | undefined;
+if (domainIndex >= 0) {
+	domains = args.slice(domainIndex + 1).filter((arg) => !arg.startsWith("--"));
+}
 
 if (domains && domains.length > 0) {
 	for (const domain of domains) {
-		new ParityValidator(domain).validate();
+		new ParityValidator(domain, implementedOnly).validate();
 	}
-} else if (domains && domains.length === 0) {
+} else if (domainIndex >= 0 && (!domains || domains.length === 0)) {
 	console.log(chalk.red("--domains flag requires at least one domain"));
 	process.exit(1);
 } else {
 	console.log(chalk.yellow("Validating all domains"));
-	new ParityValidator(undefined).validate();
+	new ParityValidator(undefined, implementedOnly).validate();
 }

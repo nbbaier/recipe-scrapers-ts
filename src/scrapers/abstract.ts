@@ -456,28 +456,13 @@ export abstract class AbstractScraper {
 			try {
 				const func = this[method as keyof this];
 				if (typeof func === "function") {
-					// TEMPORARY DEBUG LOGGING
-					if (method === "title") {
-						console.log(`[toJson] calling method="${method}", func.name="${(func as Function).name}"`);
-					}
-
 					const result = (func as () => unknown).call(this);
-
-					// TEMPORARY DEBUG LOGGING
-					if (method === "title") {
-						console.log(`[toJson] ${method}() returned:`, result);
-					}
 
 					// Map method names to Recipe field names
 					const fieldName = this.mapMethodToField(
 						method as keyof AbstractScraper,
 					);
 					jsonDict[fieldName] = result;
-
-					// TEMPORARY DEBUG LOGGING
-					if (method === "title") {
-						console.log(`[toJson] assigned to jsonDict["${fieldName}"]:`, jsonDict[fieldName]);
-					}
 				}
 			} catch (_error) {
 				// Skip fields that throw exceptions (data not available)

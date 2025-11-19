@@ -473,20 +473,21 @@ export class SchemaOrg {
 		if (typeof schemaItem === "string") {
 			instructionsGist.push(schemaItem);
 		} else if (schemaItem?.["@type"] === "HowToStep") {
-			// Add name if it's different from text
-			if (schemaItem.name) {
-				const text = schemaItem.text || "";
-				const name = schemaItem.name.replace(/\.$/, "");
-				if (!text.startsWith(name)) {
-					instructionsGist.push(schemaItem.name);
-				}
-			}
+			let instruction = schemaItem.text;
 
 			// Handle nested itemListElement
-			if (schemaItem.itemListElement?.text) {
-				instructionsGist.push(schemaItem.itemListElement.text);
-			} else if (schemaItem.text) {
-				instructionsGist.push(schemaItem.text);
+			if (!instruction && schemaItem.itemListElement) {
+				// @ts-ignore
+				instruction = schemaItem.itemListElement.text;
+			}
+
+			// Fallback to name if text is missing
+			if (!instruction && schemaItem.name) {
+				instruction = schemaItem.name;
+			}
+
+			if (instruction) {
+				instructionsGist.push(instruction);
 			}
 		} else if (schemaItem?.["@type"] === "HowToSection") {
 			// Add section name

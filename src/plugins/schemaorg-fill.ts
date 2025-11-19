@@ -46,9 +46,6 @@ export class SchemaOrgFillPlugin extends PluginInterface {
 			const className = this.constructor.name;
 			const methodName = decorated.name;
 
-			// TEMPORARY DEBUG LOGGING
-			console.log(`[SchemaOrgFillPlugin] wrapper called, decorated.name="${decorated.name}"`);
-
 			if (settings.LOG_LEVEL <= 0) {
 				// debug level
 				console.debug(
@@ -64,10 +61,6 @@ export class SchemaOrgFillPlugin extends PluginInterface {
 					error instanceof FillPluginException ||
 					error instanceof NotImplementedError
 				) {
-					// TEMPORARY DEBUG LOGGING
-					console.log(`[SchemaOrgFillPlugin] caught exception for "${decorated.name}"`);
-					console.log(`[SchemaOrgFillPlugin] schema.data exists:`, !!this.schema?.data);
-
 					// Check if schema data exists
 					if (!this.schema?.data) {
 						throw new RecipeSchemaNotFound(
@@ -78,10 +71,6 @@ export class SchemaOrgFillPlugin extends PluginInterface {
 					// Try to get function from schema
 					const schemaMethod = this.schema?.[decorated.name];
 
-					// TEMPORARY DEBUG LOGGING
-					console.log(`[SchemaOrgFillPlugin] looking for method "${decorated.name}" on schema`);
-					console.log(`[SchemaOrgFillPlugin] schemaMethod type:`, typeof schemaMethod);
-
 					if (schemaMethod) {
 						if (settings.LOG_LEVEL <= 1) {
 							// info level
@@ -90,7 +79,6 @@ export class SchemaOrgFillPlugin extends PluginInterface {
 							);
 						}
 						const result = schemaMethod.apply(this.schema, args);
-						console.log(`[SchemaOrgFillPlugin] returning from schema.${decorated.name}():`, result);
 						return result;
 					}
 				}

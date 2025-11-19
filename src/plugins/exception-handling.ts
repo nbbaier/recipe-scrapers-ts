@@ -38,9 +38,7 @@ export class ExceptionHandlingPlugin extends PluginInterface {
 				}
 
 				try {
-					const result = decorated.apply(this, args);
-					console.log(`[ExceptionHandlingPlugin] decorated.name="${decorated.name}", returning:`, result);
-					return result;
+					return decorated.apply(this, args);
 				} catch (error) {
 					if (settings.LOG_LEVEL <= 1) {
 						// info level
@@ -55,9 +53,7 @@ export class ExceptionHandlingPlugin extends PluginInterface {
 				}
 			}
 
-			const result = decorated.apply(this, args);
-			console.log(`[ExceptionHandlingPlugin] (no suppress) decorated.name="${decorated.name}", returning:`, result);
-			return result;
+			return decorated.apply(this, args);
 		};
 
 		Object.defineProperty(wrapper, "name", { value: decorated.name });
