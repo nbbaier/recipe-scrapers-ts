@@ -456,7 +456,11 @@ export abstract class AbstractScraper {
 			try {
 				const func = this[method as keyof this];
 				if (typeof func === "function") {
-					const result = (func as () => unknown).call(this);
+					let result = (func as () => unknown).call(this);
+
+					// Convert undefined to null for Python parity (recursively)
+					// Python's json.dumps serializes None as null, while JSON.stringify omits undefined
+					result = this.convertUndefinedToNull(result);
 
 					// Map method names to Recipe field names
 					const fieldName = this.mapMethodToField(
@@ -471,6 +475,26 @@ export abstract class AbstractScraper {
 
 		// Safe to cast since we control the method names and field mappings
 		return jsonDict as Partial<Recipe>;
+	}
+
+	/**
+	 * Recursively converts undefined values to null for JSON serialization parity with Python
+	 */
+	private convertUndefinedToNull(value: unknown): unknown {
+		if (value === undefined) {
+			return null;
+		}
+		if (Array.isArray(value)) {
+			return value.map((item) => this.convertUndefinedToNull(item));
+		}
+		if (value !== null && typeof value === "object") {
+			const result: Record<string, unknown> = {};
+			for (const [key, val] of Object.entries(value)) {
+				result[key] = this.convertUndefinedToNull(val);
+			}
+			return result;
+		}
+		return value;
 	}
 
 	/**

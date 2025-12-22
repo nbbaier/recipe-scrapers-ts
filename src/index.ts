@@ -40,6 +40,7 @@ export * from "./scrapers/sites";
 export { resetSettings, settings, updateSettings } from "./settings";
 // Type exports
 export type { IngredientGroup, Nutrients, Recipe } from "./types/recipe";
+export type { ScraperConstructor } from "./types/scraper";
 
 // Utility exports
 export * from "./utils";
