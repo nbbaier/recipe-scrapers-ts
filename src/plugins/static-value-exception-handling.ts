@@ -18,11 +18,11 @@ export class StaticValueExceptionHandlingPlugin extends PluginInterface {
 	static override runOnHosts = ["*"];
 	static override runOnMethods = [
 		"author",
-		"site_name",
+		"siteName",
 		"language",
 		"cuisine",
-		"cooking_method",
-		"total_time",
+		"cookingMethod",
+		"totalTime",
 		"yields",
 	];
 

@@ -61,7 +61,9 @@ for (const domain of domains) {
 		console.log(`✓ ${domain}`);
 		passed++;
 	} catch (error) {
-		console.log(`✗ ${domain}: ${error instanceof Error ? error.message : String(error)}`);
+		console.log(
+			`✗ ${domain}: ${error instanceof Error ? error.message : String(error)}`,
+		);
 		errors.push({
 			domain,
 			error: error instanceof Error ? error.message : String(error),

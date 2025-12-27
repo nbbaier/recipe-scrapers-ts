@@ -477,7 +477,6 @@ export class SchemaOrg {
 
 			// Handle nested itemListElement
 			if (!instruction && schemaItem.itemListElement) {
-				// @ts-ignore
 				instruction = schemaItem.itemListElement.text;
 			}
 

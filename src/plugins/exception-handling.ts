@@ -12,7 +12,7 @@ export class ExceptionHandlingPlugin extends PluginInterface {
 	static override runOnHosts = ["*"];
 	static override runOnMethods = [
 		"title",
-		"total_time",
+		"totalTime",
 		"yields",
 		"image",
 		"ingredients",
