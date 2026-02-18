@@ -8,8 +8,8 @@
  *   bun scripts/migrate-scraper.ts --batch budgetbytes,pinchofyum,minimalistbaker
  */
 
-import { existsSync, readFileSync, writeFileSync } from "fs";
-import { join } from "path";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 
 // Patterns to detect in Python code
 const PATTERNS = {
@@ -75,23 +75,25 @@ function parsePythonScraper(
 
 	// Extract method names (excluding host and __init__)
 	const methods: string[] = [];
-	let methodMatch;
 	const methodRegex = new RegExp(PATTERNS.method);
+	let methodMatch = methodRegex.exec(content);
 
-	while ((methodMatch = methodRegex.exec(content)) !== null) {
+	while (methodMatch !== null) {
 		const methodName = methodMatch[1];
 		if (methodName !== "host" && !methodName.startsWith("_")) {
 			methods.push(methodName);
 		}
+		methodMatch = methodRegex.exec(content);
 	}
 
 	// Extract imports
 	const imports: string[] = [];
-	let importMatch;
 	const importRegex = new RegExp(PATTERNS.imports);
+	let importMatch = importRegex.exec(content);
 
-	while ((importMatch = importRegex.exec(content)) !== null) {
+	while (importMatch !== null) {
 		imports.push(importMatch[0]);
+		importMatch = importRegex.exec(content);
 	}
 
 	return {
@@ -108,7 +110,7 @@ function parsePythonScraper(
 }
 
 function generateMinimalScraper(parsed: ParsedScraper): string {
-	const { tsClassName, host, className, pythonFilename } = parsed;
+	const { tsClassName, host, className } = parsed;
 
 	return `/**
  * ${className} scraper
@@ -128,7 +130,7 @@ export class ${tsClassName} extends AbstractScraper {
 }
 
 function generateWprmScraper(parsed: ParsedScraper): string {
-	const { tsClassName, host, className, pythonFilename } = parsed;
+	const { tsClassName, host, className } = parsed;
 
 	return `/**
  * ${className} scraper
@@ -274,9 +276,10 @@ function updateSiteScrapersIndex(scraperNames: string[]): void {
 
 	// Parse existing exports
 	const exportRegex = /export \{ (\w+) \} from ["']\.\/(\w+)["'];/g;
-	let match;
-	while ((match = exportRegex.exec(existingContent)) !== null) {
+	let match = exportRegex.exec(existingContent);
+	while (match !== null) {
 		existingExports.add(match[2]); // filename
+		match = exportRegex.exec(existingContent);
 	}
 
 	// Add new scrapers
@@ -288,11 +291,10 @@ function updateSiteScrapersIndex(scraperNames: string[]): void {
 	const sortedScrapers = Array.from(existingExports).sort();
 	const exports = sortedScrapers.map((name) => {
 		// Convert filename to class name (e.g., allrecipes -> AllRecipesScraper)
-		const className =
-			name
-				.split(/[-_]/)
-				.map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-				.join("") + "Scraper";
+		const className = `${name
+			.split(/[-_]/)
+			.map((part: string) => part.charAt(0).toUpperCase() + part.slice(1))
+			.join("")}Scraper`;
 
 		return `export { ${className} } from "./${name}";`;
 	});
@@ -370,7 +372,7 @@ Notes:
 	}
 
 	// Summary
-	console.log("\n" + "=".repeat(60));
+	console.log(`\n${"=".repeat(60)}`);
 	console.log(`✅ Successfully migrated: ${successful.length}`);
 	if (failed.length > 0) {
 		console.log(`❌ Failed: ${failed.length}`);

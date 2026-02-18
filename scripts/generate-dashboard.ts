@@ -22,12 +22,6 @@ const PYTHON_DIR = join(
 );
 const OUTPUT = join(import.meta.dirname, "../dashboard.html");
 
-interface ScraperInfo {
-	domain: string;
-	className: string;
-	aliases?: string[]; // other domains handled by same class
-}
-
 /**
  * Get all registered domains from the Python SCRAPERS dict.
  * Returns a map of domain -> class name, plus alias groupings.
@@ -115,13 +109,6 @@ function getTsRegistry(): Map<string, string> {
 /**
  * Get the set of TS scraper filenames (module names, not domains).
  */
-function getPortedModules(): Set<string> {
-	return new Set(
-		readdirSync(SITES_DIR)
-			.filter((f) => f.endsWith(".ts") && f !== "index.ts")
-			.map((f) => basename(f, ".ts")),
-	);
-}
 
 interface DashboardRow {
 	domain: string;
@@ -136,12 +123,11 @@ function buildRows(
 	pythonDomains: Map<string, string>,
 	classToDomains: Map<string, string[]>,
 	tsRegistry: Map<string, string>,
-	portedModules: Set<string>,
 ): DashboardRow[] {
 	const rows: DashboardRow[] = [];
 
-	for (const [domain, className] of [...pythonDomains.entries()].sort(
-		(a, b) => a[0].localeCompare(b[0]),
+	for (const [domain, className] of [...pythonDomains.entries()].sort((a, b) =>
+		a[0].localeCompare(b[0]),
 	)) {
 		const allDomainsForClass = classToDomains.get(className) || [domain];
 		const primaryDomain = allDomainsForClass[0];
@@ -149,10 +135,6 @@ function buildRows(
 
 		// A scraper is "ported" if the module file exists
 		// (module name is derived from Python class file, roughly matching the filename)
-		const moduleGuess = className
-			.replace(/([A-Z])/g, "_$1")
-			.toLowerCase()
-			.replace(/^_/, "");
 		const ported =
 			tsRegistry.has(domain) ||
 			allDomainsForClass.some((d) => tsRegistry.has(d));
@@ -183,11 +165,8 @@ function generateHtml(rows: DashboardRow[]): string {
 	const portedClasses = new Set(
 		rows.filter((r) => r.ported).map((r) => r.pythonClass),
 	);
-
+	``;
 	// Find classes with aliases where only some domains are registered in TS
-	const partialAliases = rows.filter(
-		(r) => r.ported && r.tsDomains.length > 0 && !r.tsDomains.includes(r.domain),
-	);
 
 	const scraperRow = (row: DashboardRow) => {
 		const statusClass = row.ported ? "ported" : "not-ported";
@@ -327,8 +306,7 @@ function generateHtml(rows: DashboardRow[]): string {
 // Main
 const { domains: pythonDomains, classToDomains } = getPythonRegistry();
 const tsRegistry = getTsRegistry();
-const portedModules = getPortedModules();
-const rows = buildRows(pythonDomains, classToDomains, tsRegistry, portedModules);
+const rows = buildRows(pythonDomains, classToDomains, tsRegistry);
 
 const html = generateHtml(rows);
 writeFileSync(OUTPUT, html);

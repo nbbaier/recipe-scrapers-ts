@@ -6,8 +6,8 @@
  * the import and registration code for factory.ts
  */
 
-import { readdirSync, readFileSync, writeFileSync } from "fs";
-import { join } from "path";
+import { readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 import { SCRAPER_CLASS_NAME_REGEX } from "./common";
 
 interface ScraperInfo {
@@ -106,7 +106,7 @@ function main() {
 	// Build new content
 	const before = factoryContent.slice(0, importStart);
 	const after = factoryContent.slice(registerEnd);
-	const newContent = before + importSection + registerSection + "\n" + after;
+	const newContent = `${before + importSection + registerSection}\n${after}`;
 
 	// Write back
 	writeFileSync(factoryPath, newContent, "utf-8");

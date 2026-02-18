@@ -3,8 +3,8 @@
  * Fix sites/index.ts by reading actual class names from scraper files
  */
 
-import { readdirSync, readFileSync, writeFileSync } from "fs";
-import { join } from "path";
+import { readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 import { SCRAPER_CLASS_NAME_REGEX } from "./common";
 
 const sitesDir = join(process.cwd(), "src", "scrapers", "sites");
