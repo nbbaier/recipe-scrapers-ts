@@ -89,20 +89,28 @@ function getPythonRegistryFallback(): {
 }
 
 /**
- * Get TS registered domains from SCRAPER_REGISTRY in sites/index.ts.
+ * Get TS registered domains by scanning each scraper file for its host() return value.
  */
 function getTsRegistry(): Map<string, string> {
-	const indexPath = join(SITES_DIR, "index.ts");
-	const content = readFileSync(indexPath, "utf-8");
-
 	const registry = new Map<string, string>();
-	// Match lines like: "allrecipes.com": AllRecipesScraper,
-	const re = /["']([^"']+)["']\s*:\s*(\w+)/g;
-	let match: RegExpExecArray | null;
-	// biome-ignore lint/suspicious/noAssignInExpressions: simple regex loop
-	while ((match = re.exec(content)) !== null) {
-		registry.set(match[1], match[2]);
+
+	const files = readdirSync(SITES_DIR).filter(
+		(f) => f.endsWith(".ts") && f !== "index.ts",
+	);
+
+	for (const file of files) {
+		const content = readFileSync(join(SITES_DIR, file), "utf-8");
+
+		// Extract class name: export class FooScraper
+		const classMatch = content.match(/export\s+class\s+(\w+)/);
+		// Extract host: host() { return "domain.com"; }
+		const hostMatch = content.match(/host\(\)[^}]*return\s+["']([^"']+)["']/);
+
+		if (classMatch && hostMatch) {
+			registry.set(hostMatch[1], classMatch[1]);
+		}
 	}
+
 	return registry;
 }
 
