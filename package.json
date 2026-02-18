@@ -36,7 +36,8 @@
 		"compare": "bun scripts/compare-outputs.ts",
 		"sync-test-data": "bash scripts/sync-test-data.sh",
 		"dashboard": "bun scripts/generate-dashboard.ts",
-		"clean": "rm -rf dist coverage *.tsbuildinfo"
+		"clean": "rm -rf dist coverage *.tsbuildinfo",
+		"migrate": "bun scripts/migrate-scraper.ts"
 	},
 	"keywords": [
 		"recipe",
