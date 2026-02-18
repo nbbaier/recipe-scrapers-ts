@@ -34,8 +34,6 @@
 		"test:scrapers": "bun run build:quiet && bun scripts/test-scrapers.ts",
 		"validate-parity": "bun run build:quiet && bun scripts/validate-parity.ts",
 		"compare": "bun scripts/compare-outputs.ts",
-		"migrate": "bun scripts/migrate-scraper.ts",
-		"register": "bun scripts/fix-sites-index.ts && bun scripts/update-factory.ts",
 		"sync-test-data": "bash scripts/sync-test-data.sh",
 		"dashboard": "bun scripts/generate-dashboard.ts",
 		"clean": "rm -rf dist coverage *.tsbuildinfo"
