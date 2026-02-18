@@ -27,6 +27,9 @@ test_data/
 # Parity reports
 parity-report.json
 
+# Generated dashboard
+dashboard.html
+
 # OS
 .DS_Store
 Thumbs.db

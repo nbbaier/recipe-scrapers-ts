@@ -6,8 +6,6 @@ TypeScript port of the popular [recipe-scrapers](https://github.com/hhursev/reci
 
 Core architecture is complete and functional. Wild mode (Schema.org-based scraping) works for the majority of recipe sites. 52 site-specific scrapers are implemented with more being added.
 
-See [STATUS.md](STATUS.md) for detailed progress tracking.
-
 ## Quick Start
 
 ```bash
@@ -27,17 +25,17 @@ bun run build
 ## Usage
 
 ```typescript
-import { scrapeHtml } from 'recipe-scrapers-ts';
+import { scrapeHtml } from "recipe-scrapers-ts";
 
 // Scrape a supported site
-const scraper = scrapeHtml(html, 'https://allrecipes.com/recipe/123');
-console.log(scraper.title());       // "Chocolate Cake"
+const scraper = scrapeHtml(html, "https://allrecipes.com/recipe/123");
+console.log(scraper.title()); // "Chocolate Cake"
 console.log(scraper.ingredients()); // ["2 cups flour", "1 cup sugar", ...]
-console.log(scraper.toJson());      // Full recipe as JSON
+console.log(scraper.toJson()); // Full recipe as JSON
 
 // Wild mode: scrape any site with Schema.org data
-const scraper = scrapeHtml(html, 'https://any-recipe-site.com/recipe', {
-  supportedOnly: false,
+const scraper = scrapeHtml(html, "https://any-recipe-site.com/recipe", {
+   supportedOnly: false,
 });
 ```
 
@@ -68,15 +66,15 @@ src/
 
 ### Scripts
 
-| Script | Description |
-|--------|-------------|
-| `bun test` | Run tests |
-| `bun run build` | Build to dist/ |
-| `bun run sync-test-data` | Sync test data from upstream Python repo |
-| `bun run type-check` | TypeScript type checking |
-| `bun run lint` | Lint with Biome |
+| Script                        | Description                                    |
+| ----------------------------- | ---------------------------------------------- |
+| `bun test`                    | Run tests                                      |
+| `bun run build`               | Build to dist/                                 |
+| `bun run sync-test-data`      | Sync test data from upstream Python repo       |
+| `bun run type-check`          | TypeScript type checking                       |
+| `bun run lint`                | Lint with Biome                                |
 | `bun run compare -- <domain>` | Compare output with Python for a specific site |
-| `bun run validate-parity` | Validate all scrapers against Python output |
+| `bun run validate-parity`     | Validate all scrapers against Python output    |
 
 ### Test Data
 
@@ -87,15 +85,15 @@ Test data (HTML snapshots + expected JSON) is synced from the [upstream Python r
 Most scrapers are minimal since they inherit from Schema.org via plugins:
 
 ```typescript
-import { AbstractScraper } from '../abstract';
+import { AbstractScraper } from "../abstract";
 
 export class ExampleScraper extends AbstractScraper {
-  host(): string {
-    return 'example.com';
-  }
-  // All methods (title, ingredients, instructions, etc.) are
-  // automatically filled from Schema.org data via plugins.
-  // Override only when the site needs special handling.
+   host(): string {
+      return "example.com";
+   }
+   // All methods (title, ingredients, instructions, etc.) are
+   // automatically filled from Schema.org data via plugins.
+   // Override only when the site needs special handling.
 }
 ```
 

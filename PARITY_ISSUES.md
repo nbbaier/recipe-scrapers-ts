@@ -15,6 +15,7 @@ This document details the root causes of parity validation failures between the 
 **Problem:** Python and TypeScript handle missing values differently in JSON serialization.
 
 **Python:**
+
 ```python
 # Returns None, which serializes as null
 def ratings(self):
@@ -24,6 +25,7 @@ def ratings(self):
 ```
 
 **TypeScript:**
+
 ```typescript
 // Returns undefined, which is omitted from JSON
 ratings(): number | null {
@@ -44,21 +46,25 @@ ratings(): number | null {
 **Problem:** Python scrapers are inconsistent in their return types. Some return `list[str]` (correct), others return `str` (incorrect but in production).
 
 **Python Example (cookinglight.com):**
+
 ```python
 # recipe_scrapers/cookinglight.py:10-14
 def ingredients(self):
     ingredients = self.soup.find("div", {"class": "ingredients"}).ul.find_all("li")
     return "\n".join([normalize_string(ingredient.get_text()) for ingredient in ingredients])
 ```
+
 **Output:** `"ingredient1\ningredient2\ningredient3"` (string)
 
 **TypeScript (following type definition):**
+
 ```typescript
 ingredients(): string[] {
     // Returns array from Schema.org
     return ["ingredient1", "ingredient2", "ingredient3"];
 }
 ```
+
 **Output:** `["ingredient1", "ingredient2", "ingredient3"]` (array)
 
 **Impact:** Major - affects many test cases
@@ -74,26 +80,25 @@ ingredients(): string[] {
 **Problem:** Python preserves section headers (e.g., "Step 1", "Build your roux"), TypeScript strips them.
 
 **Python Example (pinchofyum.com):**
+
 ```json
 {
-  "instructions": "Sauté garlic and onion\nIn a large soup pot...\nBuild your roux\nAdd remaining...",
-  "instructions_list": [
-    "Sauté garlic and onion",
-    "In a large soup pot...",
-    "Build your roux",
-    "Add remaining..."
-  ]
+   "instructions": "Sauté garlic and onion\nIn a large soup pot...\nBuild your roux\nAdd remaining...",
+   "instructions_list": [
+      "Sauté garlic and onion",
+      "In a large soup pot...",
+      "Build your roux",
+      "Add remaining..."
+   ]
 }
 ```
 
 **TypeScript:**
+
 ```json
 {
-  "instructions": "In a large soup pot...\nAdd remaining...",
-  "instructions_list": [
-    "In a large soup pot...",
-    "Add remaining..."
-  ]
+   "instructions": "In a large soup pot...\nAdd remaining...",
+   "instructions_list": ["In a large soup pot...", "Add remaining..."]
 }
 ```
 
@@ -108,25 +113,27 @@ ingredients(): string[] {
 **Problem:** Similar to issue #2 but within ingredient groups.
 
 **Python:**
+
 ```json
 {
-  "ingredient_groups": [
-    {
-      "ingredients": "1/2 cup beans\n1 teaspoon oil\n1/2 cup tomatoes",
-      "purpose": null
-    }
-  ]
+   "ingredient_groups": [
+      {
+         "ingredients": "1/2 cup beans\n1 teaspoon oil\n1/2 cup tomatoes",
+         "purpose": null
+      }
+   ]
 }
 ```
 
 **TypeScript:**
+
 ```json
 {
-  "ingredient_groups": [
-    {
-      "ingredients": ["1/2 cup beans", "1 teaspoon oil", "1/2 cup tomatoes"]
-    }
-  ]
+   "ingredient_groups": [
+      {
+         "ingredients": ["1/2 cup beans", "1 teaspoon oil", "1/2 cup tomatoes"]
+      }
+   ]
 }
 ```
 
@@ -156,7 +163,9 @@ ingredients(): string[] {
 **Goal:** Achieve 100% parity with Python for initial release
 
 **Changes Required:**
+
 1. **Update `toJson()` serialization:**
+
    ```typescript
    toJson(): Partial<Recipe> {
        const jsonDict: Record<string, unknown> = {};
@@ -179,6 +188,7 @@ ingredients(): string[] {
    ```
 
 2. **Add custom scraper overrides** for sites like cookinglight:
+
    ```typescript
    // cookinglight.ts
    ingredients(): string {  // Return string, not string[]
@@ -194,11 +204,13 @@ ingredients(): string[] {
 4. **Update IngredientGroup serialization** to match Python format
 
 **Pros:**
+
 - Achieves 100% parity with Python
 - Can validate against all existing Python test data
 - Safe for initial v1.0 release
 
 **Cons:**
+
 - Types don't match actual return values (ingredients declared as string[] but returns string)
 - Less idiomatic TypeScript/JavaScript
 
@@ -209,16 +221,19 @@ ingredients(): string[] {
 **Goal:** Make Python follow its own type hints
 
 **Changes Required:**
+
 1. Update Python scrapers to consistently return `list[str]` for `ingredients()`
 2. Update all test data to match
 3. Fix type hints across Python codebase
 
 **Pros:**
+
 - Consistent types
 - Better developer experience
 - TypeScript can use proper types
 
 **Cons:**
+
 - Requires changes to stable Python codebase
 - Breaking change for Python users
 - Large amount of test data to update
@@ -230,6 +245,7 @@ ingredients(): string[] {
 **Goal:** Keep TypeScript types correct, add compatibility layer
 
 **Implementation:**
+
 ```typescript
 interface ScrapeOptions {
     pythonCompatMode?: boolean;  // Default: false
@@ -254,11 +270,13 @@ toJson(options?: ScrapeOptions): Partial<Recipe> {
 ```
 
 **Pros:**
+
 - Clean types by default
 - Can still validate parity when needed
 - Clear migration path
 
 **Cons:**
+
 - More complexity
 - Two modes to maintain
 
@@ -267,11 +285,13 @@ toJson(options?: ScrapeOptions): Partial<Recipe> {
 ## Recommendation
 
 **For v1.0 (current goal):** Implement **Option 1**
+
 - Focus: Achieve 100% parity with Python
 - Timeline: Can be done quickly
 - Risk: Low - matches existing behavior
 
 **For v2.0 (after npm extraction):** Migrate to **Option 3** or **Option 2**
+
 - Clean up types
 - Add compatibility mode for Python parity validation
 - Document breaking changes
@@ -281,6 +301,7 @@ toJson(options?: ScrapeOptions): Partial<Recipe> {
 ## Testing Strategy
 
 ### Current Validation
+
 ```bash
 # Run parity tests on implemented scrapers only
 bun run scripts/validate-parity.ts -- --implemented-only
@@ -290,6 +311,7 @@ bun run scripts/validate-parity.ts -- --domains cookinglight.com cafedelites.com
 ```
 
 ### Expected Outcomes After Fixes
+
 - **Phase 1:** Fix serialization (null/undefined) → ~60% pass rate
 - **Phase 2:** Fix custom scraper overrides → ~85% pass rate
 - **Phase 3:** Fix instructions formatting → ~95% pass rate
@@ -300,15 +322,18 @@ bun run scripts/validate-parity.ts -- --domains cookinglight.com cafedelites.com
 ## Files to Modify
 
 ### High Priority
+
 1. `typescript/src/scrapers/abstract.ts` - Update `toJson()` method
 2. `typescript/src/scrapers/sites/cookinglight.ts` - Add custom overrides
 3. `typescript/src/parsers/schema-org.ts` - Preserve section headers
 
 ### Medium Priority
+
 4. Other site scrapers with custom ingredient/instruction parsing
 5. `typescript/src/types/recipe.ts` - Update docs about string vs array
 
 ### Low Priority
+
 6. Test suite updates
 7. Documentation updates
 
@@ -349,6 +374,7 @@ bun run build && bun run scripts/validate-parity.ts -- --implemented-only
 ## Appendix: Example Failures
 
 ### cookinglight.com/cookinglight.testhtml
+
 ```diff
 - ingredients (Python):  "1/2 cup beans\n1 teaspoon oil"
 + ingredients (TypeScript): ["1/2 cup beans", "1 teaspoon oil"]
@@ -361,6 +387,7 @@ bun run build && bun run scripts/validate-parity.ts -- --implemented-only
 ```
 
 ### pinchofyum.com (instructions formatting)
+
 ```diff
 - instructions (Python): "Sauté garlic and onion\nIn a large soup pot...\nBuild your roux\nAdd remaining..."
 + instructions (TypeScript): "In a large soup pot...\nAdd remaining..."
@@ -370,6 +397,7 @@ bun run build && bun run scripts/validate-parity.ts -- --implemented-only
 ```
 
 ### cafedelites.com (ingredient_groups)
+
 ```diff
 - ingredient_groups (Python): [
     {"ingredients": ["1/2 cup sugar", "1/2 tsp cinnamon"], "purpose": "COATING"},
@@ -379,7 +407,8 @@ bun run build && bun run scripts/validate-parity.ts -- --implemented-only
     {"ingredients": ["1/2 cup sugar", "1/2 tsp cinnamon", "4 oz butter", "1 cup water", ...]}
   ]
 ```
-*Note: Grouping logic not correctly splitting by purpose*
+
+_Note: Grouping logic not correctly splitting by purpose_
 
 ---
 
