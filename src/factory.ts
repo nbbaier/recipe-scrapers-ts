@@ -8,6 +8,9 @@ import {
 	NoSchemaFoundInWildMode,
 	WebsiteNotImplementedError,
 } from "./exceptions";
+
+import "./default-plugins";
+
 import { AbstractScraper } from "./scrapers/abstract";
 import { SCRAPER_REGISTRY } from "./scrapers/sites";
 import type { ScraperConstructor } from "./types/scraper";

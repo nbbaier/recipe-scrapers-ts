@@ -48,26 +48,5 @@ export * from "./utils";
 // Version
 export const VERSION = "0.1.0";
 
-import {
-	BestImagePlugin,
-	ExceptionHandlingPlugin,
-	HTMLTagStripperPlugin,
-	NormalizeStringPlugin,
-	OpenGraphFillPlugin,
-	OpenGraphImageFetchPlugin,
-	SchemaOrgFillPlugin,
-	StaticValueExceptionHandlingPlugin,
-} from "./plugins";
 // Initialize default plugins
-import { configureDefaultPlugins } from "./settings";
-
-configureDefaultPlugins([
-	ExceptionHandlingPlugin,
-	BestImagePlugin,
-	StaticValueExceptionHandlingPlugin,
-	HTMLTagStripperPlugin,
-	NormalizeStringPlugin,
-	OpenGraphImageFetchPlugin,
-	OpenGraphFillPlugin,
-	SchemaOrgFillPlugin,
-]);
+import "./default-plugins";

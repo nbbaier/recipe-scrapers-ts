@@ -37,8 +37,10 @@ describe("Settings System", () => {
 			expect(defaultSettings.BEST_IMAGE_SELECTION).toBe(true);
 			expect(defaultSettings.SUPPRESS_EXCEPTIONS).toBe(false);
 			expect(defaultSettings.LOG_LEVEL).toBe(2);
-			expect(defaultSettings.PLUGINS).toEqual([]);
-		});
+			// Default plugins may be configured by importing entrypoints
+                        // like src/index.ts or src/factory.ts.
+                        expect(Array.isArray(defaultSettings.PLUGINS)).toBe(true);
+                });
 
 		it("should have default ON_EXCEPTION_RETURN_VALUES", () => {
 			expect(defaultSettings.ON_EXCEPTION_RETURN_VALUES).toMatchObject({
