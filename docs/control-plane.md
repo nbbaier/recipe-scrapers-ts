@@ -42,4 +42,6 @@ In CI, `.github/workflows/ci.yml` runs `risk-policy-gate` first and only then fa
 
 `.github/workflows/migration-batch.yml` runs nightly (and on demand) to generate a deterministic batch of pending scraper domains. The workflow writes `artifacts/migration-batch.json`, then creates a GitHub issue assigned to Copilot coding agent (model `gpt-5.2-codex`) so Copilot can open the migration PR.
 
-To auto-assign Copilot from Actions, the workflow needs a user-scoped token associated with a Copilot subscription. Configure the `COPILOT_ASSIGN_TOKEN` GitHub Actions secret (fine-grained PAT with access to this repo and Issues read/write). Without it, the workflow will create an unassigned issue that you can manually assign to Copilot.
+To auto-assign Copilot from Actions, the workflow needs a user-scoped token associated with a Copilot subscription. Configure the `COPILOT_ASSIGN_TOKEN` GitHub Actions secret (fine-grained PAT with access to this repo and Issues read/write). The workflow copies this secret into a job-level env var so it can be used in step `if:` conditions (GitHub Actions does not allow `secrets.*` in `if:`).
+
+Without `COPILOT_ASSIGN_TOKEN`, the workflow will create an unassigned issue that you can manually assign to Copilot.
