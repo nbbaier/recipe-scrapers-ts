@@ -9,15 +9,15 @@
 import { AbstractScraper } from "../abstract";
 
 export class FineDiningLoversScraper extends AbstractScraper {
-	host(): string {
-		return "finedininglovers.com";
-	}
+  host(): string {
+    return "finedininglovers.com";
+  }
 
-	/**
-	 * TODO: Implement custom site_name() logic
-	 * Check Python implementation in recipe_scrapers/finedininglovers.py
-	 */
-	// site_name(): ReturnType {
-	// 	return undefined;
-	// }
+  /**
+   * TODO: Implement custom site_name() logic
+   * Check Python implementation in recipe_scrapers/finedininglovers.py
+   */
+  // site_name(): ReturnType {
+  // 	return undefined;
+  // }
 }

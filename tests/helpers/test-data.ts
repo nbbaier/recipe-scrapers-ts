@@ -21,13 +21,13 @@ const TEST_DATA_PATH = join(import.meta.dirname, "../..", "test_data");
  * @returns The HTML content as a string
  */
 export function loadTestHtml(domain: string, filename: string): string {
-	const path = join(TEST_DATA_PATH, domain, filename);
+  const path = join(TEST_DATA_PATH, domain, filename);
 
-	if (!existsSync(path)) {
-		throw new Error(`Test HTML not found: ${path}`);
-	}
+  if (!existsSync(path)) {
+    throw new Error(`Test HTML not found: ${path}`);
+  }
 
-	return readFileSync(path, "utf-8");
+  return readFileSync(path, "utf-8");
 }
 
 /**
@@ -39,14 +39,14 @@ export function loadTestHtml(domain: string, filename: string): string {
  */
 // biome-ignore lint/suspicious/noExplicitAny: test data can have any structure
 export function loadExpectedJson(domain: string, filename: string): any {
-	const path = join(TEST_DATA_PATH, domain, filename);
+  const path = join(TEST_DATA_PATH, domain, filename);
 
-	if (!existsSync(path)) {
-		throw new Error(`Expected JSON not found: ${path}`);
-	}
+  if (!existsSync(path)) {
+    throw new Error(`Expected JSON not found: ${path}`);
+  }
 
-	const content = readFileSync(path, "utf-8");
-	return JSON.parse(content);
+  const content = readFileSync(path, "utf-8");
+  return JSON.parse(content);
 }
 
 /**
@@ -56,7 +56,7 @@ export function loadExpectedJson(domain: string, filename: string): any {
  * @returns Absolute path to the domain's test data directory
  */
 export function getTestDataPath(domain: string): string {
-	return join(TEST_DATA_PATH, domain);
+  return join(TEST_DATA_PATH, domain);
 }
 
 /**
@@ -65,13 +65,13 @@ export function getTestDataPath(domain: string): string {
  * @returns Array of domain names that have test data
  */
 export function getTestDomains(): string[] {
-	if (!existsSync(TEST_DATA_PATH)) {
-		throw new Error(`Test data directory not found: ${TEST_DATA_PATH}`);
-	}
+  if (!existsSync(TEST_DATA_PATH)) {
+    throw new Error(`Test data directory not found: ${TEST_DATA_PATH}`);
+  }
 
-	return readdirSync(TEST_DATA_PATH, { withFileTypes: true })
-		.filter((dirent) => dirent.isDirectory())
-		.map((dirent) => dirent.name);
+  return readdirSync(TEST_DATA_PATH, { withFileTypes: true })
+    .filter((dirent) => dirent.isDirectory())
+    .map((dirent) => dirent.name);
 }
 
 /**
@@ -81,19 +81,19 @@ export function getTestDomains(): string[] {
  * @returns Array of test case objects with html and json filenames
  */
 export function getTestCases(
-	domain: string,
+  domain: string,
 ): Array<{ html: string; json: string }> {
-	const domainPath = getTestDataPath(domain);
+  const domainPath = getTestDataPath(domain);
 
-	if (!existsSync(domainPath)) {
-		throw new Error(`Test data for domain not found: ${domain}`);
-	}
+  if (!existsSync(domainPath)) {
+    throw new Error(`Test data for domain not found: ${domain}`);
+  }
 
-	const files = readdirSync(domainPath);
-	const htmlFiles = files.filter((f) => f.endsWith(".testhtml"));
+  const files = readdirSync(domainPath);
+  const htmlFiles = files.filter((f) => f.endsWith(".testhtml"));
 
-	return htmlFiles.map((htmlFile) => ({
-		html: htmlFile,
-		json: htmlFile.replace(".testhtml", ".json"),
-	}));
+  return htmlFiles.map((htmlFile) => ({
+    html: htmlFile,
+    json: htmlFile.replace(".testhtml", ".json"),
+  }));
 }

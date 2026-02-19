@@ -8,7 +8,7 @@
 import { AbstractScraper } from "../abstract";
 
 export class EatingBirdFoodScraper extends AbstractScraper {
-	host(): string {
-		return "eatingbirdfood.com";
-	}
+  host(): string {
+    return "eatingbirdfood.com";
+  }
 }

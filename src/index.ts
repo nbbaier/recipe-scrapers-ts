@@ -7,26 +7,26 @@
 
 // Exception exports
 export {
-	ElementNotFoundInHtml,
-	FieldNotProvidedByWebsiteException,
-	FillPluginException,
-	NoSchemaFoundInWildMode,
-	OpenGraphException,
-	RecipeSchemaNotFound,
-	RecipeScrapersException,
-	SchemaOrgException,
-	StaticValueException,
-	WebsiteNotImplementedError,
+  ElementNotFoundInHtml,
+  FieldNotProvidedByWebsiteException,
+  FillPluginException,
+  NoSchemaFoundInWildMode,
+  OpenGraphException,
+  RecipeSchemaNotFound,
+  RecipeScrapersException,
+  SchemaOrgException,
+  StaticValueException,
+  WebsiteNotImplementedError,
 } from "./exceptions";
 // Factory exports
 export {
-	getSupportedUrls,
-	isSupported,
-	registerScraper,
-	SCRAPERS,
-	SchemaScraper,
-	type ScrapeOptions,
-	scrapeHtml,
+  getSupportedUrls,
+  isSupported,
+  registerScraper,
+  SCRAPERS,
+  SchemaScraper,
+  type ScrapeOptions,
+  scrapeHtml,
 } from "./factory";
 export { OpenGraph } from "./parsers/opengraph";
 // Parser exports

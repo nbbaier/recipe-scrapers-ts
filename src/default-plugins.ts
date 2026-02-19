@@ -6,24 +6,24 @@
  */
 
 import {
-        BestImagePlugin,
-        ExceptionHandlingPlugin,
-        HTMLTagStripperPlugin,
-        NormalizeStringPlugin,
-        OpenGraphFillPlugin,
-        OpenGraphImageFetchPlugin,
-        SchemaOrgFillPlugin,
-        StaticValueExceptionHandlingPlugin,
+  BestImagePlugin,
+  ExceptionHandlingPlugin,
+  HTMLTagStripperPlugin,
+  NormalizeStringPlugin,
+  OpenGraphFillPlugin,
+  OpenGraphImageFetchPlugin,
+  SchemaOrgFillPlugin,
+  StaticValueExceptionHandlingPlugin,
 } from "./plugins";
 import { configureDefaultPlugins } from "./settings";
 
 configureDefaultPlugins([
-        ExceptionHandlingPlugin,
-        BestImagePlugin,
-        StaticValueExceptionHandlingPlugin,
-        HTMLTagStripperPlugin,
-        NormalizeStringPlugin,
-        OpenGraphImageFetchPlugin,
-        OpenGraphFillPlugin,
-        SchemaOrgFillPlugin,
+  ExceptionHandlingPlugin,
+  BestImagePlugin,
+  StaticValueExceptionHandlingPlugin,
+  HTMLTagStripperPlugin,
+  NormalizeStringPlugin,
+  OpenGraphImageFetchPlugin,
+  OpenGraphFillPlugin,
+  SchemaOrgFillPlugin,
 ]);

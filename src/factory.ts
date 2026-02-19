@@ -5,8 +5,8 @@
  */
 
 import {
-	NoSchemaFoundInWildMode,
-	WebsiteNotImplementedError,
+  NoSchemaFoundInWildMode,
+  WebsiteNotImplementedError,
 } from "./exceptions";
 
 import "./default-plugins";
@@ -27,14 +27,14 @@ export type { ScraperConstructor } from "./types/scraper";
  * NotImplementedError and falls back to schema methods automatically.
  */
 export class SchemaScraper extends AbstractScraper {
-	override host(): string {
-		return getHostName(this.url);
-	}
+  override host(): string {
+    return getHostName(this.url);
+  }
 
-	// Equipment is not available in Schema.org, return empty array
-	override equipment(): string[] {
-		return [];
-	}
+  // Equipment is not available in Schema.org, return empty array
+  override equipment(): string[] {
+    return [];
+  }
 }
 
 /**
@@ -45,17 +45,17 @@ export class SchemaScraper extends AbstractScraper {
  * Additional scrapers can be added via registerScraper()
  */
 export const SCRAPERS: Record<string, ScraperConstructor> = {
-	...SCRAPER_REGISTRY,
+  ...SCRAPER_REGISTRY,
 };
 
 /**
  * Options for scrapeHtml function
  */
 export interface ScrapeOptions {
-	/** Whether to restrict to supported domains only (default: true) */
-	supportedOnly?: boolean;
-	/** Whether to enable best image selection (default: from settings) */
-	bestImage?: boolean;
+  /** Whether to restrict to supported domains only (default: true) */
+  supportedOnly?: boolean;
+  /** Whether to enable best image selection (default: from settings) */
+  bestImage?: boolean;
 }
 
 /**
@@ -70,36 +70,36 @@ export interface ScrapeOptions {
  * @throws {NoSchemaFoundInWildMode} When domain is not supported and no Schema.org data found
  */
 export function scrapeHtml(
-	html: string,
-	url: string,
-	options: ScrapeOptions = {},
+  html: string,
+  url: string,
+  options: ScrapeOptions = {},
 ): AbstractScraper {
-	const { supportedOnly = true, bestImage } = options;
+  const { supportedOnly = true, bestImage } = options;
 
-	const hostName = getHostName(url);
+  const hostName = getHostName(url);
 
-	// Check if we have a specific scraper for this domain
-	const ScraperClass = SCRAPERS[hostName];
-	if (ScraperClass) {
-		return new ScraperClass(html, url, bestImage);
-	}
+  // Check if we have a specific scraper for this domain
+  const ScraperClass = SCRAPERS[hostName];
+  if (ScraperClass) {
+    return new ScraperClass(html, url, bestImage);
+  }
 
-	// Domain not supported
-	if (supportedOnly) {
-		const message = `The website '${hostName}' isn't currently supported by recipe-scrapers!
+  // Domain not supported
+  if (supportedOnly) {
+    const message = `The website '${hostName}' isn't currently supported by recipe-scrapers!
 ---
 If you have time to help us out, please report this as a feature
 request on our bugtracker.`;
-		throw new WebsiteNotImplementedError(message);
-	}
+    throw new WebsiteNotImplementedError(message);
+  }
 
-	// Wild mode: try generic Schema.org scraping
-	const schemaScraper = new SchemaScraper(html, url, bestImage);
-	if (schemaScraper.hasSchema()) {
-		return schemaScraper;
-	}
+  // Wild mode: try generic Schema.org scraping
+  const schemaScraper = new SchemaScraper(html, url, bestImage);
+  if (schemaScraper.hasSchema()) {
+    return schemaScraper;
+  }
 
-	throw new NoSchemaFoundInWildMode(`No Schema.org data found at URL: ${url}`);
+  throw new NoSchemaFoundInWildMode(`No Schema.org data found at URL: ${url}`);
 }
 
 /**
@@ -112,10 +112,10 @@ request on our bugtracker.`;
  * @param scraperClass - Scraper class to use for this domain
  */
 export function registerScraper(
-	hostname: string,
-	scraperClass: ScraperConstructor,
+  hostname: string,
+  scraperClass: ScraperConstructor,
 ): void {
-	SCRAPERS[hostname] = scraperClass;
+  SCRAPERS[hostname] = scraperClass;
 }
 
 /**
@@ -124,7 +124,7 @@ export function registerScraper(
  * @returns Array of supported domain names
  */
 export function getSupportedUrls(): string[] {
-	return Object.keys(SCRAPERS).sort();
+  return Object.keys(SCRAPERS).sort();
 }
 
 /**
@@ -134,6 +134,6 @@ export function getSupportedUrls(): string[] {
  * @returns True if the domain is supported
  */
 export function isSupported(url: string): boolean {
-	const hostName = getHostName(url);
-	return hostName in SCRAPERS;
+  const hostName = getHostName(url);
+  return hostName in SCRAPERS;
 }

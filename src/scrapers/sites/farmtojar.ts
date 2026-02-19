@@ -9,15 +9,15 @@
 import { AbstractScraper } from "../abstract";
 
 export class FarmToJarScraper extends AbstractScraper {
-	host(): string {
-		return "farmtojar.com";
-	}
+  host(): string {
+    return "farmtojar.com";
+  }
 
-	/**
-	 * TODO: Implement custom author() logic
-	 * Check Python implementation in recipe_scrapers/farmtojar.py
-	 */
-	// author(): ReturnType {
-	// 	return undefined;
-	// }
+  /**
+   * TODO: Implement custom author() logic
+   * Check Python implementation in recipe_scrapers/farmtojar.py
+   */
+  // author(): ReturnType {
+  // 	return undefined;
+  // }
 }
