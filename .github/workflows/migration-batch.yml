@@ -11,6 +11,7 @@ jobs:
     permissions:
       contents: read
       issues: write
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -27,7 +28,10 @@ jobs:
         run: bun run sync-test-data
 
       - name: Generate migration batch
-        run: bun run migration:batch -- --limit 5 --output artifacts/migration-batch.json
+        run: |
+          # Ensure artifacts dir exists (prevents weird redirects / permission issues)
+          mkdir -p artifacts
+          bun run migration:batch -- --limit 5 --output artifacts/migration-batch.json
 
       - name: Read migration batch
         id: batch
@@ -48,7 +52,7 @@ jobs:
           REPO: ${{ github.repository }}
           DOMAINS: ${{ steps.batch.outputs.domains }}
         run: |
-          body=$(cat <<EOF
+          body=$(cat <<'EOF'
           Nightly migration batch.
 
           Domains: ${DOMAINS}
@@ -64,6 +68,9 @@ jobs:
           EOF
           )
 
+          # Expand DOMAINS after the heredoc (because we used <<'EOF' to avoid accidental shell parsing)
+          body="${body//'${DOMAINS}'/$DOMAINS}"
+
           export BODY="$body"
           python - <<'PY'
           import json
@@ -72,7 +79,9 @@ jobs:
           payload = {
               "title": f"Migration batch: {os.environ['DOMAINS']}",
               "body": os.environ["BODY"],
-              "assignees": ["copilot-swe-agent[bot]"],
+              # Fix: do not set assignees to "Copilot" / copilot bot, since it cannot be assigned
+              # (this was causing the HTTP 422 Validation Failed)
+              # "assignees": ["copilot-swe-agent[bot]"],
               "agent_assignment": {
                   "target_repo": os.environ["REPO"],
                   "base_branch": "main",
