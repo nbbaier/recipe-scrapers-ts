@@ -11,6 +11,8 @@ jobs:
     permissions:
       contents: read
       issues: write
+    env:
+      COPILOT_ASSIGN_TOKEN: ${{ secrets.COPILOT_ASSIGN_TOKEN }}
 
     steps:
       - name: Checkout
@@ -46,9 +48,9 @@ jobs:
           echo "domains=$domains" >> "$GITHUB_OUTPUT"
 
       - name: Create Copilot migration issue
-        if: steps.batch.outputs.domains != '' && secrets.COPILOT_ASSIGN_TOKEN != ''
+        if: steps.batch.outputs.domains != '' && env.COPILOT_ASSIGN_TOKEN != ''
         env:
-          GH_TOKEN: ${{ secrets.COPILOT_ASSIGN_TOKEN }}
+          GH_TOKEN: ${{ env.COPILOT_ASSIGN_TOKEN }}
           REPO: ${{ github.repository }}
           DOMAINS: ${{ steps.batch.outputs.domains }}
         run: |
@@ -98,7 +100,7 @@ jobs:
             --input artifacts/copilot-issue.json
 
       - name: Create unassigned issue (missing Copilot token)
-        if: steps.batch.outputs.domains != '' && secrets.COPILOT_ASSIGN_TOKEN == ''
+        if: steps.batch.outputs.domains != '' && env.COPILOT_ASSIGN_TOKEN == ''
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
