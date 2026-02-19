@@ -41,7 +41,7 @@ export abstract class PluginInterface {
 	 * Check if plugin should run for given host and method
 	 */
 	static shouldRun(host: string, method: string): boolean {
-		// biome-ignore lint/suspicious/noExplicitAny: type casting needed for plugin class reference
+		// biome-ignore lint/complexity/noThisInStatic: in a static method, `this` is the concrete plugin class (intended)
 		const pluginClass = this as unknown as typeof PluginInterface;
 		return shouldRunPlugin(pluginClass, host, method);
 	}

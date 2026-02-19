@@ -22,14 +22,9 @@
 		"low": ["**"]
 	},
 	"mergePolicy": {
-                "high": {
-                        "requiredChecks": [
-                                "risk-policy-gate",
-                                "test",
-                                "type-check",
-                                "lint"
-                        ]
-                },
+		"high": {
+			"requiredChecks": ["risk-policy-gate", "test", "type-check", "lint"]
+		},
 		"medium": {
 			"requiredChecks": ["risk-policy-gate", "test", "type-check"]
 		},
@@ -43,6 +38,6 @@
 			"scripts/risk-policy-gate.ts",
 			".github/workflows/**"
 		],
-                "requiredDocs": ["docs/control-plane.md"]
-        }
+		"requiredDocs": ["docs/control-plane.md"]
+	}
 }

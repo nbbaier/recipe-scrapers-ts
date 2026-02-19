@@ -45,8 +45,6 @@ export default defineConfig({
 
 	// Define global constants
 	define: {
-		TEST_DATA_PATH: JSON.stringify(
-			path.resolve(__dirname, "./test_data"),
-		),
+		TEST_DATA_PATH: JSON.stringify(path.resolve(__dirname, "./test_data")),
 	},
 });

@@ -11,11 +11,7 @@ import { join } from "node:path";
 /**
  * Path to test data directory (synced from upstream Python repo)
  */
-const TEST_DATA_PATH = join(
-	import.meta.dirname,
-	"../..",
-	"test_data",
-);
+const TEST_DATA_PATH = join(import.meta.dirname, "../..", "test_data");
 
 /**
  * Load test HTML file for a specific domain and test case
