@@ -1,0 +1,48 @@
+{
+	"version": "1",
+	"riskTierRules": {
+		"high": [
+			"src/factory.ts",
+			"src/parsers/**",
+			"src/plugins/**",
+			"src/scrapers/abstract.ts",
+			"policy/**",
+			"scripts/risk-policy-gate.ts",
+			".github/workflows/**"
+		],
+		"medium": [
+			"src/scrapers/sites/**",
+			"src/utils/**",
+			"tests/**",
+			"scripts/**",
+			"package.json",
+			"tsconfig.json",
+			"vitest.config.ts"
+		],
+		"low": ["**"]
+	},
+	"mergePolicy": {
+                "high": {
+                        "requiredChecks": [
+                                "risk-policy-gate",
+                                "test",
+                                "type-check",
+                                "lint"
+                        ]
+                },
+		"medium": {
+			"requiredChecks": ["risk-policy-gate", "test", "type-check"]
+		},
+		"low": {
+			"requiredChecks": ["risk-policy-gate", "test"]
+		}
+	},
+	"docsDriftRules": {
+		"triggerPaths": [
+			"policy/**",
+			"scripts/risk-policy-gate.ts",
+			".github/workflows/**"
+		],
+                "requiredDocs": ["docs/control-plane.md"]
+        }
+}

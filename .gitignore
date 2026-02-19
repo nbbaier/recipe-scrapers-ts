@@ -30,6 +30,10 @@ parity-report.json
 # Generated dashboard
 dashboard.html
 
+# Migration artifacts
+artifacts/
+
 # OS
 .DS_Store
 Thumbs.db
+code-factory.md

@@ -73,6 +73,8 @@ src/
 | `bun run sync-test-data`      | Sync test data from upstream Python repo       |
 | `bun run type-check`          | TypeScript type checking                       |
 | `bun run lint`                | Lint with Biome                                |
+| `bun run risk-policy-gate`    | Run deterministic control-plane policy gate    |
+| `bun run harness:risk-tier`   | Alias for risk policy gate                     |
 | `bun run compare -- <domain>` | Compare output with Python for a specific site |
 | `bun run validate-parity`     | Validate all scrapers against Python output    |
 
@@ -102,6 +104,18 @@ Register it in `src/scrapers/sites/index.ts` and add test data in `test_data/exa
 ## Parity Validation
 
 The TypeScript port aims for 1:1 output parity with the Python version. Known differences are tracked in [PARITY_ISSUES.md](PARITY_ISSUES.md).
+
+## Control Plane Gate
+
+This repo includes a machine-readable policy contract at `policy/risk-policy.contract.json` and a deterministic gate script at `scripts/risk-policy-gate.ts`.
+
+Run it locally:
+
+```bash
+bun run risk-policy-gate
+```
+
+Full control-plane details are in [docs/control-plane.md](docs/control-plane.md).
 
 ## License
 
