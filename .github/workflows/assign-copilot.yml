@@ -1,6 +1,7 @@
 name: Assign Copilot to Migration Issues
 
 on:
+  workflow_dispatch:
   issues:
     types: [opened]
 
