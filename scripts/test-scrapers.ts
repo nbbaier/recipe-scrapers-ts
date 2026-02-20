@@ -24,9 +24,9 @@ let failed = 0;
 const errors: Array<{ domain: string; error: string }> = [];
 
 for (const domain of domains) {
-	try {
-		// Create a minimal HTML document with Schema.org data
-		const testHtml = `
+  try {
+    // Create a minimal HTML document with Schema.org data
+    const testHtml = `
 			<!DOCTYPE html>
 			<html>
 			<head><title>Test Recipe</title></head>
@@ -45,31 +45,31 @@ for (const domain of domains) {
 			</html>
 		`;
 
-		// Try to create scraper
-		const scraper = scrapeHtml(testHtml, `https://${domain}/test-recipe`, {
-			supportedOnly: true,
-		});
+    // Try to create scraper
+    const scraper = scrapeHtml(testHtml, `https://${domain}/test-recipe`, {
+      supportedOnly: true,
+    });
 
-		// Try to get JSON output (just verify it doesn't throw)
-		const json = scraper.toJson();
+    // Try to get JSON output (just verify it doesn't throw)
+    const json = scraper.toJson();
 
-		// Basic validation - just check we got something back
-		if (typeof json !== "object" || json === null) {
-			throw new Error("toJson() did not return an object");
-		}
+    // Basic validation - just check we got something back
+    if (typeof json !== "object" || json === null) {
+      throw new Error("toJson() did not return an object");
+    }
 
-		console.log(`✓ ${domain}`);
-		passed++;
-	} catch (error) {
-		console.log(
-			`✗ ${domain}: ${error instanceof Error ? error.message : String(error)}`,
-		);
-		errors.push({
-			domain,
-			error: error instanceof Error ? error.message : String(error),
-		});
-		failed++;
-	}
+    console.log(`✓ ${domain}`);
+    passed++;
+  } catch (error) {
+    console.log(
+      `✗ ${domain}: ${error instanceof Error ? error.message : String(error)}`,
+    );
+    errors.push({
+      domain,
+      error: error instanceof Error ? error.message : String(error),
+    });
+    failed++;
+  }
 }
 
 console.log(`\n${"=".repeat(60)}`);
@@ -77,11 +77,11 @@ console.log(`Results: ${passed} passed, ${failed} failed`);
 console.log(`Success rate: ${((passed / domains.length) * 100).toFixed(1)}%`);
 
 if (errors.length > 0) {
-	console.log(`\nFailed domains:`);
-	for (const { domain, error } of errors) {
-		console.log(`  - ${domain}: ${error}`);
-	}
-	process.exit(1);
+  console.log(`\nFailed domains:`);
+  for (const { domain, error } of errors) {
+    console.log(`  - ${domain}: ${error}`);
+  }
+  process.exit(1);
 }
 
 console.log("\n✅ All scrapers working!");

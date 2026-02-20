@@ -5,46 +5,46 @@ import { defineConfig } from "vitest/config";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
-	test: {
-		// Test environment
-		environment: "node",
+  test: {
+    // Test environment
+    environment: "node",
 
-		// Test file patterns
-		include: ["tests/**/*.{test,spec}.ts"],
+    // Test file patterns
+    include: ["tests/**/*.{test,spec}.ts"],
 
-		// Coverage configuration
-		coverage: {
-			provider: "v8",
-			reporter: ["text", "lcov", "html"],
-			include: ["src/**/*.ts"],
-			exclude: ["src/**/*.d.ts", "src/types/**", "src/index.ts"],
-			thresholds: {
-				branches: 85,
-				functions: 85,
-				lines: 85,
-				statements: 85,
-			},
-		},
+    // Coverage configuration
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "lcov", "html"],
+      include: ["src/**/*.ts"],
+      exclude: ["src/**/*.d.ts", "src/types/**", "src/index.ts"],
+      thresholds: {
+        branches: 85,
+        functions: 85,
+        lines: 85,
+        statements: 85,
+      },
+    },
 
-		// Globals - makes describe, it, expect available without imports
-		globals: true,
+    // Globals - makes describe, it, expect available without imports
+    globals: true,
 
-		// Test timeout
-		testTimeout: 10000,
+    // Test timeout
+    testTimeout: 10000,
 
-		// Setup files (if needed)
-		// setupFiles: ['./tests/setup.ts'],
-	},
+    // Setup files (if needed)
+    // setupFiles: ['./tests/setup.ts'],
+  },
 
-	resolve: {
-		alias: {
-			"@": path.resolve(__dirname, "./src"),
-			"@test-data": path.resolve(__dirname, "./test_data"),
-		},
-	},
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+      "@test-data": path.resolve(__dirname, "./test_data"),
+    },
+  },
 
-	// Define global constants
-	define: {
-		TEST_DATA_PATH: JSON.stringify(path.resolve(__dirname, "./test_data")),
-	},
+  // Define global constants
+  define: {
+    TEST_DATA_PATH: JSON.stringify(path.resolve(__dirname, "./test_data")),
+  },
 });

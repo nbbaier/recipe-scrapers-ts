@@ -9,15 +9,15 @@
 import { AbstractScraper } from "../abstract";
 
 export class CulinaryHillScraper extends AbstractScraper {
-	host(): string {
-		return "culinaryhill.com";
-	}
+  host(): string {
+    return "culinaryhill.com";
+  }
 
-	/**
-	 * TODO: Implement custom ingredients() logic
-	 * Check Python implementation in recipe_scrapers/culinaryhill.py
-	 */
-	// ingredients(): ReturnType {
-	// 	return undefined;
-	// }
+  /**
+   * TODO: Implement custom ingredients() logic
+   * Check Python implementation in recipe_scrapers/culinaryhill.py
+   */
+  // ingredients(): ReturnType {
+  // 	return undefined;
+  // }
 }

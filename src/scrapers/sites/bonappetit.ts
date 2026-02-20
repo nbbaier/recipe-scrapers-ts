@@ -8,14 +8,14 @@
 import { AbstractScraper } from "../abstract";
 
 export class BonAppetitScraper extends AbstractScraper {
-	host(): string {
-		return "bonappetit.com";
-	}
+  host(): string {
+    return "bonappetit.com";
+  }
 
-	/**
-	 * Total time is not reliably available for Bon Appétit recipes
-	 */
-	totalTime(): number | null {
-		return null;
-	}
+  /**
+   * Total time is not reliably available for Bon Appétit recipes
+   */
+  totalTime(): number | null {
+    return null;
+  }
 }

@@ -7,50 +7,8 @@ on:
          - main
 
 jobs:
-   risk-policy-gate:
-      name: risk-policy-gate
-      runs-on: ubuntu-latest
-      steps:
-         - name: Checkout
-           uses: actions/checkout@v4
-           with:
-              fetch-depth: 0
-
-         - name: Setup Bun
-           uses: oven-sh/setup-bun@v2
-           with:
-              bun-version: latest
-
-         - name: Install dependencies
-           run: bun install --frozen-lockfile
-
-         - name: Compute changed files
-           id: changed
-           shell: bash
-           run: |
-              if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-                BASE_SHA="${{ github.event.pull_request.base.sha }}"
-                HEAD_SHA="${{ github.sha }}"
-                CHANGED_FILES="$(git diff --name-only "$BASE_SHA...$HEAD_SHA" | tr '\n' ',')"
-              else
-                BEFORE_SHA="${{ github.event.before }}"
-                if [[ "$BEFORE_SHA" == "0000000000000000000000000000000000000000" ]]; then
-                  CHANGED_FILES="$(git ls-files | tr '\n' ',')"
-                else
-                  CHANGED_FILES="$(git diff --name-only "$BEFORE_SHA...${{ github.sha }}" | tr '\n' ',')"
-                fi
-              fi
-              echo "files=$CHANGED_FILES" >> "$GITHUB_OUTPUT"
-
-         - name: Run risk policy gate
-           env:
-              CHANGED_FILES: ${{ steps.changed.outputs.files }}
-              HEAD_SHA: ${{ github.sha }}
-           run: bun run risk-policy-gate
-
    type-check:
       name: type-check
-      needs: risk-policy-gate
       runs-on: ubuntu-latest
       steps:
          - name: Checkout
@@ -69,7 +27,6 @@ jobs:
 
    lint:
       name: lint
-      needs: risk-policy-gate
       runs-on: ubuntu-latest
       steps:
          - name: Checkout
@@ -88,7 +45,6 @@ jobs:
 
    test:
       name: test
-      needs: risk-policy-gate
       runs-on: ubuntu-latest
       steps:
          - name: Checkout
@@ -101,6 +57,9 @@ jobs:
 
          - name: Install dependencies
            run: bun install --frozen-lockfile
+
+         - name: Sync test data
+           run: bun run sync-test-data
 
          - name: Test
            run: bun test

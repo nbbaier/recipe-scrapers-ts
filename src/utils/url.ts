@@ -6,13 +6,13 @@
  * Interface representing the parsed components of a URL
  */
 export interface UrlComponents {
-	schema?: string;
-	user?: string;
-	password?: string;
-	host: string;
-	port?: string;
-	path?: string;
-	query?: string;
+  schema?: string;
+  user?: string;
+  password?: string;
+  host: string;
+  port?: string;
+  path?: string;
+  query?: string;
 }
 
 /**
@@ -33,25 +33,25 @@ export interface UrlComponents {
  * // }
  */
 export function urlPathToDict(path: string): UrlComponents | null {
-	const pattern =
-		/^((?<schema>.+?):\/\/)?((?<user>.+?)(:(?<password>.*?))?@)?(?<host>[^:/]+)(:(?<port>\d+?))?(?<path>\/.*?)?(?<query>[?].*?)?$/;
+  const pattern =
+    /^((?<schema>.+?):\/\/)?((?<user>.+?)(:(?<password>.*?))?@)?(?<host>[^:/]+)(:(?<port>\d+?))?(?<path>\/.*?)?(?<query>[?].*?)?$/;
 
-	const match = path.match(pattern);
-	if (!match?.groups) {
-		return null;
-	}
+  const match = path.match(pattern);
+  if (!match?.groups) {
+    return null;
+  }
 
-	const groups = match.groups;
+  const groups = match.groups;
 
-	return {
-		schema: groups.schema,
-		user: groups.user,
-		password: groups.password,
-		host: groups.host,
-		port: groups.port,
-		path: groups.path,
-		query: groups.query,
-	};
+  return {
+    schema: groups.schema,
+    user: groups.user,
+    password: groups.password,
+    host: groups.host,
+    port: groups.port,
+    path: groups.path,
+    query: groups.query,
+  };
 }
 
 /**
@@ -68,9 +68,9 @@ export function urlPathToDict(path: string): UrlComponents | null {
  * // Returns: "subdomain.example.com"
  */
 export function getHostName(url: string): string {
-	const normalized = url.replace("://www.", "://");
-	const parsed = urlPathToDict(normalized);
-	return parsed?.host || "";
+  const normalized = url.replace("://www.", "://");
+  const parsed = urlPathToDict(normalized);
+  return parsed?.host || "";
 }
 
 /**
@@ -102,23 +102,23 @@ export function getHostName(url: string): string {
  * // Returns: ""
  */
 export function getUrlSlug(url: string): string {
-	const parsed = urlPathToDict(url);
-	const path = parsed?.path || "";
+  const parsed = urlPathToDict(url);
+  const path = parsed?.path || "";
 
-	// Filter out empty segments
-	const segments = path.split("/").filter((seg) => seg !== "");
+  // Filter out empty segments
+  const segments = path.split("/").filter((seg) => seg !== "");
 
-	// No path segments
-	if (segments.length === 0) {
-		return "";
-	}
+  // No path segments
+  if (segments.length === 0) {
+    return "";
+  }
 
-	// Single segment ending with '/' is treated as a directory (e.g., '/recipes/')
-	// Returns empty string to indicate no slug, just a directory path
-	if (segments.length === 1 && path.endsWith("/")) {
-		return "";
-	}
+  // Single segment ending with '/' is treated as a directory (e.g., '/recipes/')
+  // Returns empty string to indicate no slug, just a directory path
+  if (segments.length === 1 && path.endsWith("/")) {
+    return "";
+  }
 
-	// Return the last segment (e.g., 'chocolate-cake' from '/recipes/chocolate-cake/' or '/recipes/chocolate-cake')
-	return segments[segments.length - 1];
+  // Return the last segment (e.g., 'chocolate-cake' from '/recipes/chocolate-cake/' or '/recipes/chocolate-cake')
+  return segments[segments.length - 1];
 }
