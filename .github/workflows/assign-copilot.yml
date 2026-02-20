@@ -2,6 +2,11 @@ name: Assign Copilot to Migration Issues
 
 on:
   workflow_dispatch:
+    inputs:
+      issue_number:
+        description: "Issue number to assign when run manually"
+        required: true
+        type: number
   issues:
     types: [opened, labeled]
 
@@ -17,12 +22,40 @@ jobs:
     env:
       COPILOT_ASSIGN_TOKEN: ${{ secrets.COPILOT_ASSIGN_TOKEN }}
     steps:
+      - name: Resolve issue number
+        id: issue
+        shell: bash
+        env:
+          EVENT_ISSUE_NUMBER: ${{ github.event.issue.number }}
+          INPUT_ISSUE_NUMBER: ${{ inputs.issue_number }}
+        run: |
+          ISSUE_NUMBER="$EVENT_ISSUE_NUMBER"
+
+          if [ -z "$ISSUE_NUMBER" ]; then
+            ISSUE_NUMBER="$INPUT_ISSUE_NUMBER"
+          fi
+
+          if ! [[ "$ISSUE_NUMBER" =~ ^[0-9]+$ ]]; then
+            echo "Could not determine a valid issue number."
+            exit 1
+          fi
+
+          echo "issue_number=$ISSUE_NUMBER" >> "$GITHUB_OUTPUT"
+
       - name: Check whether Copilot is already assigned
         id: check
         env:
-          ASSIGNEES_JSON: ${{ toJson(github.event.issue.assignees) }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ steps.issue.outputs.issue_number }}
+          REPOSITORY: ${{ github.repository }}
         shell: bash
         run: |
+          ASSIGNEES_JSON="$(gh api \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            /repos/$REPOSITORY/issues/$ISSUE_NUMBER \
+            --jq '.assignees')"
+
           if echo "$ASSIGNEES_JSON" | jq -e 'map(.login) | index("copilot-swe-agent[bot]") != null' >/dev/null; then
             echo "already_assigned=true" >> "$GITHUB_OUTPUT"
           else
@@ -33,7 +66,7 @@ jobs:
         if: env.COPILOT_ASSIGN_TOKEN != '' && steps.check.outputs.already_assigned != 'true'
         env:
           GH_TOKEN: ${{ env.COPILOT_ASSIGN_TOKEN }}
-          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_NUMBER: ${{ steps.issue.outputs.issue_number }}
         run: |
           gh api \
             --method POST \
@@ -47,7 +80,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh issue comment ${{ github.event.issue.number }} \
+          gh issue comment ${{ steps.issue.outputs.issue_number }} \
             --repo ${{ github.repository }} \
             --body "ℹ️ Copilot is already assigned to this issue."
 
@@ -56,6 +89,6 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh issue comment ${{ github.event.issue.number }} \
+          gh issue comment ${{ steps.issue.outputs.issue_number }} \
             --repo ${{ github.repository }} \
             --body "⚠️ COPILOT_ASSIGN_TOKEN is not configured. Assign this issue to Copilot manually."
