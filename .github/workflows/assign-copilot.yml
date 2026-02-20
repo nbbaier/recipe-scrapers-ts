@@ -2,12 +2,12 @@ name: Assign Copilot to Migration Issues
 
 on:
   issues:
-    types: [labeled]
+    types: [opened]
 
 jobs:
   assign:
     runs-on: ubuntu-latest
-    if: github.event.label.name == 'copilot-migration'
+    if: github.event.issue.labels == 'copilot-migration'
     permissions:
       issues: write
     env:
