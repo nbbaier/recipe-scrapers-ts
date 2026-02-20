@@ -36,8 +36,6 @@
     "compare": "bun scripts/compare-outputs.ts",
     "sync-test-data": "bash scripts/sync-test-data.sh",
     "dashboard": "bun scripts/generate-dashboard.ts",
-    "risk-policy-gate": "bun scripts/risk-policy-gate.ts",
-    "harness:risk-tier": "bun run risk-policy-gate",
     "migration:batch": "bun scripts/migration-batch.ts",
     "clean": "rm -rf dist coverage *.tsbuildinfo",
     "migrate": "bun scripts/migrate-scraper.ts"

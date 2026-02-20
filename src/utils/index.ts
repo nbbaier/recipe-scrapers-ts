@@ -17,30 +17,6 @@ export {
   NUTRITION_KEYS,
   type NutritionKey,
 } from "./helpers";
-// Risk policy utilities
-export {
-  computeRiskTier,
-  type DocsDriftRule,
-  type EvidenceRule,
-  evaluateDocsDriftRule,
-  evaluateEvidenceRule,
-  evaluatePolicyGate,
-  evaluateRequiredChecks,
-  evaluateReviewAgentRule,
-  globToRegExp,
-  type MergePolicyTier,
-  normalizeCheckStatuses,
-  type PolicyGateInput,
-  type PolicyGateResult,
-  pathMatchesAny,
-  pathMatchesGlob,
-  type RequiredChecksEvaluation,
-  type ReviewAgentEvaluation,
-  type ReviewAgentRule,
-  type RiskPolicyContract,
-  type RiskTierComputation,
-  type RuleEvaluation,
-} from "./risk-policy";
 // String utilities
 export { csvToTags, formatDietName, normalizeString } from "./strings";
 // Time utilities

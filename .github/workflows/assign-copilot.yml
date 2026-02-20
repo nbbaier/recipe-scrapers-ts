@@ -1,0 +1,36 @@
+name: Assign Copilot to Migration Issues
+
+on:
+  issues:
+    types: [labeled]
+
+jobs:
+  assign:
+    runs-on: ubuntu-latest
+    if: github.event.label.name == 'copilot-migration'
+    permissions:
+      issues: write
+    env:
+      COPILOT_ASSIGN_TOKEN: ${{ secrets.COPILOT_ASSIGN_TOKEN }}
+    steps:
+      - name: Assign to Copilot
+        if: env.COPILOT_ASSIGN_TOKEN != ''
+        env:
+          GH_TOKEN: ${{ env.COPILOT_ASSIGN_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          gh api \
+            --method POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            /repos/${{ github.repository }}/issues/$ISSUE_NUMBER/assignees \
+            -f "assignees[]=copilot-swe-agent[bot]"
+
+      - name: Comment (missing token)
+        if: env.COPILOT_ASSIGN_TOKEN == ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue comment ${{ github.event.issue.number }} \
+            --repo ${{ github.repository }} \
+            --body "⚠️ COPILOT_ASSIGN_TOKEN is not configured. Assign this issue to Copilot manually."

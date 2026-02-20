@@ -1,0 +1,63 @@
+name: Nightly Migration Batch
+
+on:
+  schedule:
+    - cron: "0 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  batch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install deps
+        run: bun install --frozen-lockfile
+
+      - name: Sync test data
+        run: bun run sync-test-data
+
+      - name: Run migration batch
+        run: bun run migration:batch -- --limit 5 --output artifacts/migration-batch.json
+
+      - name: Read domains
+        id: read-domains
+        run: |
+          domains=$(jq -r '.selectedDomains | join(",")' artifacts/migration-batch.json)
+          echo "domains=$domains" >> "$GITHUB_OUTPUT"
+
+      - name: Create issue
+        if: steps.read-domains.outputs.domains != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DOMAINS: ${{ steps.read-domains.outputs.domains }}
+        run: |
+          gh issue create \
+            --title "Migration batch: $DOMAINS" \
+            --label "copilot-migration" \
+            --body "Nightly migration batch.
+
+          Domains: $DOMAINS
+
+          For each domain:
+          1. Run \`bun scripts/migrate-scraper.ts <scraper-name>\`
+          2. Ensure \`src/scrapers/sites/index.ts\` is updated
+          3. Run \`bun run build:quiet\`
+          4. Run \`bun run validate-parity -- --domains <domain>\`
+          5. If a domain cannot be migrated automatically, add a note to \`PARITY_ISSUES.md\`"
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: migration-batch
+          path: artifacts
