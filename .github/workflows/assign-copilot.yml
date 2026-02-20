@@ -3,19 +3,34 @@ name: Assign Copilot to Migration Issues
 on:
   workflow_dispatch:
   issues:
-    types: [opened]
+    types: [opened, labeled]
 
 jobs:
   assign:
     runs-on: ubuntu-latest
-    if: github.event.issue.labels == 'copilot-migration'
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.action == 'opened' && contains(github.event.issue.labels.*.name, 'copilot-migration')) ||
+      (github.event.action == 'labeled' && github.event.label.name == 'copilot-migration')
     permissions:
       issues: write
     env:
       COPILOT_ASSIGN_TOKEN: ${{ secrets.COPILOT_ASSIGN_TOKEN }}
     steps:
+      - name: Check whether Copilot is already assigned
+        id: check
+        env:
+          ASSIGNEES_JSON: ${{ toJson(github.event.issue.assignees) }}
+        shell: bash
+        run: |
+          if echo "$ASSIGNEES_JSON" | jq -e 'map(.login) | index("copilot-swe-agent[bot]") != null' >/dev/null; then
+            echo "already_assigned=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "already_assigned=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Assign to Copilot
-        if: env.COPILOT_ASSIGN_TOKEN != ''
+        if: env.COPILOT_ASSIGN_TOKEN != '' && steps.check.outputs.already_assigned != 'true'
         env:
           GH_TOKEN: ${{ env.COPILOT_ASSIGN_TOKEN }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
@@ -26,6 +41,15 @@ jobs:
             -H "X-GitHub-Api-Version: 2022-11-28" \
             /repos/${{ github.repository }}/issues/$ISSUE_NUMBER/assignees \
             -f "assignees[]=copilot-swe-agent[bot]"
+
+      - name: Comment (already assigned)
+        if: steps.check.outputs.already_assigned == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue comment ${{ github.event.issue.number }} \
+            --repo ${{ github.repository }} \
+            --body "ℹ️ Copilot is already assigned to this issue."
 
       - name: Comment (missing token)
         if: env.COPILOT_ASSIGN_TOKEN == ''
