@@ -33,6 +33,8 @@
     "check": "bun run type-check && bun run lint && bun run test",
     "test:scrapers": "bun run build:quiet && bun scripts/test-scrapers.ts",
     "validate-parity": "bun run build:quiet && bun scripts/validate-parity.ts",
+    "validate-registry": "bun scripts/validate-scraper-registry.ts",
+    "sync-registry": "bun scripts/sync-scraper-registry.ts",
     "compare": "bun scripts/compare-outputs.ts",
     "sync-test-data": "bash scripts/sync-test-data.sh",
     "dashboard": "bun scripts/generate-dashboard.ts",
