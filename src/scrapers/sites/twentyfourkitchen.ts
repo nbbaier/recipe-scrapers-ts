@@ -9,23 +9,23 @@
 import { AbstractScraper } from "../abstract";
 
 export class TwentyFourKitchenScraper extends AbstractScraper {
-	host(): string {
-		return "24kitchen.nl";
-	}
+  host(): string {
+    return "24kitchen.nl";
+  }
 
-	/**
-	 * TODO: Implement custom ingredient_groups() logic
-	 * Check Python implementation in recipe_scrapers/twentyfourkitchen.py
-	 */
-	// ingredient_groups(): ReturnType {
-	// 	return undefined;
-	// }
+  /**
+   * TODO: Implement custom ingredient_groups() logic
+   * Check Python implementation in recipe_scrapers/twentyfourkitchen.py
+   */
+  // ingredient_groups(): ReturnType {
+  // 	return undefined;
+  // }
 
-	/**
-	 * TODO: Implement custom instructions() logic
-	 * Check Python implementation in recipe_scrapers/twentyfourkitchen.py
-	 */
-	// instructions(): ReturnType {
-	// 	return undefined;
-	// }
+  /**
+   * TODO: Implement custom instructions() logic
+   * Check Python implementation in recipe_scrapers/twentyfourkitchen.py
+   */
+  // instructions(): ReturnType {
+  // 	return undefined;
+  // }
 }
