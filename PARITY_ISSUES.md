@@ -414,3 +414,11 @@ _Note: Grouping logic not correctly splitting by purpose_
 
 **Report Generated:** 2025-11-19
 **For Questions:** Reference this document in TypeScript port discussions
+
+## 2026-02-21 Nightly migration batch notes
+
+- `750g.com` (`g750g`): auto-migrated scraper scaffold includes TODO for custom `site_name()` override; parity run executed but skipped with `0` tests because no fixtures were available locally.
+- `abeautifulmess.com`: auto-migrated with WPRM equipment helper; parity run executed but skipped with `0` tests because no fixtures were available locally.
+- `aberlehome.com`: auto-migrated scraper scaffold includes TODO stubs for many custom overrides (`ingredients`, `instructions`, `yields`, etc.); parity run executed but skipped with `0` tests because no fixtures were available locally.
+- `abuelascounter.com`: auto-migrated scraper scaffold includes TODO for custom `ingredient_groups()` override; parity run executed but skipped with `0` tests because no fixtures were available locally.
+- `acouplecooks.com`: auto-migrated scraper scaffold includes TODO stubs for custom `ingredient_groups()` and `ingredients()` overrides; parity run executed but skipped with `0` tests because no fixtures were available locally.
