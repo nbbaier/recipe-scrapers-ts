@@ -7,6 +7,10 @@
 
 import type { ScraperConstructor } from "../../types/scraper";
 
+import { ABeautifulMessScraper } from "./abeautifulmess";
+import { AberleHomeScraper } from "./aberlehome";
+import { AbuelasCounterScraper } from "./abuelascounter";
+import { ACoupleCooksScraper } from "./acouplecooks";
 import { AllRecipesScraper } from "./allrecipes";
 import { AllTheHealthyThingsScraper } from "./allthehealthythings";
 import { AltonBrownScraper } from "./altonbrown";
@@ -41,6 +45,7 @@ import { Food52Scraper } from "./food52";
 import { FoodAndWineScraper } from "./foodandwine";
 import { FoodNetworkScraper } from "./foodnetwork";
 import { FortyApronsScraper } from "./fortyaprons";
+import { G750gScraper } from "./g750g";
 import { GimmeSomeOvenScraper } from "./gimmesomeoven";
 import { HalfBakedHarvestScraper } from "./halfbakedharvest";
 import { JamieOliverScraper } from "./jamieoliver";
@@ -67,6 +72,10 @@ import { ThreeSixFiveDaysOfBakingAndMoreScraper } from "./threesixfivedaysofbaki
 import { TwentyFourKitchenScraper } from "./twentyfourkitchen";
 
 export {
+  ABeautifulMessScraper,
+  AberleHomeScraper,
+  AbuelasCounterScraper,
+  ACoupleCooksScraper,
   AllRecipesScraper,
   AllTheHealthyThingsScraper,
   AltonBrownScraper,
@@ -101,6 +110,7 @@ export {
   FoodAndWineScraper,
   FoodNetworkScraper,
   FortyApronsScraper,
+  G750gScraper,
   GimmeSomeOvenScraper,
   HalfBakedHarvestScraper,
   JamieOliverScraper,
@@ -128,6 +138,16 @@ export {
 };
 
 export const SCRAPER_REGISTRY: Record<string, ScraperConstructor> = {
+  "101cookbooks.com": OneHundredOneCookBooksScraper,
+  "15gram.be": FifteenGramScraper,
+  "24kitchen.nl": TwentyFourKitchenScraper,
+  "365daysofbakingandmore.com": ThreeSixFiveDaysOfBakingAndMoreScraper,
+  "40aprons.com": FortyApronsScraper,
+  "750g.com": G750gScraper,
+  "abeautifulmess.com": ABeautifulMessScraper,
+  "aberlehome.com": AberleHomeScraper,
+  "abuelascounter.com": AbuelasCounterScraper,
+  "acouplecooks.com": ACoupleCooksScraper,
   "allrecipes.com": AllRecipesScraper,
   "allthehealthythings.com": AllTheHealthyThingsScraper,
   "altonbrown.com": AltonBrownScraper,
@@ -155,13 +175,11 @@ export const SCRAPER_REGISTRY: Record<string, ScraperConstructor> = {
   "epicurious.com": EpicuriousScraper,
   "farmtojar.com": FarmToJarScraper,
   "feastingathome.com": FeastingAtHomeScraper,
-  "15gram.be": FifteenGramScraper,
   "fifteenspatulas.com": FifteenSpatulasScraper,
   "finedininglovers.com": FineDiningLoversScraper,
   "food52.com": Food52Scraper,
   "foodandwine.com": FoodAndWineScraper,
   "foodnetwork.co.uk": FoodNetworkScraper,
-  "40aprons.com": FortyApronsScraper,
   "gimmesomeoven.com": GimmeSomeOvenScraper,
   "halfbakedharvest.com": HalfBakedHarvestScraper,
   "jamieoliver.com": JamieOliverScraper,
@@ -171,7 +189,6 @@ export const SCRAPER_REGISTRY: Record<string, ScraperConstructor> = {
   "marthastewart.com": MarthaStewartScraper,
   "minimalistbaker.com": MinimalistbakerScraper,
   "mybakingaddiction.com": MyBakingAddictionScraper,
-  "101cookbooks.com": OneHundredOneCookBooksScraper,
   "pinchofyum.com": PinchOfYumScraper,
   "recipetineats.com": RecipeTinEatsScraper,
   "sallysbakingaddiction.com": SallysBakingAddictionScraper,
@@ -184,6 +201,4 @@ export const SCRAPER_REGISTRY: Record<string, ScraperConstructor> = {
   "thekitchn.com": TheKitchnScraper,
   "thepioneerwoman.com": ThePioneerWomanScraper,
   "therecipecritic.com": TheRecipeCriticScraper,
-  "365daysofbakingandmore.com": ThreeSixFiveDaysOfBakingAndMoreScraper,
-  "24kitchen.nl": TwentyFourKitchenScraper,
 };
