@@ -412,5 +412,42 @@ _Note: Grouping logic not correctly splitting by purpose_
 
 ---
 
+## Migration Batch: 750g.com, abeautifulmess.com, aberlehome.com, abuelascounter.com, acouplecooks.com
+
+**Date:** 2026-02-20
+**Status:** Scrapers created, parity validation skipped (test fixtures unavailable - GitHub API returned 403 during migration)
+
+### 750g.com ⚠️
+
+- Scraper created: `src/scrapers/sites/g750g.ts`
+- Custom method `site_name()` not yet ported (TODO stub)
+- Python uses `self.opengraph.site_name()`
+
+### abeautifulmess.com ✅
+
+- Scraper created: `src/scrapers/sites/abeautifulmess.ts`
+- Uses WordPress Recipe Maker (WPRM) plugin; `equipment()` auto-ported
+
+### aberlehome.com ⚠️
+
+- Scraper created: `src/scrapers/sites/aberlehome.ts`
+- Many custom methods not yet ported (all TODO stubs): `ingredients`, `title`, `author`, `category`, `total_time`, `cook_time`, `prep_time`, `description`, `instructions`, `ratings`, `ratings_count`, `yields`, `nutrients`
+- Python implementation uses mv-create plugin CSS selectors as fallback when Schema.org data is unavailable
+
+### abuelascounter.com ⚠️
+
+- Scraper created: `src/scrapers/sites/abuelascounter.ts`
+- Custom `ingredient_groups()` not yet ported (TODO stub)
+- Python uses `group_ingredients()` utility with CSS selectors `.ingredient-item-group-title` and `.wpzoom-rcb-ingredient-name`
+
+### acouplecooks.com ⚠️
+
+- Scraper created: `src/scrapers/sites/acouplecooks.ts`
+- Custom `ingredient_groups()` and `ingredients()` not yet ported (TODO stubs)
+- Python `ingredients()` uses `.tasty-recipes-ingredients-body ul li` CSS selector
+- Python `ingredient_groups()` uses `group_ingredients()` with `.tasty-recipes-ingredients-body p b` (headers) and `.tasty-recipes-ingredients-body ul li` (items)
+
+---
+
 **Report Generated:** 2025-11-19
 **For Questions:** Reference this document in TypeScript port discussions
