@@ -473,20 +473,25 @@ export class SchemaOrg {
     if (typeof schemaItem === "string") {
       instructionsGist.push(schemaItem);
     } else if (schemaItem?.["@type"] === "HowToStep") {
-      let instruction = schemaItem.text;
+      // Some sites have duplicated name and text properties (1:1)
+      // others have name same as text but truncated to X chars.
+      // Include name only if it's different from the text
+      if (schemaItem.name && schemaItem.text) {
+        if (!schemaItem.text.startsWith(schemaItem.name.replace(/\.+$/, ""))) {
+          instructionsGist.push(schemaItem.name);
+        }
+      }
 
       // Handle nested itemListElement
-      if (!instruction && schemaItem.itemListElement) {
-        instruction = schemaItem.itemListElement.text;
+      if (schemaItem.itemListElement) {
+        schemaItem = schemaItem.itemListElement as unknown as HowToStep;
       }
 
-      // Fallback to name if text is missing
-      if (!instruction && schemaItem.name) {
-        instruction = schemaItem.name;
-      }
-
-      if (instruction) {
-        instructionsGist.push(instruction);
+      if (schemaItem.text) {
+        instructionsGist.push(schemaItem.text);
+      } else if (schemaItem.name) {
+        // Fallback to name if text is missing
+        instructionsGist.push(schemaItem.name);
       }
     } else if (schemaItem?.["@type"] === "HowToSection") {
       // Add section name

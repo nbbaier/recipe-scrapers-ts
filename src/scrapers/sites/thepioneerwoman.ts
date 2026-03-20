@@ -6,6 +6,7 @@
  */
 
 import type { IngredientGroup } from "../../types/recipe";
+import { normalizeString } from "../../utils";
 import { groupIngredients } from "../../utils/grouping";
 import { AbstractScraper } from "../abstract";
 
@@ -36,7 +37,15 @@ export class ThePioneerWomanScraper extends AbstractScraper {
     if (instructions === "") {
       const directionsElement = this.$(".directions");
       if (directionsElement.length > 0) {
-        instructions = directionsElement.text();
+        // Python uses get_text(separator="\n") which inserts \n at tag boundaries
+        const html = directionsElement.html() || "";
+        instructions = html
+          .replace(/<br\s*\/?>/gi, "\n")
+          .replace(/<[^>]+>/g, "\n")
+          .split("\n")
+          .map((s) => normalizeString(s))
+          .filter(Boolean)
+          .join("\n");
       }
     }
 

@@ -1,11 +1,10 @@
 /**
  * TwentyFourKitchen scraper
  * https://24kitchen.nl/
- *
- * Custom implementation - has overridden methods
- * TODO: Review Python implementation and port custom logic
  */
 
+import { groupIngredients } from "../../utils/grouping";
+import type { IngredientGroup } from "../../types/recipe";
 import { AbstractScraper } from "../abstract";
 
 export class TwentyFourKitchenScraper extends AbstractScraper {
@@ -13,19 +12,43 @@ export class TwentyFourKitchenScraper extends AbstractScraper {
     return "24kitchen.nl";
   }
 
-  /**
-   * TODO: Implement custom ingredient_groups() logic
-   * Check Python implementation in recipe_scrapers/twentyfourkitchen.py
-   */
-  // ingredient_groups(): ReturnType {
-  // 	return undefined;
-  // }
+  ingredientGroups(): IngredientGroup[] {
+    const groups = groupIngredients(
+      this.ingredients(),
+      this.$,
+      ".ingredient-list-title",
+      ".recipe-ingredient",
+    );
+    if (
+      groups.length === 1 &&
+      groups[0].purpose &&
+      groups[0].purpose.trim() === this.schema.title()
+    ) {
+      groups[0].purpose = null;
+    }
+    return groups;
+  }
 
-  /**
-   * TODO: Implement custom instructions() logic
-   * Check Python implementation in recipe_scrapers/twentyfourkitchen.py
-   */
-  // instructions(): ReturnType {
-  // 	return undefined;
-  // }
+  instructions(): string {
+    const instructions: string[] = [];
+
+    // Instructions format #1
+    this.$(".preparation-step .field--name-field-text").each((_, el) => {
+      const text = this.$(el).text().trim();
+      if (!text.toLowerCase().startsWith("stap:")) {
+        instructions.push(text);
+      }
+    });
+
+    // Instructions format #2
+    this.$(".preparation-text p").each((_, el) => {
+      const text = this.$(el).text().trim();
+      const cleaned = text.replace(/^Stap\s*\d+:?/, "").trim();
+      if (cleaned) {
+        instructions.push(cleaned);
+      }
+    });
+
+    return instructions.join("\n");
+  }
 }
