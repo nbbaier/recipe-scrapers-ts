@@ -1,11 +1,10 @@
 /**
  * CountryLiving scraper
  * https://countryliving.com/
- *
- * Custom implementation - has overridden methods
- * TODO: Review Python implementation and port custom logic
  */
 
+import type { IngredientGroup } from "../../types/recipe";
+import { groupIngredients } from "../../utils/grouping";
 import { AbstractScraper } from "../abstract";
 
 export class CountryLivingScraper extends AbstractScraper {
@@ -13,27 +12,12 @@ export class CountryLivingScraper extends AbstractScraper {
     return "countryliving.com";
   }
 
-  /**
-   * TODO: Implement custom author() logic
-   * Check Python implementation in recipe_scrapers/countryliving.py
-   */
-  // author(): ReturnType {
-  // 	return undefined;
-  // }
-
-  /**
-   * TODO: Implement custom ingredient_groups() logic
-   * Check Python implementation in recipe_scrapers/countryliving.py
-   */
-  // ingredient_groups(): ReturnType {
-  // 	return undefined;
-  // }
-
-  /**
-   * TODO: Implement custom keywords() logic
-   * Check Python implementation in recipe_scrapers/countryliving.py
-   */
-  // keywords(): ReturnType {
-  // 	return undefined;
-  // }
+  ingredientGroups(): IngredientGroup[] {
+    return groupIngredients(
+      this.ingredients(),
+      this.$,
+      ".ingredients-body h3",
+      ".ingredients-body li",
+    );
+  }
 }

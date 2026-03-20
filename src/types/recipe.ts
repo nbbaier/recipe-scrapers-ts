@@ -87,7 +87,7 @@ export interface Recipe {
  */
 export interface IngredientGroup {
   /** Purpose or section name (e.g., 'For the sauce', 'For the topping') */
-  purpose?: string;
+  purpose?: string | null;
 
   /** Ingredients in this group */
   ingredients: string[];

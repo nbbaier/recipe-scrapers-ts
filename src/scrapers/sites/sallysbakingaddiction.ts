@@ -1,11 +1,10 @@
 /**
  * SallysBakingAddiction scraper
  * https://sallysbakingaddiction.com/
- *
- * Custom implementation - has overridden methods
- * TODO: Review Python implementation and port custom logic
  */
 
+import type { IngredientGroup } from "../../types/recipe";
+import { groupIngredients } from "../../utils/grouping";
 import { AbstractScraper } from "../abstract";
 
 export class SallysBakingAddictionScraper extends AbstractScraper {
@@ -13,11 +12,12 @@ export class SallysBakingAddictionScraper extends AbstractScraper {
     return "sallysbakingaddiction.com";
   }
 
-  /**
-   * TODO: Implement custom ingredient_groups() logic
-   * Check Python implementation in recipe_scrapers/sallysbakingaddiction.py
-   */
-  // ingredient_groups(): ReturnType {
-  // 	return undefined;
-  // }
+  ingredientGroups(): IngredientGroup[] {
+    return groupIngredients(
+      this.ingredients(),
+      this.$,
+      ".tasty-recipes-ingredients-body h4",
+      "li[data-tr-ingredient-checkbox]",
+    );
+  }
 }

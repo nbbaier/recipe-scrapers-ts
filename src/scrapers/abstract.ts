@@ -12,6 +12,7 @@ import { OpenGraph } from "../parsers/opengraph";
 import { SchemaOrg } from "../parsers/schema-org";
 import { settings } from "../settings";
 import type { IngredientGroup, Recipe } from "../types/recipe";
+import { groupIngredients } from "../utils/grouping";
 
 /**
  * Abstract base scraper class
@@ -371,16 +372,9 @@ export abstract class AbstractScraper {
 
   /**
    * Extracts ingredient groups (ingredients organized by purpose/section)
-   * For now, returns a single group with all ingredients
-   * TODO: Implement proper ingredient grouping logic
    */
   ingredientGroups(): IngredientGroup[] {
-    return [
-      {
-        purpose: undefined,
-        ingredients: this.ingredients(),
-      },
-    ];
+    return groupIngredients(this.ingredients(), this.$);
   }
 
   /**

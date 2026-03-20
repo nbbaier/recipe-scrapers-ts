@@ -119,7 +119,7 @@ export function groupIngredients(
     }
   }
   if (!heading || !element) {
-    return [{ purpose: undefined, ingredients: ingredientsList }];
+    return [{ purpose: null, ingredients: ingredientsList }];
   }
   const foundIngredients = $(element);
   if (foundIngredients.length !== ingredientsList.length) {
@@ -127,8 +127,8 @@ export function groupIngredients(
       `Found ${foundIngredients.length} grouped ingredients but was expecting to find ${ingredientsList.length}.`,
     );
   }
-  const groupings = new Map<string | undefined, string[]>();
-  let currentHeading: string | undefined;
+  const groupings = new Map<string | null, string[]>();
+  let currentHeading: string | null = null;
   const elements = $(`${heading}, ${element}`);
   elements.each((_idx, elem) => {
     const $elem = $(elem as cheerio.Element);
@@ -138,7 +138,7 @@ export function groupIngredients(
       parent.find(heading).filter((_i, e) => e === elem).length > 0
     ) {
       const headingText = normalizeString($elem.text());
-      currentHeading = headingText || undefined;
+      currentHeading = headingText || null;
       if (!groupings.has(currentHeading)) groupings.set(currentHeading, []);
     } else {
       const ingredientText = normalizeString($elem.text());

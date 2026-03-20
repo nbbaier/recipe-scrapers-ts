@@ -1,11 +1,10 @@
 /**
  * AllTheHealthyThings scraper
  * https://allthehealthythings.com/
- *
- * Custom implementation - has overridden methods
- * TODO: Review Python implementation and port custom logic
  */
 
+import type { IngredientGroup } from "../../types/recipe";
+import { groupIngredients } from "../../utils/grouping";
 import { AbstractScraper } from "../abstract";
 
 export class AllTheHealthyThingsScraper extends AbstractScraper {
@@ -13,11 +12,12 @@ export class AllTheHealthyThingsScraper extends AbstractScraper {
     return "allthehealthythings.com";
   }
 
-  /**
-   * TODO: Implement custom ingredient_groups() logic
-   * Check Python implementation in recipe_scrapers/allthehealthythings.py
-   */
-  // ingredient_groups(): ReturnType {
-  // 	return undefined;
-  // }
+  ingredientGroups(): IngredientGroup[] {
+    return groupIngredients(
+      this.ingredients(),
+      this.$,
+      ".tasty-recipes-ingredients-body strong",
+      ".tasty-recipes-ingredients-body li",
+    );
+  }
 }
