@@ -1,5 +1,5 @@
-// @ts-expect-error - TypeScript's noUnusedLocals check doesn't recognize namespace type imports as "used" when only accessed as cheerio.Type in type positions (known TS limitation)
-import type * as cheerio from "cheerio";
+import type { CheerioAPI } from "cheerio";
+import type { Element } from "domhandler";
 import type { IngredientGroup } from "../types/recipe";
 import { normalizeString } from "./strings";
 
@@ -91,7 +91,7 @@ function bestMatch(testString: string, targetStrings: string[]): string {
 
 export function groupIngredients(
   ingredientsList: string[],
-  $: cheerio.CheerioAPI,
+  $: CheerioAPI,
   groupHeading?: string,
   groupElement?: string,
 ): IngredientGroup[] {
@@ -131,7 +131,7 @@ export function groupIngredients(
   let currentHeading: string | null = null;
   const elements = $(`${heading}, ${element}`);
   elements.each((_idx, elem) => {
-    const $elem = $(elem as cheerio.Element);
+    const $elem = $(elem as Element);
     const parent = $elem.parent();
     if (
       parent &&
