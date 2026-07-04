@@ -101,7 +101,7 @@ Register it in `src/scrapers/sites/index.ts` and add test data in `test_data/exa
 
 ## Parity Validation
 
-The TypeScript port aims for 1:1 output parity with the Python version. Known differences are tracked in [PARITY_ISSUES.md](PARITY_ISSUES.md).
+The TypeScript port aims for 1:1 output parity with the Python version. Known differences are tracked in [docs/PARITY_ISSUES.md](docs/PARITY_ISSUES.md).
 
 ## License
 
