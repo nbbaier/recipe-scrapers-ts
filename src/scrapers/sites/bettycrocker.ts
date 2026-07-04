@@ -17,7 +17,7 @@ export class BettyCrockerScraper extends AbstractScraper {
       this.ingredients(),
       this.$,
       ".recipeIngredients h3",
-      ".recipeIngredients li",
+      ".recipeIngredients li"
     );
   }
 }

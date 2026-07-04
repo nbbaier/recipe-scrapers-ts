@@ -13,9 +13,9 @@ import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
 interface ScraperMeta {
-  moduleName: string;
   className: string;
   host: string;
+  moduleName: string;
 }
 
 const SITES_DIR = join(import.meta.dirname, "../src/scrapers/sites");
@@ -31,7 +31,7 @@ function getImplementedScrapers(): ScraperMeta[] {
 
     const classMatch = content.match(/export\s+class\s+(\w+)/);
     const hostMatch = content.match(
-      /host\(\)\s*:\s*string\s*\{[^}]*return\s+["']([^"']+)["']/s,
+      /host\(\)\s*:\s*string\s*\{[^}]*return\s+["']([^"']+)["']/s
     );
 
     if (!classMatch) {
@@ -68,7 +68,7 @@ function getIndexExports(indexContent: string): Set<string> {
 
   if (!exportMatch) {
     throw new Error(
-      "Could not parse export block from src/scrapers/sites/index.ts",
+      "Could not parse export block from src/scrapers/sites/index.ts"
     );
   }
 
@@ -76,18 +76,18 @@ function getIndexExports(indexContent: string): Set<string> {
     exportMatch[1]
       .split(",")
       .map((entry) => entry.trim())
-      .filter(Boolean),
+      .filter(Boolean)
   );
 }
 
 function getIndexRegistry(indexContent: string): Map<string, string> {
   const registryBlockMatch = indexContent.match(
-    /export\s+const\s+SCRAPER_REGISTRY:[\s\S]*?=\s*\{([\s\S]*?)\n\};/,
+    /export\s+const\s+SCRAPER_REGISTRY:[\s\S]*?=\s*\{([\s\S]*?)\n\};/
   );
 
   if (!registryBlockMatch) {
     throw new Error(
-      "Could not parse SCRAPER_REGISTRY block from src/scrapers/sites/index.ts",
+      "Could not parse SCRAPER_REGISTRY block from src/scrapers/sites/index.ts"
     );
   }
 
@@ -119,7 +119,7 @@ function main(): void {
     const importedClass = imports.get(scraper.moduleName);
     if (importedClass !== scraper.className) {
       missingImports.push(
-        `${scraper.moduleName}.ts -> expected import { ${scraper.className} } from "./${scraper.moduleName}"`,
+        `${scraper.moduleName}.ts -> expected import { ${scraper.className} } from "./${scraper.moduleName}"`
       );
     }
 
@@ -130,7 +130,7 @@ function main(): void {
     const registeredClass = registry.get(scraper.host);
     if (registeredClass !== scraper.className) {
       missingRegistryEntries.push(
-        `${scraper.host} -> expected ${scraper.className}`,
+        `${scraper.host} -> expected ${scraper.className}`
       );
     }
   }
@@ -142,14 +142,14 @@ function main(): void {
 
   if (issues === 0) {
     console.log(
-      `✅ Registry is in sync (${scrapers.length} implemented scrapers validated).`,
+      `✅ Registry is in sync (${scrapers.length} implemented scrapers validated).`
     );
     return;
   }
 
   console.error("❌ Scraper registry validation failed.");
   console.error(
-    'Run "bun run sync-registry" to regenerate src/scrapers/sites/index.ts.',
+    'Run "bun run sync-registry" to regenerate src/scrapers/sites/index.ts.'
   );
 
   if (missingImports.length > 0) {

@@ -49,7 +49,7 @@ export class SchemaOrgFillPlugin extends PluginInterface {
       if (settings.LOG_LEVEL <= 0) {
         // debug level
         console.debug(
-          `Decorating: ${className}.${methodName}() with SchemaOrgFillPlugin`,
+          `Decorating: ${className}.${methodName}() with SchemaOrgFillPlugin`
         );
       }
 
@@ -64,7 +64,7 @@ export class SchemaOrgFillPlugin extends PluginInterface {
           // Check if schema data exists
           if (!this.schema?.data) {
             throw new RecipeSchemaNotFound(
-              `No Schema.org data found at URL: ${this.url}`,
+              `No Schema.org data found at URL: ${this.url}`
             );
           }
 
@@ -75,7 +75,7 @@ export class SchemaOrgFillPlugin extends PluginInterface {
             if (settings.LOG_LEVEL <= 1) {
               // info level
               console.info(
-                `${className}.${methodName}() not implemented but Schema.org available. Returning from Schema.org.`,
+                `${className}.${methodName}() not implemented but Schema.org available. Returning from Schema.org.`
               );
             }
             const result = schemaMethod.apply(this.schema, args);

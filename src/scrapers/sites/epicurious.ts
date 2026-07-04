@@ -20,6 +20,6 @@ export class EpicuriousScraper extends AbstractScraper {
     if (authorElement.length > 0) {
       return authorElement.text().trim();
     }
-    return undefined;
+    return;
   }
 }

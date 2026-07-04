@@ -17,7 +17,7 @@ export class TheKitchnScraper extends AbstractScraper {
       this.ingredients(),
       this.$,
       ".Recipe__ingredientsGroupName",
-      ".Recipe__ingredient",
+      ".Recipe__ingredient"
     );
   }
 }

@@ -6,13 +6,13 @@
  * Interface representing the parsed components of a URL
  */
 export interface UrlComponents {
+  host: string;
+  password?: string;
+  path?: string;
+  port?: string;
+  query?: string;
   schema?: string;
   user?: string;
-  password?: string;
-  host: string;
-  port?: string;
-  path?: string;
-  query?: string;
 }
 
 /**

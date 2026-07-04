@@ -43,35 +43,35 @@ type HostTemplate =
 
 interface ParsedScraper {
   className: string;
-  tsClassName: string;
-  pythonFilename: string;
-  primaryHost: string;
-  hostTemplate: HostTemplate;
   hasWprm: boolean;
+  hostTemplate: HostTemplate;
   methods: string[];
+  primaryHost: string;
+  pythonFilename: string;
+  tsClassName: string;
 }
 
 interface CliOptions {
-  scraperName: string;
-  ref: string;
   primaryOnly: boolean;
+  ref: string;
+  scraperName: string;
 }
 
 interface TsScraperMeta {
-  filename: string;
   className: string;
+  filename: string;
   host: string;
 }
 
 interface FixtureSyncResult {
+  detail: string;
   domain: string;
   status: "downloaded" | "copied-local" | "scaffolded" | "existing" | "failed";
-  detail: string;
 }
 
 interface ParityResult {
-  status: "passed" | "failed" | "skipped";
   detail: string;
+  status: "passed" | "failed" | "skipped";
 }
 
 function printHelp(): void {
@@ -127,7 +127,7 @@ function parseArgs(argv: string[]): CliOptions {
 
     if (scraperName) {
       throw new Error(
-        `Unexpected positional argument: ${arg}. Only one scraper name is allowed.`,
+        `Unexpected positional argument: ${arg}. Only one scraper name is allowed.`
       );
     }
 
@@ -152,7 +152,7 @@ function getLocalUpstreamRoots(): string[] {
 
 async function loadUpstreamText(
   relativePath: string,
-  ref: string,
+  ref: string
 ): Promise<string> {
   const rawUrl = `https://raw.githubusercontent.com/${UPSTREAM_REPO}/${ref}/${relativePath}`;
   try {
@@ -172,7 +172,7 @@ async function loadUpstreamText(
   }
 
   throw new Error(
-    `Could not load upstream file: ${relativePath} (tried GitHub ref '${ref}' and local fallback paths).`,
+    `Could not load upstream file: ${relativePath} (tried GitHub ref '${ref}' and local fallback paths).`
   );
 }
 
@@ -189,7 +189,7 @@ function parseDefaults(signature: string): Record<string, string> {
 
 function parseHostTemplate(content: string): HostTemplate {
   const hostMethodMatch = content.match(
-    /@classmethod\s+def\s+host\(([^)]*)\):\s*\n([\s\S]*?)(?=\n\s*def\s|\nclass\s|\n\s*$)/,
+    /@classmethod\s+def\s+host\(([^)]*)\):\s*\n([\s\S]*?)(?=\n\s*def\s|\nclass\s|\n\s*$)/
   );
 
   if (!hostMethodMatch) {
@@ -213,7 +213,7 @@ function parseHostTemplate(content: string): HostTemplate {
   }
 
   const interpolatedMatch = expr.match(
-    /^f["']([^"'{]*)\{(\w+)\}([^"'}]*)["']$/,
+    /^f["']([^"'{]*)\{(\w+)\}([^"'}]*)["']$/
   );
   if (interpolatedMatch) {
     return {
@@ -235,7 +235,7 @@ function parseHostTemplate(content: string): HostTemplate {
 
 function resolveHost(
   template: HostTemplate,
-  overrides: Record<string, string>,
+  overrides: Record<string, string>
 ): string | null {
   if (template.kind === "literal") {
     return template.value;
@@ -256,7 +256,7 @@ function resolveHost(
 
 function parsePythonScraper(
   scraperName: string,
-  content: string,
+  content: string
 ): ParsedScraper {
   const classMatch = content.match(/class\s+(\w+)\((.*?)\):/);
   if (!classMatch) {
@@ -307,7 +307,7 @@ function parseKwargs(argsText: string): Record<string, string> {
 function resolveScrapersDictKey(
   keyExpr: string,
   className: string,
-  hostTemplate: HostTemplate,
+  hostTemplate: HostTemplate
 ): string | null {
   const literalMatch = keyExpr.match(/^["']([^"']+)["']$/);
   if (literalMatch) {
@@ -332,7 +332,7 @@ function resolveScrapersDictKey(
 function extractDomainsForClass(
   initContent: string,
   className: string,
-  hostTemplate: HostTemplate,
+  hostTemplate: HostTemplate
 ): string[] {
   const lines = initContent.split("\n");
   const domains: string[] = [];
@@ -379,7 +379,7 @@ function extractDomainsForClass(
 
 function generateMinimalScraper(
   parsed: ParsedScraper,
-  domains: string[],
+  domains: string[]
 ): string {
   const aliasNote =
     domains.length > 1
@@ -441,7 +441,7 @@ export class ${parsed.tsClassName} extends AbstractScraper {
 
 function generateScraperWithMethodStubs(
   parsed: ParsedScraper,
-  domains: string[],
+  domains: string[]
 ): string {
   const aliasNote =
     domains.length > 1
@@ -449,15 +449,15 @@ function generateScraperWithMethodStubs(
       : "";
 
   const methodStubs = parsed.methods
-    .map((method) => {
-      return `\t/**
+    .map(
+      (method) => `\t/**
 \t * TODO: Implement custom ${method}() logic
 \t * Check Python implementation in recipe_scrapers/${parsed.pythonFilename}.py
 \t */
 \t// ${method}(): ReturnType {
 \t// \treturn undefined;
-\t// }`;
-    })
+\t// }`
+    )
     .join("\n\n");
 
   return `/**
@@ -482,11 +482,11 @@ ${methodStubs}
 
 function generateTypescriptScraper(
   parsed: ParsedScraper,
-  domains: string[],
+  domains: string[]
 ): string {
   if (parsed.methods.length > 0) {
     console.log(
-      `⚠️  Detected custom methods in Python: ${parsed.methods.join(", ")}`,
+      `⚠️  Detected custom methods in Python: ${parsed.methods.join(", ")}`
     );
     return generateScraperWithMethodStubs(parsed, domains);
   }
@@ -518,7 +518,7 @@ function parseTsScraperMeta(filePath: string): TsScraperMeta {
   }
 
   const hostMatch = content.match(
-    /host\(\)\s*(?::\s*string)?\s*\{[\s\S]*?return\s+["']([^"']+)["']/,
+    /host\(\)\s*(?::\s*string)?\s*\{[\s\S]*?return\s+["']([^"']+)["']/
   );
   if (!hostMatch) {
     throw new Error(`Could not parse host() return value from ${filePath}`);
@@ -533,16 +533,16 @@ function parseTsScraperMeta(filePath: string): TsScraperMeta {
 
 function buildSitesIndexContent(
   scrapers: TsScraperMeta[],
-  registryEntries: Map<string, string>,
+  registryEntries: Map<string, string>
 ): string {
   const sortedScrapers = [...scrapers].sort((a, b) =>
-    a.className.localeCompare(b.className),
+    a.className.localeCompare(b.className)
   );
 
   const imports = sortedScrapers
     .map(
       (scraper) =>
-        `import { ${scraper.className} } from "./${scraper.filename}";`,
+        `import { ${scraper.className} } from "./${scraper.filename}";`
     )
     .join("\n");
 
@@ -578,7 +578,7 @@ ${registryLines}
 
 function updateSiteIndex(
   targetDomains: string[],
-  targetClassName: string,
+  targetClassName: string
 ): string[] {
   const sitesDir = join(process.cwd(), "src", "scrapers", "sites");
   const indexPath = join(sitesDir, "index.ts");
@@ -592,7 +592,7 @@ function updateSiteIndex(
     .sort();
 
   const scraperMeta = scraperFiles.map((file) =>
-    parseTsScraperMeta(join(sitesDir, file)),
+    parseTsScraperMeta(join(sitesDir, file))
   );
   const knownClasses = new Set(scraperMeta.map((scraper) => scraper.className));
 
@@ -608,7 +608,7 @@ function updateSiteIndex(
     const existingClass = registry.get(domain);
     if (existingClass && existingClass !== className) {
       throw new Error(
-        `Registry conflict for '${domain}': ${existingClass} vs ${className}`,
+        `Registry conflict for '${domain}': ${existingClass} vs ${className}`
       );
     }
     registry.set(domain, className);
@@ -619,7 +619,7 @@ function updateSiteIndex(
     const existingClass = registry.get(domain);
     if (existingClass && existingClass !== targetClassName) {
       throw new Error(
-        `Alias conflict for '${domain}': already mapped to ${existingClass}`,
+        `Alias conflict for '${domain}': already mapped to ${existingClass}`
       );
     }
     if (!registry.has(domain)) {
@@ -637,13 +637,13 @@ function updateSiteIndex(
 function ensureDomainScaffold(
   domainDir: string,
   domain: string,
-  reason: string,
+  reason: string
 ): void {
   mkdirSync(domainDir, { recursive: true });
   writeFileSync(
     join(domainDir, "README.md"),
     `No upstream fixtures found for ${domain}.\nReason: ${reason}\n\nTODO: Add .testhtml/.json fixtures for this domain.\n`,
-    "utf-8",
+    "utf-8"
   );
 }
 
@@ -669,7 +669,7 @@ function syncDomainFromLocalUpstream(domain: string): FixtureSyncResult | null {
 
 async function syncDomainFixtures(
   domain: string,
-  ref: string,
+  ref: string
 ): Promise<FixtureSyncResult> {
   const destination = join(process.cwd(), "test_data", domain);
   if (existsSync(destination) && readdirSync(destination).length > 0) {
@@ -701,7 +701,7 @@ async function syncDomainFixtures(
       ensureDomainScaffold(
         destination,
         domain,
-        `GitHub API returned ${response.status}`,
+        `GitHub API returned ${response.status}`
       );
       return {
         domain,
@@ -717,13 +717,13 @@ async function syncDomainFixtures(
     }>;
 
     const files = payload.filter(
-      (item) => item.type === "file" && typeof item.download_url === "string",
+      (item) => item.type === "file" && typeof item.download_url === "string"
     );
     if (files.length === 0) {
       ensureDomainScaffold(
         destination,
         domain,
-        "Upstream fixture directory empty",
+        "Upstream fixture directory empty"
       );
       return {
         domain,
@@ -739,13 +739,13 @@ async function syncDomainFixtures(
       });
       if (!fileResponse.ok) {
         throw new Error(
-          `Failed downloading ${file.name} (${fileResponse.status})`,
+          `Failed downloading ${file.name} (${fileResponse.status})`
         );
       }
       writeFileSync(
         join(destination, file.name),
         await fileResponse.text(),
-        "utf-8",
+        "utf-8"
       );
     }
 
@@ -843,7 +843,7 @@ async function main(): Promise<void> {
   const discoveredDomains = extractDomainsForClass(
     pythonInitContent,
     parsed.className,
-    parsed.hostTemplate,
+    parsed.hostTemplate
   );
 
   const domains = primaryOnly
@@ -861,7 +861,7 @@ async function main(): Promise<void> {
     "src",
     "scrapers",
     "sites",
-    `${scraperName}.ts`,
+    `${scraperName}.ts`
   );
   if (existsSync(tsPath)) {
     throw new Error(`TypeScript scraper already exists: ${tsPath}`);
@@ -873,7 +873,7 @@ async function main(): Promise<void> {
 
   const addedDomains = updateSiteIndex(domains, parsed.tsClassName);
   console.log(
-    `✅ Updated src/scrapers/sites/index.ts (${domains.length} domain mapping(s), ${addedDomains.length} newly added)`,
+    `✅ Updated src/scrapers/sites/index.ts (${domains.length} domain mapping(s), ${addedDomains.length} newly added)`
   );
 
   const fixtureResults: FixtureSyncResult[] = [];
@@ -894,11 +894,11 @@ async function main(): Promise<void> {
   console.log(`Class: ${parsed.tsClassName}`);
   console.log(`Domains: ${domains.join(", ")}`);
   console.log(`TS file: src/scrapers/sites/${scraperName}.ts`);
-  console.log(`Registry: src/scrapers/sites/index.ts`);
+  console.log("Registry: src/scrapers/sites/index.ts");
   console.log(
     `Fixtures: ${fixtureResults
       .map((result) => `${result.domain}=${result.status}`)
-      .join(", ")}`,
+      .join(", ")}`
   );
   console.log(`Parity: ${parity.status}`);
 
@@ -906,13 +906,13 @@ async function main(): Promise<void> {
   console.log("1. Review generated scraper and TODO stubs (if any).");
   console.log("2. Run bun test.");
   console.log(
-    "3. If parity was skipped, install Python recipe-scrapers and rerun validate-parity for these domains.",
+    "3. If parity was skipped, install Python recipe-scrapers and rerun validate-parity for these domains."
   );
 }
 
 void main().catch((error) => {
   console.error(
-    `\n❌ Migration failed: ${error instanceof Error ? error.message : String(error)}`,
+    `\n❌ Migration failed: ${error instanceof Error ? error.message : String(error)}`
   );
   process.exit(1);
 });

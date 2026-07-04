@@ -17,9 +17,9 @@ import { SCRAPER_REGISTRY } from "../src/scrapers/sites";
 import { getTestDomains } from "../tests/helpers/test-data";
 
 interface CliArgs {
+  json: boolean;
   limit?: number;
   output?: string;
-  json: boolean;
 }
 
 function printHelp(): void {
@@ -133,7 +133,7 @@ function main(): void {
   console.log(`- Implemented: ${result.implementedCount}`);
   console.log(`- Pending: ${result.pendingCount}`);
   console.log(
-    `- Selected (${selected.length}): ${selected.join(", ") || "(none)"}`,
+    `- Selected (${selected.length}): ${selected.join(", ") || "(none)"}`
   );
 }
 

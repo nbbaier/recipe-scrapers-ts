@@ -58,17 +58,26 @@ const DEFAULT_GROUPINGS: Array<{
 ];
 
 function scoreSentenceSimilarity(first: string, second: string): number {
-  if (first === second) return 1;
-  if (first.length < 2 || second.length < 2) return 0;
+  if (first === second) {
+    return 1;
+  }
+  if (first.length < 2 || second.length < 2) {
+    return 0;
+  }
   const firstBigrams = new Set<string>();
-  for (let i = 0; i < first.length - 1; i++)
+  for (let i = 0; i < first.length - 1; i++) {
     firstBigrams.add(first.slice(i, i + 2));
+  }
   const secondBigrams = new Set<string>();
-  for (let i = 0; i < second.length - 1; i++)
+  for (let i = 0; i < second.length - 1; i++) {
     secondBigrams.add(second.slice(i, i + 2));
+  }
   let intersection = 0;
-  for (const bigram of firstBigrams)
-    if (secondBigrams.has(bigram)) intersection++;
+  for (const bigram of firstBigrams) {
+    if (secondBigrams.has(bigram)) {
+      intersection++;
+    }
+  }
   return (2 * intersection) / (firstBigrams.size + secondBigrams.size);
 }
 
@@ -76,7 +85,7 @@ function bestMatch(testString: string, targetStrings: string[]): string {
   const normalizedTest = normalizeFractions(testString);
   const normalizedTargets = targetStrings.map((t) => normalizeFractions(t));
   const scores = normalizedTargets.map((target) =>
-    scoreSentenceSimilarity(normalizedTest, target),
+    scoreSentenceSimilarity(normalizedTest, target)
   );
   let bestIndex = 0;
   let bestScore = scores[0];
@@ -93,11 +102,11 @@ export function groupIngredients(
   ingredientsList: string[],
   $: CheerioAPI,
   groupHeading?: string,
-  groupElement?: string,
+  groupElement?: string
 ): IngredientGroup[] {
   let heading = groupHeading;
   let element = groupElement;
-  if (!heading || !element) {
+  if (!(heading && element)) {
     for (const { headingSelectors, elementSelectors } of DEFAULT_GROUPINGS) {
       let foundHeading: string | undefined;
       let foundElement: string | undefined;
@@ -109,7 +118,9 @@ export function groupIngredients(
             break;
           }
         }
-        if (foundHeading && foundElement) break;
+        if (foundHeading && foundElement) {
+          break;
+        }
       }
       if (foundHeading && foundElement) {
         heading = foundHeading;
@@ -118,13 +129,13 @@ export function groupIngredients(
       }
     }
   }
-  if (!heading || !element) {
+  if (!(heading && element)) {
     return [{ purpose: null, ingredients: ingredientsList }];
   }
   const foundIngredients = $(element);
   if (foundIngredients.length !== ingredientsList.length) {
     throw new Error(
-      `Found ${foundIngredients.length} grouped ingredients but was expecting to find ${ingredientsList.length}.`,
+      `Found ${foundIngredients.length} grouped ingredients but was expecting to find ${ingredientsList.length}.`
     );
   }
   const groupings = new Map<string | null, string[]>();
@@ -139,17 +150,23 @@ export function groupIngredients(
     ) {
       const headingText = normalizeString($elem.text());
       currentHeading = headingText || null;
-      if (!groupings.has(currentHeading)) groupings.set(currentHeading, []);
+      if (!groupings.has(currentHeading)) {
+        groupings.set(currentHeading, []);
+      }
     } else {
       const ingredientText = normalizeString($elem.text());
       const matchedIngredient = bestMatch(ingredientText, ingredientsList);
-      if (!groupings.has(currentHeading)) groupings.set(currentHeading, []);
+      if (!groupings.has(currentHeading)) {
+        groupings.set(currentHeading, []);
+      }
       groupings.get(currentHeading)?.push(matchedIngredient);
     }
   });
   const result: IngredientGroup[] = [];
   for (const [purpose, ingredients] of groupings.entries()) {
-    if (ingredients.length > 0) result.push({ purpose, ingredients });
+    if (ingredients.length > 0) {
+      result.push({ purpose, ingredients });
+    }
   }
   return result;
 }

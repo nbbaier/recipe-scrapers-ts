@@ -163,7 +163,7 @@ describe("AbstractScraper", () => {
       const scraper = new TestScraper(
         testHtml,
         "https://test.com/recipe",
-        false,
+        false
       );
       // biome-ignore lint/suspicious/noExplicitAny: accessing protected property for testing
       expect((scraper as any).bestImageSelection).toBe(false);
@@ -207,7 +207,7 @@ describe("AbstractScraper", () => {
 
         // biome-ignore lint/suspicious/noExplicitAny: test plugin requires flexible signatures
         static override run<T extends (...args: any[]) => any>(
-          decorated: T,
+          decorated: T
         ): T {
           // biome-ignore lint/suspicious/noExplicitAny: test plugin requires flexible signatures
           const wrapper = function (this: any, ...args: any[]) {
@@ -240,7 +240,7 @@ describe("AbstractScraper", () => {
       const htmlNoCanonical = "<html><body>Test</body></html>";
       const scraper = new TestScraper(
         htmlNoCanonical,
-        "https://test.com/recipe",
+        "https://test.com/recipe"
       );
       expect(scraper.canonicalUrl()).toBe("https://test.com/recipe");
     });

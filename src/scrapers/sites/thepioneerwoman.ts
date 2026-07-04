@@ -23,7 +23,7 @@ export class ThePioneerWomanScraper extends AbstractScraper {
       this.ingredients(),
       this.$,
       ".ingredients-body h3",
-      ".ingredient-lists li",
+      ".ingredient-lists li"
     );
   }
 

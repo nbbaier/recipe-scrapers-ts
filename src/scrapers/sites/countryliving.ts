@@ -17,7 +17,7 @@ export class CountryLivingScraper extends AbstractScraper {
       this.ingredients(),
       this.$,
       ".ingredients-body h3",
-      ".ingredients-body li",
+      ".ingredients-body li"
     );
   }
 }

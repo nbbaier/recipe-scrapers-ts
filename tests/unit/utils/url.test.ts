@@ -90,7 +90,7 @@ describe("urlPathToDict", () => {
 
   it("should handle recipe website URLs", () => {
     const result = urlPathToDict(
-      "https://www.allrecipes.com/recipe/12345/chocolate-cake/",
+      "https://www.allrecipes.com/recipe/12345/chocolate-cake/"
     );
     expect(result?.schema).toBe("https");
     expect(result?.host).toBe("www.allrecipes.com");
@@ -111,7 +111,7 @@ describe("getHostName", () => {
 
   it("should preserve subdomains that are not www", () => {
     expect(getHostName("https://subdomain.example.com")).toBe(
-      "subdomain.example.com",
+      "subdomain.example.com"
     );
     expect(getHostName("https://api.example.com")).toBe("api.example.com");
   });
@@ -123,13 +123,13 @@ describe("getHostName", () => {
 
   it("should handle recipe website URLs", () => {
     expect(getHostName("https://www.allrecipes.com/recipe/12345/")).toBe(
-      "allrecipes.com",
+      "allrecipes.com"
     );
     expect(getHostName("https://www.foodnetwork.com/recipes")).toBe(
-      "foodnetwork.com",
+      "foodnetwork.com"
     );
     expect(getHostName("https://cooking.nytimes.com/recipes/12345")).toBe(
-      "cooking.nytimes.com",
+      "cooking.nytimes.com"
     );
   });
 
@@ -142,14 +142,14 @@ describe("getHostName", () => {
 describe("getUrlSlug", () => {
   it("should extract last path segment", () => {
     expect(getUrlSlug("https://example.com/recipes/chocolate-cake")).toBe(
-      "chocolate-cake",
+      "chocolate-cake"
     );
     expect(getUrlSlug("https://example.com/path/to/resource")).toBe("resource");
   });
 
   it("should handle URLs with trailing slashes", () => {
     expect(getUrlSlug("https://example.com/recipes/chocolate-cake/")).toBe(
-      "chocolate-cake",
+      "chocolate-cake"
     );
     expect(getUrlSlug("https://example.com/recipes/")).toBe("");
   });
@@ -165,10 +165,10 @@ describe("getUrlSlug", () => {
 
   it("should handle recipe URLs", () => {
     expect(
-      getUrlSlug("https://www.allrecipes.com/recipe/12345/chocolate-cake"),
+      getUrlSlug("https://www.allrecipes.com/recipe/12345/chocolate-cake")
     ).toBe("chocolate-cake");
     expect(getUrlSlug("https://example.com/recipes/vanilla-cupcakes")).toBe(
-      "vanilla-cupcakes",
+      "vanilla-cupcakes"
     );
   });
 

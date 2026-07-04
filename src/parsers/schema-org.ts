@@ -22,10 +22,10 @@ const SCHEMA_ORG_HOST = "schema.org";
  * Represents a Schema.org entity (Recipe, Person, WebSite, etc.)
  */
 interface SchemaEntity {
-  "@type"?: string | string[];
-  "@id"?: string;
   "@context"?: string;
   "@graph"?: SchemaEntity[] | SchemaEntity;
+  "@id"?: string;
+  "@type"?: string | string[];
 
   // biome-ignore lint/suspicious/noExplicitAny: Schema.org entities can have arbitrary properties
   [key: string]: any;
@@ -36,9 +36,9 @@ interface SchemaEntity {
  */
 interface HowToStep {
   "@type": "HowToStep";
+  itemListElement?: HowToStep;
   name?: string;
   text?: string;
-  itemListElement?: HowToStep;
 }
 
 /**
@@ -46,9 +46,9 @@ interface HowToStep {
  */
 interface HowToSection {
   "@type": "HowToSection";
-  name?: string;
-  Name?: string;
   itemListElement?: HowToSchemaItem[];
+  Name?: string;
+  name?: string;
 }
 
 /**
@@ -177,7 +177,7 @@ export class SchemaOrg {
 
     const types = Array.isArray(itemType) ? itemType : [itemType];
     return types.some((type) =>
-      type.toLowerCase().includes(schemaType.toLowerCase()),
+      type.toLowerCase().includes(schemaType.toLowerCase())
     );
   }
 
@@ -186,7 +186,7 @@ export class SchemaOrg {
    */
   private findEntity(
     item: SchemaEntity,
-    schemaType: string,
+    schemaType: string
   ): SchemaEntity | undefined {
     // Check if the item itself matches
     if (this.containsSchemaType(item, schemaType)) {
@@ -198,15 +198,17 @@ export class SchemaOrg {
     if (graph) {
       const nodes = Array.isArray(graph) ? graph : [graph];
       for (const node of nodes) {
-        if (typeof node === "object" && node !== null) {
-          if (this.containsSchemaType(node, schemaType)) {
-            return node;
-          }
+        if (
+          typeof node === "object" &&
+          node !== null &&
+          this.containsSchemaType(node, schemaType)
+        ) {
+          return node;
         }
       }
     }
 
-    return undefined;
+    return;
   }
 
   /**
@@ -244,7 +246,7 @@ export class SchemaOrg {
     if (category) {
       return normalizeString(category);
     }
-    return undefined;
+    return;
   }
 
   /**
@@ -275,7 +277,7 @@ export class SchemaOrg {
       return author.trim();
     }
 
-    return undefined;
+    return;
   }
 
   /**
@@ -310,7 +312,7 @@ export class SchemaOrg {
 
     if (!hasTimeData) {
       throw new SchemaOrgException(
-        "Cooking time information not found in SchemaOrg",
+        "Cooking time information not found in SchemaOrg"
       );
     }
 
@@ -334,7 +336,7 @@ export class SchemaOrg {
   cookTime(): number | null {
     if (!("cookTime" in this.data)) {
       throw new SchemaOrgException(
-        "Cooktime information not found in SchemaOrg",
+        "Cooktime information not found in SchemaOrg"
       );
     }
     return this.readDurationField("cookTime");
@@ -346,7 +348,7 @@ export class SchemaOrg {
   prepTime(): number | null {
     if (!("prepTime" in this.data)) {
       throw new SchemaOrgException(
-        "Preptime information not found in SchemaOrg",
+        "Preptime information not found in SchemaOrg"
       );
     }
     return this.readDurationField("prepTime");
@@ -359,7 +361,7 @@ export class SchemaOrg {
     const hasYieldData = "recipeYield" in this.data || "yield" in this.data;
     if (!hasYieldData) {
       throw new SchemaOrgException(
-        "Servings information not found in SchemaOrg",
+        "Servings information not found in SchemaOrg"
       );
     }
 
@@ -446,7 +448,7 @@ export class SchemaOrg {
     const cleanedNutrients: Record<string, string> = {};
 
     for (const [key, value] of Object.entries(nutrition)) {
-      if (!key || !value) {
+      if (!(key && value)) {
         continue;
       }
       if (key.startsWith("@") || key === "type") {
@@ -476,10 +478,12 @@ export class SchemaOrg {
       // Some sites have duplicated name and text properties (1:1)
       // others have name same as text but truncated to X chars.
       // Include name only if it's different from the text
-      if (schemaItem.name && schemaItem.text) {
-        if (!schemaItem.text.startsWith(schemaItem.name.replace(/\.+$/, ""))) {
-          instructionsGist.push(schemaItem.name);
-        }
+      if (
+        schemaItem.name &&
+        schemaItem.text &&
+        !schemaItem.text.startsWith(schemaItem.name.replace(/\.+$/, ""))
+      ) {
+        instructionsGist.push(schemaItem.name);
       }
 
       // Handle nested itemListElement
@@ -570,7 +574,7 @@ export class SchemaOrg {
     }
 
     if (ratings !== undefined && ratings !== null) {
-      return Math.round(parseFloat(String(ratings)) * 100) / 100;
+      return Math.round(Number.parseFloat(String(ratings)) * 100) / 100;
     }
 
     throw new SchemaOrgException("No ratingValue in SchemaOrg.");
@@ -593,8 +597,8 @@ export class SchemaOrg {
 
       const count = ratings.ratingCount || ratings.reviewCount;
       if (count !== undefined && count !== null) {
-        const countNum = parseInt(String(count), 10);
-        return countNum !== 0 ? countNum : null;
+        const countNum = Number.parseInt(String(count), 10);
+        return countNum === 0 ? null : countNum;
       }
     }
 
@@ -669,7 +673,7 @@ export class SchemaOrg {
     let dietaryRestrictions = this.data.suitableForDiet;
     if (dietaryRestrictions === undefined || dietaryRestrictions === null) {
       throw new SchemaOrgException(
-        "No dietary restrictions data in SchemaOrg.",
+        "No dietary restrictions data in SchemaOrg."
       );
     }
 

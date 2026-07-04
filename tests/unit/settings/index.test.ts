@@ -71,10 +71,10 @@ describe("Settings System", () => {
 
       // Verify reset
       expect(settings.BEST_IMAGE_SELECTION).toBe(
-        defaultSettings.BEST_IMAGE_SELECTION,
+        defaultSettings.BEST_IMAGE_SELECTION
       );
       expect(settings.SUPPRESS_EXCEPTIONS).toBe(
-        defaultSettings.SUPPRESS_EXCEPTIONS,
+        defaultSettings.SUPPRESS_EXCEPTIONS
       );
       expect(settings.LOG_LEVEL).toBe(defaultSettings.LOG_LEVEL);
     });
@@ -208,10 +208,10 @@ describe("Settings System", () => {
       updateSettings({});
 
       expect(settings.BEST_IMAGE_SELECTION).toBe(
-        originalSettings.BEST_IMAGE_SELECTION,
+        originalSettings.BEST_IMAGE_SELECTION
       );
       expect(settings.SUPPRESS_EXCEPTIONS).toBe(
-        originalSettings.SUPPRESS_EXCEPTIONS,
+        originalSettings.SUPPRESS_EXCEPTIONS
       );
     });
   });

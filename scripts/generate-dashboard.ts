@@ -18,7 +18,7 @@ import { basename, join } from "node:path";
 const SITES_DIR = join(import.meta.dirname, "../src/scrapers/sites");
 const PYTHON_DIR = join(
   import.meta.dirname,
-  "../../recipe-scrapers/recipe_scrapers",
+  "../../recipe-scrapers/recipe_scrapers"
 );
 const OUTPUT = join(import.meta.dirname, "../dashboard.html");
 
@@ -58,7 +58,7 @@ print(json.dumps(result))
     return { domains, classToDomains };
   } catch {
     console.warn(
-      "Warning: Could not run Python to get SCRAPERS registry, falling back to file listing",
+      "Warning: Could not run Python to get SCRAPERS registry, falling back to file listing"
     );
     return getPythonRegistryFallback();
   }
@@ -72,8 +72,12 @@ function getPythonRegistryFallback(): {
   classToDomains: Map<string, string[]>;
 } {
   const files = readdirSync(PYTHON_DIR).filter((f) => {
-    if (!f.endsWith(".py")) return false;
-    if (f.startsWith("_")) return false;
+    if (!f.endsWith(".py")) {
+      return false;
+    }
+    if (f.startsWith("_")) {
+      return false;
+    }
     return statSync(join(PYTHON_DIR, f)).isFile();
   });
 
@@ -95,7 +99,7 @@ function getTsRegistry(): Map<string, string> {
   const registry = new Map<string, string>();
 
   const files = readdirSync(SITES_DIR).filter(
-    (f) => f.endsWith(".ts") && f !== "index.ts",
+    (f) => f.endsWith(".ts") && f !== "index.ts"
   );
 
   for (const file of files) {
@@ -120,22 +124,22 @@ function getTsRegistry(): Map<string, string> {
 
 interface DashboardRow {
   domain: string;
-  pythonClass: string;
-  ported: boolean;
   isAlias: boolean; // true if this domain is a secondary alias
+  ported: boolean;
   primaryDomain: string; // the "main" domain for the class
+  pythonClass: string;
   tsDomains: string[]; // which aliases are registered in TS
 }
 
 function buildRows(
   pythonDomains: Map<string, string>,
   classToDomains: Map<string, string[]>,
-  tsRegistry: Map<string, string>,
+  tsRegistry: Map<string, string>
 ): DashboardRow[] {
   const rows: DashboardRow[] = [];
 
   for (const [domain, className] of [...pythonDomains.entries()].sort((a, b) =>
-    a[0].localeCompare(b[0]),
+    a[0].localeCompare(b[0])
   )) {
     const allDomainsForClass = classToDomains.get(className) || [domain];
     const primaryDomain = allDomainsForClass[0];
@@ -171,9 +175,9 @@ function generateHtml(rows: DashboardRow[]): string {
   // Count unique classes
   const allClasses = new Set(rows.map((r) => r.pythonClass));
   const portedClasses = new Set(
-    rows.filter((r) => r.ported).map((r) => r.pythonClass),
+    rows.filter((r) => r.ported).map((r) => r.pythonClass)
   );
-  ``;
+  ("");
   // Find classes with aliases where only some domains are registered in TS
 
   const scraperRow = (row: DashboardRow) => {
@@ -322,8 +326,8 @@ writeFileSync(OUTPUT, html);
 const portedCount = rows.filter((r) => r.ported).length;
 console.log(`Dashboard written to ${OUTPUT}`);
 console.log(
-  `  Domains: ${portedCount} / ${rows.length} (${((portedCount / rows.length) * 100).toFixed(1)}%)`,
+  `  Domains: ${portedCount} / ${rows.length} (${((portedCount / rows.length) * 100).toFixed(1)}%)`
 );
 console.log(
-  `  Classes: ${new Set(rows.filter((r) => r.ported).map((r) => r.pythonClass)).size} / ${new Set(rows.map((r) => r.pythonClass)).size}`,
+  `  Classes: ${new Set(rows.filter((r) => r.ported).map((r) => r.pythonClass)).size} / ${new Set(rows.map((r) => r.pythonClass)).size}`
 );

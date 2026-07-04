@@ -3,8 +3,8 @@
  * https://tasteofhome.com/
  */
 
-import { AbstractScraper } from "../abstract";
 import { normalizeString } from "../../utils";
+import { AbstractScraper } from "../abstract";
 
 export class TasteOfHomeScraper extends AbstractScraper {
   host(): string {

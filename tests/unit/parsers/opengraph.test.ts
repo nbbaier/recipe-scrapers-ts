@@ -54,7 +54,7 @@ describe("OpenGraph Parser", () => {
 
       expect(() => og.siteName()).toThrow(OpenGraphException);
       expect(() => og.siteName()).toThrow(
-        "Site name not found in OpenGraph metadata.",
+        "Site name not found in OpenGraph metadata."
       );
     });
 
@@ -119,7 +119,7 @@ describe("OpenGraph Parser", () => {
 
       expect(() => og.image()).toThrow(OpenGraphException);
       expect(() => og.image()).toThrow(
-        "Image not found in OpenGraph metadata.",
+        "Image not found in OpenGraph metadata."
       );
     });
 

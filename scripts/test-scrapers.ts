@@ -62,7 +62,7 @@ for (const domain of domains) {
     passed++;
   } catch (error) {
     console.log(
-      `✗ ${domain}: ${error instanceof Error ? error.message : String(error)}`,
+      `✗ ${domain}: ${error instanceof Error ? error.message : String(error)}`
     );
     errors.push({
       domain,
@@ -77,7 +77,7 @@ console.log(`Results: ${passed} passed, ${failed} failed`);
 console.log(`Success rate: ${((passed / domains.length) * 100).toFixed(1)}%`);
 
 if (errors.length > 0) {
-  console.log(`\nFailed domains:`);
+  console.log("\nFailed domains:");
   for (const { domain, error } of errors) {
     console.log(`  - ${domain}: ${error}`);
   }

@@ -17,7 +17,7 @@ export class FortyApronsScraper extends AbstractScraper {
       this.ingredients(),
       this.$,
       "h4.wprm-recipe-group-name",
-      "li.wprm-recipe-ingredient",
+      "li.wprm-recipe-ingredient"
     );
   }
 }

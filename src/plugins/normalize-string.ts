@@ -22,7 +22,7 @@ export class NormalizeStringPlugin extends PluginInterface {
         const className = this.constructor.name;
         const methodName = decorated.name;
         console.debug(
-          `Decorating: ${className}.${methodName}() with NormalizeStringPlugin`,
+          `Decorating: ${className}.${methodName}() with NormalizeStringPlugin`
         );
       }
 

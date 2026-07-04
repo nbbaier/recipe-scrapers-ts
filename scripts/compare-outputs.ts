@@ -39,14 +39,14 @@ class OutputComparer {
       try {
         execSync(`${envPython} --version`, { stdio: "pipe" });
         console.log(
-          chalk.gray(`Using Python from PYTHON_COMMAND: ${envPython}`),
+          chalk.gray(`Using Python from PYTHON_COMMAND: ${envPython}`)
         );
         return envPython;
       } catch {
         console.warn(
           chalk.yellow(
-            `Warning: PYTHON_COMMAND="${envPython}" failed, trying defaults...`,
-          ),
+            `Warning: PYTHON_COMMAND="${envPython}" failed, trying defaults...`
+          )
         );
       }
     }
@@ -69,7 +69,7 @@ class OutputComparer {
 
     throw new Error(
       "Python not found. Please install Python 3 or set PYTHON_COMMAND environment variable.\n" +
-        "Tried: uv run python, python3, python",
+        "Tried: uv run python, python3, python"
     );
   }
 
@@ -81,7 +81,7 @@ class OutputComparer {
     } catch {
       throw new Error(
         "Python recipe_scrapers not installed.\n" +
-          `Run: ${this.pythonCommand.includes("uv") ? "uv pip install" : "pip install"} recipe-scrapers`,
+          `Run: ${this.pythonCommand.includes("uv") ? "uv pip install" : "pip install"} recipe-scrapers`
       );
     }
   }
@@ -96,7 +96,7 @@ class OutputComparer {
 
       if (testCases.length === 0) {
         console.log(
-          chalk.yellow(`\n⚠️  No test cases found for domain: ${this.domain}\n`),
+          chalk.yellow(`\n⚠️  No test cases found for domain: ${this.domain}\n`)
         );
         return;
       }
@@ -108,7 +108,7 @@ class OutputComparer {
 
       if (casesToCompare.length === 0) {
         console.log(
-          chalk.yellow(`\n⚠️  Test file not found: ${this.testFile}\n`),
+          chalk.yellow(`\n⚠️  Test file not found: ${this.testFile}\n`)
         );
         return;
       }
@@ -122,7 +122,7 @@ class OutputComparer {
       if (error instanceof Error) {
         console.error(chalk.red(`\n❌ Error: ${error.message}\n`));
       } else {
-        console.error(chalk.red(`\n❌ Unknown error\n`));
+        console.error(chalk.red("\n❌ Unknown error\n"));
       }
       process.exit(1);
     }
@@ -153,7 +153,7 @@ class OutputComparer {
           error.message.includes("not yet implemented")
         ) {
           console.log(
-            chalk.yellow("⚠️  TypeScript scrapers not yet implemented\n"),
+            chalk.yellow("⚠️  TypeScript scrapers not yet implemented\n")
           );
           this.printPythonOutput(pythonOutput);
         } else {
@@ -225,7 +225,7 @@ print(json.dumps(scraper.to_json(), indent=2, sort_keys=True, default=str))
 
   private compareAndPrint(
     pythonOutput: ScraperOutput,
-    typescriptOutput: ScraperOutput,
+    typescriptOutput: ScraperOutput
   ): void {
     const pythonJson = JSON.stringify(pythonOutput, null, 2);
     const tsJson = JSON.stringify(typescriptOutput, null, 2);
@@ -272,17 +272,25 @@ print(json.dumps(scraper.to_json(), indent=2, sort_keys=True, default=str))
    */
   private deepEqual(a: unknown, b: unknown): boolean {
     // Strict equality check (handles primitives, null, undefined, same reference)
-    if (a === b) return true;
+    if (a === b) {
+      return true;
+    }
 
     // Type mismatch
-    if (typeof a !== typeof b) return false;
+    if (typeof a !== typeof b) {
+      return false;
+    }
 
     // null check (null === null handled above, but null !== undefined)
-    if (a === null || b === null) return false;
+    if (a === null || b === null) {
+      return false;
+    }
 
     // Array comparison (order matters)
     if (Array.isArray(a) && Array.isArray(b)) {
-      if (a.length !== b.length) return false;
+      if (a.length !== b.length) {
+        return false;
+      }
       return a.every((item, index) => this.deepEqual(item, b[index]));
     }
 
@@ -292,17 +300,21 @@ print(json.dumps(scraper.to_json(), indent=2, sort_keys=True, default=str))
       const bKeys = Object.keys(b as Record<string, unknown>).sort();
 
       // Different number of keys
-      if (aKeys.length !== bKeys.length) return false;
+      if (aKeys.length !== bKeys.length) {
+        return false;
+      }
 
       // Different key names
-      if (!aKeys.every((key, i) => key === bKeys[i])) return false;
+      if (!aKeys.every((key, i) => key === bKeys[i])) {
+        return false;
+      }
 
       // Compare values for each key
       return aKeys.every((key) =>
         this.deepEqual(
           (a as Record<string, unknown>)[key],
-          (b as Record<string, unknown>)[key],
-        ),
+          (b as Record<string, unknown>)[key]
+        )
       );
     }
 
@@ -316,68 +328,78 @@ print(json.dumps(scraper.to_json(), indent=2, sort_keys=True, default=str))
   private isCosmeticDifference(
     key: string,
     pyValue: unknown,
-    tsValue: unknown,
+    tsValue: unknown
   ): string | null {
     // Handle ingredient_groups.purpose: null vs undefined
-    if (key === "ingredient_groups") {
-      if (Array.isArray(pyValue) && Array.isArray(tsValue)) {
-        // Same length check
-        if (pyValue.length !== tsValue.length) return null;
+    if (
+      key === "ingredient_groups" &&
+      Array.isArray(pyValue) &&
+      Array.isArray(tsValue)
+    ) {
+      // Same length check
+      if (pyValue.length !== tsValue.length) {
+        return null;
+      }
 
-        // Check if only difference is purpose: null vs missing purpose
-        // biome-ignore lint/suspicious/noExplicitAny: ingredient group structure is dynamic
-        const pyWithoutPurpose = pyValue.map((group: any) => {
-          if (typeof group !== "object" || group === null) return group;
-          const copy = { ...group };
-          delete copy.purpose;
-          return copy;
-        });
-        // biome-ignore lint/suspicious/noExplicitAny: ingredient group structure is dynamic
-        const tsWithoutPurpose = tsValue.map((group: any) => {
-          if (typeof group !== "object" || group === null) return group;
-          const copy = { ...group };
-          delete copy.purpose;
-          return copy;
-        });
+      // Check if only difference is purpose: null vs missing purpose
+      // biome-ignore lint/suspicious/noExplicitAny: ingredient group structure is dynamic
+      const pyWithoutPurpose = pyValue.map((group: any) => {
+        if (typeof group !== "object" || group === null) {
+          return group;
+        }
+        const copy = { ...group };
+        delete copy.purpose;
+        return copy;
+      });
+      // biome-ignore lint/suspicious/noExplicitAny: ingredient group structure is dynamic
+      const tsWithoutPurpose = tsValue.map((group: any) => {
+        if (typeof group !== "object" || group === null) {
+          return group;
+        }
+        const copy = { ...group };
+        delete copy.purpose;
+        return copy;
+      });
 
-        if (this.deepEqual(pyWithoutPurpose, tsWithoutPurpose)) {
-          // Check if Python has purpose:null and TypeScript has purpose:undefined
-          const pyHasPurposeNull = pyValue.some(
-            // biome-ignore lint/suspicious/noExplicitAny: ingredient group structure is dynamic
-            (g: any) =>
-              typeof g === "object" &&
-              g !== null &&
-              Object.hasOwn(g, "purpose") &&
-              g.purpose === null,
-          );
-          const tsHasPurposeUndefined = tsValue.every(
-            // biome-ignore lint/suspicious/noExplicitAny: ingredient group structure is dynamic
-            (g: any) =>
-              typeof g === "object" &&
-              g !== null &&
-              Object.hasOwn(g, "purpose") &&
-              g.purpose === undefined,
-          );
+      if (this.deepEqual(pyWithoutPurpose, tsWithoutPurpose)) {
+        // Check if Python has purpose:null and TypeScript has purpose:undefined
+        const pyHasPurposeNull = pyValue.some(
+          // biome-ignore lint/suspicious/noExplicitAny: ingredient group structure is dynamic
+          (g: any) =>
+            typeof g === "object" &&
+            g !== null &&
+            Object.hasOwn(g, "purpose") &&
+            g.purpose === null
+        );
+        const tsHasPurposeUndefined = tsValue.every(
+          // biome-ignore lint/suspicious/noExplicitAny: ingredient group structure is dynamic
+          (g: any) =>
+            typeof g === "object" &&
+            g !== null &&
+            Object.hasOwn(g, "purpose") &&
+            g.purpose === undefined
+        );
 
-          if (pyHasPurposeNull && tsHasPurposeUndefined) {
-            return 'Python serializes "purpose": null, TypeScript omits "purpose": undefined';
-          }
+        if (pyHasPurposeNull && tsHasPurposeUndefined) {
+          return 'Python serializes "purpose": null, TypeScript omits "purpose": undefined';
         }
       }
     }
 
     // Handle nutrients: same values, different key order
-    if (key === "nutrients") {
-      if (
-        typeof pyValue === "object" &&
-        pyValue !== null &&
-        typeof tsValue === "object" &&
-        tsValue !== null
-      ) {
-        if (this.deepEqual(pyValue, tsValue)) {
-          return "Same values, different key ordering (cosmetic)";
-        }
-      }
+    if (
+      key === "nutrients" &&
+      typeof pyValue === "object" &&
+      pyValue !== null &&
+      typeof tsValue === "object" &&
+      tsValue !== null &&
+      typeof pyValue === "object" &&
+      pyValue !== null &&
+      typeof tsValue === "object" &&
+      tsValue !== null &&
+      this.deepEqual(pyValue, tsValue)
+    ) {
+      return "Same values, different key ordering (cosmetic)";
     }
 
     return null;
@@ -385,7 +407,7 @@ print(json.dumps(scraper.to_json(), indent=2, sort_keys=True, default=str))
 
   private compareFields(
     python: ScraperOutput,
-    typescript: ScraperOutput,
+    typescript: ScraperOutput
   ): void {
     console.log(chalk.bold("\nField-by-Field Comparison:"));
     console.log(chalk.blue("─".repeat(60)));
@@ -428,14 +450,14 @@ print(json.dumps(scraper.to_json(), indent=2, sort_keys=True, default=str))
     } else if (realDiffs === 0 && cosmeticDiffs > 0) {
       console.log(
         chalk.yellow.bold(
-          `⚠️  ${cosmeticDiffs} cosmetic difference(s) - functionally identical\n`,
-        ),
+          `⚠️  ${cosmeticDiffs} cosmetic difference(s) - functionally identical\n`
+        )
       );
     } else {
       console.log(chalk.red.bold(`❌ ${realDiffs} real difference(s) found\n`));
       if (cosmeticDiffs > 0) {
         console.log(
-          chalk.yellow(`   (plus ${cosmeticDiffs} cosmetic difference(s))\n`),
+          chalk.yellow(`   (plus ${cosmeticDiffs} cosmetic difference(s))\n`)
         );
       }
     }
@@ -456,17 +478,17 @@ if (require.main === module) {
   if (args.length === 0) {
     console.log(
       chalk.yellow(
-        "Usage: ts-node scripts/compare-outputs.ts <domain> [testfile]",
-      ),
+        "Usage: ts-node scripts/compare-outputs.ts <domain> [testfile]"
+      )
     );
     console.log(chalk.yellow("\nExamples:"));
     console.log(
-      chalk.cyan("  ts-node scripts/compare-outputs.ts allrecipes.com"),
+      chalk.cyan("  ts-node scripts/compare-outputs.ts allrecipes.com")
     );
     console.log(
       chalk.cyan(
-        "  ts-node scripts/compare-outputs.ts allrecipes.com recipe.testhtml",
-      ),
+        "  ts-node scripts/compare-outputs.ts allrecipes.com recipe.testhtml"
+      )
     );
     console.log(chalk.cyan("  npm run compare -- allrecipes.com\n"));
     process.exit(1);

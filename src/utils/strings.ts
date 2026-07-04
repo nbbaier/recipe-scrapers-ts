@@ -69,14 +69,14 @@ function unescapeHtml(text: string): string {
   }
 
   // Replace numeric entities (decimal)
-  result = result.replace(/&#(\d+);/g, (_match, dec) => {
-    return String.fromCharCode(parseInt(dec, 10));
-  });
+  result = result.replace(/&#(\d+);/g, (_match, dec) =>
+    String.fromCharCode(Number.parseInt(dec, 10))
+  );
 
   // Replace numeric entities (hexadecimal)
-  result = result.replace(/&#x([0-9a-fA-F]+);/g, (_match, hex) => {
-    return String.fromCharCode(parseInt(hex, 16));
-  });
+  result = result.replace(/&#x([0-9a-fA-F]+);/g, (_match, hex) =>
+    String.fromCharCode(Number.parseInt(hex, 16))
+  );
 
   return result;
 }
@@ -96,7 +96,7 @@ function unescapeHtml(text: string): string {
  * csvToTags("Italian, Pasta, italian, Dinner", true)
  * // Returns: ["italian", "pasta", "dinner"]
  */
-export function csvToTags(csv: string, lowercase: boolean = false): string[] {
+export function csvToTags(csv: string, lowercase = false): string[] {
   const rawTags = csv.split(",");
   const seen = new Set<string>();
   const tags: string[] = [];

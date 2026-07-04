@@ -30,7 +30,7 @@ export default defineConfig({
     globals: true,
 
     // Test timeout
-    testTimeout: 10000,
+    testTimeout: 10_000,
 
     // Setup files (if needed)
     // setupFiles: ['./tests/setup.ts'],

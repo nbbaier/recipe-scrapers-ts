@@ -68,7 +68,7 @@ describe("Factory Pattern", () => {
 
       const scraper = new SchemaScraper(
         html,
-        "https://unknown-site.com/recipe",
+        "https://unknown-site.com/recipe"
       );
       expect(scraper.title()).toBe("Generic Recipe");
       expect(scraper.ingredients()).toEqual(["flour", "eggs"]);
@@ -79,7 +79,7 @@ describe("Factory Pattern", () => {
       const html = "<html></html>";
       const scraper = new SchemaScraper(
         html,
-        "https://example.com/path/to/recipe",
+        "https://example.com/path/to/recipe"
       );
       expect(scraper.host()).toBe("example.com");
     });
@@ -102,11 +102,11 @@ describe("Factory Pattern", () => {
 
       const scraperWithSchema = new SchemaScraper(
         htmlWithSchema,
-        "https://example.com/recipe",
+        "https://example.com/recipe"
       );
       const scraperWithoutSchema = new SchemaScraper(
         htmlWithoutSchema,
-        "https://example.com/recipe",
+        "https://example.com/recipe"
       );
 
       // hasSchema checks if schema.data exists (even if empty object)
@@ -172,7 +172,7 @@ describe("Factory Pattern", () => {
       expect(urls).toContain("zebra.com");
       // Check sorted order
       const testUrls = urls.filter(
-        (u) => u === "apple.com" || u === "banana.com" || u === "zebra.com",
+        (u) => u === "apple.com" || u === "banana.com" || u === "zebra.com"
       );
       expect(testUrls).toEqual(["apple.com", "banana.com", "zebra.com"]);
     });
@@ -356,7 +356,7 @@ describe("Factory Pattern", () => {
       const html = "<html></html>";
       const scraper = scrapeHtml(
         html,
-        "https://example.com/path/to/recipe?id=123",
+        "https://example.com/path/to/recipe?id=123"
       );
 
       expect(scraper).toBeInstanceOf(TestScraper);

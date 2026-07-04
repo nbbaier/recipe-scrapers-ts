@@ -22,7 +22,7 @@ export class BBCGoodFoodScraper extends AbstractScraper {
       this.ingredients(),
       this.$,
       ".recipe__ingredients h3",
-      ".recipe__ingredients li",
+      ".recipe__ingredients li"
     );
   }
 }

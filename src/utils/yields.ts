@@ -54,7 +54,7 @@ export const RECIPE_YIELD_TYPES: Array<[string, string]> = [
 function formatCountLabel(
   count: number,
   singular: string,
-  plural: string,
+  plural: string
 ): string {
   // Format as integer if the number is whole, otherwise keep decimals
   const formatted = Number.isInteger(count)
@@ -81,7 +81,7 @@ function formatCountLabel(
  * getYields("8 muffins") // Returns: "8 muffins"
  */
 export function getYields(
-  element: string | { getText?: () => string } | null,
+  element: string | { getText?: () => string } | null
 ): string {
   if (element === null || element === undefined) {
     throw new Error("Element cannot be null or undefined");
@@ -123,7 +123,7 @@ export function getYields(
   const matchedRaw = numberMatch?.groups?.items || "0";
   let matched: number;
   try {
-    matched = parseFloat(matchedRaw);
+    matched = Number.parseFloat(matchedRaw);
   } catch {
     matched = 0;
   }

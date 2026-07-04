@@ -22,7 +22,7 @@ export class TastyScraper extends AbstractScraper {
       this.ingredients(),
       this.$,
       ".ingredient-section-name",
-      ".ingredient",
+      ".ingredient"
     );
   }
 }

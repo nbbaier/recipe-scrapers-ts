@@ -3,8 +3,8 @@
  * https://24kitchen.nl/
  */
 
-import { groupIngredients } from "../../utils/grouping";
 import type { IngredientGroup } from "../../types/recipe";
+import { groupIngredients } from "../../utils/grouping";
 import { AbstractScraper } from "../abstract";
 
 export class TwentyFourKitchenScraper extends AbstractScraper {
@@ -17,7 +17,7 @@ export class TwentyFourKitchenScraper extends AbstractScraper {
       this.ingredients(),
       this.$,
       ".ingredient-list-title",
-      ".recipe-ingredient",
+      ".recipe-ingredient"
     );
     if (
       groups.length === 1 &&

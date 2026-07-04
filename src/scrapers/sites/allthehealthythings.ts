@@ -17,7 +17,7 @@ export class AllTheHealthyThingsScraper extends AbstractScraper {
       this.ingredients(),
       this.$,
       ".tasty-recipes-ingredients-body strong",
-      ".tasty-recipes-ingredients-body li",
+      ".tasty-recipes-ingredients-body li"
     );
   }
 }

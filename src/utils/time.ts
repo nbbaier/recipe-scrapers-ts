@@ -29,7 +29,7 @@ const TIME_REGEX =
  * getMinutes("12-15 minutes") // Returns: 15 (uses max value)
  */
 export function getMinutes(
-  element: string | number | { text?: string } | null,
+  element: string | number | { text?: string } | null
 ): number | null {
   if (element === null || element === undefined) {
     throw new Error("Element cannot be null or undefined");
@@ -44,7 +44,7 @@ export function getMinutes(
   } else if (typeof element === "number") {
     // If it's already a number, try to parse it as integer minutes
     try {
-      return parseInt(element.toString(), 10);
+      return Number.parseInt(element.toString(), 10);
     } catch {
       throw new Error("Unexpected format for time element");
     }
@@ -53,7 +53,7 @@ export function getMinutes(
   }
 
   // Try parsing as integer
-  const asInt = parseInt(timeText, 10);
+  const asInt = Number.parseInt(timeText, 10);
   if (!Number.isNaN(asInt) && asInt.toString() === timeText.trim()) {
     return asInt === 0 ? null : asInt;
   }
@@ -108,19 +108,19 @@ export function getMinutes(
   const minutesMatched = timeUnits.minutes;
   const secondsMatched = timeUnits.seconds;
 
-  const days = daysMatched ? parseFloat(daysMatched) : 0;
+  const days = daysMatched ? Number.parseFloat(daysMatched) : 0;
   let hours = 0;
   if (hoursMatched?.trim()) {
     try {
       hours = extractFractional(hoursMatched);
     } catch {
       // If extraction fails, try parsing as float
-      const parsed = parseFloat(hoursMatched);
+      const parsed = Number.parseFloat(hoursMatched);
       hours = Number.isNaN(parsed) ? 0 : parsed;
     }
   }
-  const minutes = minutesMatched ? parseFloat(minutesMatched) : 0;
-  const seconds = secondsMatched ? parseFloat(secondsMatched) : 0;
+  const minutes = minutesMatched ? Number.parseFloat(minutesMatched) : 0;
+  const seconds = secondsMatched ? Number.parseFloat(secondsMatched) : 0;
 
   const totalMinutes = minutes + hours * 60 + days * 24 * 60 + seconds / 60;
 

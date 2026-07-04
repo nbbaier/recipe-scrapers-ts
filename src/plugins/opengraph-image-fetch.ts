@@ -21,7 +21,7 @@ export class OpenGraphImageFetchPlugin extends PluginInterface {
         const className = this.constructor.name;
         const methodName = decorated.name;
         console.debug(
-          `Decorating: ${className}.${methodName}() with OpenGraphImageFetchPlugin`,
+          `Decorating: ${className}.${methodName}() with OpenGraphImageFetchPlugin`
         );
       }
 
@@ -41,13 +41,13 @@ export class OpenGraphImageFetchPlugin extends PluginInterface {
       if (settings.LOG_LEVEL <= 1) {
         // info level
         console.info(
-          `${this.constructor.name}.${decorated.name}() did not find recipe image. OpenGraphImageFetchPlugin will attempt fallback.`,
+          `${this.constructor.name}.${decorated.name}() did not find recipe image. OpenGraphImageFetchPlugin will attempt fallback.`
         );
       }
 
       // Use Cheerio to find the og:image meta tag
       const ogImage = this.$('meta[property="og:image"][content]').attr(
-        "content",
+        "content"
       );
 
       return ogImage || null;

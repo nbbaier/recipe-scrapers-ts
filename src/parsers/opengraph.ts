@@ -40,14 +40,14 @@ export class OpenGraph {
 
     if (meta.length === 0) {
       throw new OpenGraphException(
-        "Site name not found in OpenGraph metadata.",
+        "Site name not found in OpenGraph metadata."
       );
     }
 
     const content = meta.attr("content");
     if (!content) {
       throw new OpenGraphException(
-        "Site name not found in OpenGraph metadata.",
+        "Site name not found in OpenGraph metadata."
       );
     }
 

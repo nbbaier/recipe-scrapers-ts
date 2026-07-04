@@ -36,7 +36,7 @@ export function changeKeys<T>(obj: T, convert: (key: string) => string): T {
 
   if (obj instanceof Set) {
     return new Set(
-      Array.from(obj).map((item) => changeKeys(item, convert)),
+      Array.from(obj).map((item) => changeKeys(item, convert))
     ) as T;
   }
 

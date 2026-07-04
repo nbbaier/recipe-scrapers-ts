@@ -45,7 +45,7 @@ export function extractFractional(input: string): number {
   for (const [unicodeFraction, fractionValue] of Object.entries(FRACTIONS)) {
     if (trimmed.includes(unicodeFraction)) {
       const wholeNumberPart = trimmed.split(unicodeFraction)[0];
-      const wholeNumber = parseFloat(wholeNumberPart || "0");
+      const wholeNumber = Number.parseFloat(wholeNumberPart || "0");
       return wholeNumber + fractionValue;
     }
   }
@@ -56,24 +56,26 @@ export function extractFractional(input: string): number {
   }
 
   // Try parsing as a simple number
-  const asNumber = parseFloat(trimmed);
-  if (!Number.isNaN(asNumber) && !trimmed.includes("/")) {
+  const asNumber = Number.parseFloat(trimmed);
+  if (!(Number.isNaN(asNumber) || trimmed.includes("/"))) {
     return asNumber;
   }
 
   // Handle mixed numbers with slash fractions (e.g., '1 1/2')
   if (trimmed.includes(" ") && trimmed.includes("/")) {
     const parts = trimmed.split(/\s+/); // Split on any whitespace
-    const wholePart = parseFloat(parts[0]);
+    const wholePart = Number.parseFloat(parts[0]);
     const fractionalPart = parts[1];
     const [numerator, denominator] = fractionalPart.split("/");
-    return wholePart + parseFloat(numerator) / parseFloat(denominator);
+    return (
+      wholePart + Number.parseFloat(numerator) / Number.parseFloat(denominator)
+    );
   }
 
   // Handle simple slash fractions (e.g., '3/4')
   if (trimmed.includes("/")) {
     const [numerator, denominator] = trimmed.split("/");
-    return parseFloat(numerator) / parseFloat(denominator);
+    return Number.parseFloat(numerator) / Number.parseFloat(denominator);
   }
 
   throw new Error(`Unrecognized fraction format: '${trimmed}'`);

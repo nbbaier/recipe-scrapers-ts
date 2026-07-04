@@ -10,5 +10,5 @@ import type { AbstractScraper } from "../scrapers/abstract";
 export type ScraperConstructor = new (
   html: string,
   url: string,
-  bestImage?: boolean,
+  bestImage?: boolean
 ) => AbstractScraper;

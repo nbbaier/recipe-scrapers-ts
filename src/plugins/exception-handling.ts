@@ -33,7 +33,7 @@ export class ExceptionHandlingPlugin extends PluginInterface {
           const className = this.constructor.name;
           const methodName = decorated.name;
           console.debug(
-            `Decorating: ${className}.${methodName}() with ExceptionHandlingPlugin`,
+            `Decorating: ${className}.${methodName}() with ExceptionHandlingPlugin`
           );
         }
 
@@ -45,7 +45,7 @@ export class ExceptionHandlingPlugin extends PluginInterface {
             const errorMessage =
               error instanceof Error ? error.message : String(error);
             console.info(
-              `ExceptionHandlingPlugin silenced exception: ${errorMessage} in ${this.constructor.name}.${decorated.name}()`,
+              `ExceptionHandlingPlugin silenced exception: ${errorMessage} in ${this.constructor.name}.${decorated.name}()`
             );
           }
 

@@ -9,15 +9,15 @@ import { settings } from "../settings";
 import { PluginInterface } from "./interface";
 
 interface ImageCandidate {
+  height: number | null;
+  order?: number;
+  sources?: Set<string>;
   url: string;
   width: number | null;
-  height: number | null;
-  sources?: Set<string>;
-  order?: number;
 }
 
 // Maximum reasonable dimension for an image (10000x10000 should cover most real images)
-const MAX_DIMENSION = 10000;
+const MAX_DIMENSION = 10_000;
 
 export class BestImagePlugin extends PluginInterface {
   static override runOnHosts = ["*"];
@@ -37,7 +37,7 @@ export class BestImagePlugin extends PluginInterface {
         const className = this.constructor.name;
         const methodName = decorated.name;
         console.debug(
-          `Decorating: ${className}.${methodName}() with BestImagePlugin`,
+          `Decorating: ${className}.${methodName}() with BestImagePlugin`
         );
       }
 
@@ -64,7 +64,7 @@ export class BestImagePlugin extends PluginInterface {
     // biome-ignore lint/suspicious/noExplicitAny: scraper type is dynamic
     scraper: any,
     // biome-ignore lint/suspicious/noExplicitAny: image type is dynamic
-    image: any,
+    image: any
   ): ImageCandidate[] {
     const candidates: Map<string, ImageCandidate> = new Map();
 
@@ -118,10 +118,10 @@ export class BestImagePlugin extends PluginInterface {
       }
 
       const width = BestImagePlugin._parseDimension(
-        entry.width || entry.pixelWidth || entry.contentWidth,
+        entry.width || entry.pixelWidth || entry.contentWidth
       );
       const height = BestImagePlugin._parseDimension(
-        entry.height || entry.pixelHeight || entry.contentHeight,
+        entry.height || entry.pixelHeight || entry.contentHeight
       );
 
       yield {
@@ -144,7 +144,7 @@ export class BestImagePlugin extends PluginInterface {
   private static _collectOpenGraphCandidates(
     // biome-ignore lint/suspicious/noExplicitAny: scraper type includes dynamic Cheerio instance
     scraper: any,
-    candidates: Map<string, ImageCandidate>,
+    candidates: Map<string, ImageCandidate>
   ): void {
     const $ = scraper.$;
     if (!$) {
@@ -205,7 +205,7 @@ export class BestImagePlugin extends PluginInterface {
             width: imageData.width ?? null,
             height: imageData.height ?? null,
           },
-          "opengraph",
+          "opengraph"
         );
       }
     }
@@ -214,7 +214,7 @@ export class BestImagePlugin extends PluginInterface {
   private static _mergeCandidate(
     candidates: Map<string, ImageCandidate>,
     candidate: ImageCandidate | null,
-    source: string,
+    source: string
   ): void {
     if (!candidate) {
       return;
@@ -252,10 +252,14 @@ export class BestImagePlugin extends PluginInterface {
 
   private static _maxDimension(
     current: number | null,
-    newVal: number | null,
+    newVal: number | null
   ): number | null {
-    if (current === null) return newVal;
-    if (newVal === null) return current;
+    if (current === null) {
+      return newVal;
+    }
+    if (newVal === null) {
+      return current;
+    }
     return Math.max(current, newVal);
   }
 
@@ -274,7 +278,7 @@ export class BestImagePlugin extends PluginInterface {
     if (typeof value === "string") {
       const match = value.match(/\d+/);
       if (match) {
-        const parsed = parseInt(match[0], 10);
+        const parsed = Number.parseInt(match[0], 10);
         if (!Number.isNaN(parsed)) {
           // Validate dimension is reasonable
           return parsed > 0 && parsed <= MAX_DIMENSION ? parsed : null;
@@ -298,7 +302,7 @@ export class BestImagePlugin extends PluginInterface {
   }
 
   private static _selectBestCandidate(
-    candidates: ImageCandidate[],
+    candidates: ImageCandidate[]
   ): string | null {
     let bestCandidate: ImageCandidate | null = null;
     let bestScore: [number, number, number] = [-1, 0, 0];
@@ -321,7 +325,7 @@ export class BestImagePlugin extends PluginInterface {
   }
 
   private static _scoreCandidate(
-    candidate: ImageCandidate,
+    candidate: ImageCandidate
   ): [number, number, number] {
     const [width, height] = BestImagePlugin._ensureDimensions(candidate);
 
@@ -343,7 +347,7 @@ export class BestImagePlugin extends PluginInterface {
   }
 
   private static _ensureDimensions(
-    candidate: ImageCandidate,
+    candidate: ImageCandidate
   ): [number | null, number | null] {
     let { width, height } = candidate;
 
@@ -363,7 +367,7 @@ export class BestImagePlugin extends PluginInterface {
   }
 
   private static _extractDimensionsFromUrl(
-    url: string,
+    url: string
   ): [number, number] | null {
     if (!url) {
       return null;
@@ -371,9 +375,9 @@ export class BestImagePlugin extends PluginInterface {
 
     const match = url.match(BestImagePlugin.DIMENSION_PATTERN);
     if (match?.groups) {
-      const width = parseInt(match.groups.width, 10);
-      const height = parseInt(match.groups.height, 10);
-      if (!Number.isNaN(width) && !Number.isNaN(height)) {
+      const width = Number.parseInt(match.groups.width, 10);
+      const height = Number.parseInt(match.groups.height, 10);
+      if (!(Number.isNaN(width) || Number.isNaN(height))) {
         return [width, height];
       }
     }
@@ -382,9 +386,9 @@ export class BestImagePlugin extends PluginInterface {
     const heightMatch = url.match(BestImagePlugin.QUERY_HEIGHT_PATTERN);
 
     if (widthMatch && heightMatch) {
-      const width = parseInt(widthMatch[1], 10);
-      const height = parseInt(heightMatch[1], 10);
-      if (!Number.isNaN(width) && !Number.isNaN(height)) {
+      const width = Number.parseInt(widthMatch[1], 10);
+      const height = Number.parseInt(heightMatch[1], 10);
+      if (!(Number.isNaN(width) || Number.isNaN(height))) {
         return [width, height];
       }
     }

@@ -53,7 +53,7 @@ export abstract class PluginInterface {
 function shouldRunPlugin(
   pluginClass: typeof PluginInterface,
   host: string,
-  method: string,
+  method: string
 ): boolean {
   return (
     shouldRunHostCheck(pluginClass, host) &&
@@ -66,7 +66,7 @@ function shouldRunPlugin(
  */
 function shouldRunHostCheck(
   pluginClass: typeof PluginInterface,
-  host: string,
+  host: string
 ): boolean {
   return (
     pluginClass.runOnHosts.includes("*") ||
@@ -79,7 +79,7 @@ function shouldRunHostCheck(
  */
 function shouldRunMethodCheck(
   pluginClass: typeof PluginInterface,
-  method: string,
+  method: string
 ): boolean {
   return pluginClass.runOnMethods.includes(method);
 }

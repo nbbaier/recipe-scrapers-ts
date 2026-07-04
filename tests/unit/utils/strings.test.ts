@@ -59,11 +59,11 @@ describe("normalizeString", () => {
 
   it("should handle complex real-world examples", () => {
     expect(normalizeString("<p>Test&nbsp;&nbsp;Recipe</p>")).toBe(
-      "Test Recipe",
+      "Test Recipe"
     );
     // &lt;div&gt; unescapes to <div>, which is then removed as an HTML tag
     expect(normalizeString("&lt;div&gt;Hello&amp;Goodbye&lt;/div&gt;")).toBe(
-      "Hello&Goodbye",
+      "Hello&Goodbye"
     );
   });
 
@@ -117,7 +117,7 @@ describe("formatDietName", () => {
   it("should format Schema.org diet URLs", () => {
     expect(formatDietName("http://schema.org/VeganDiet")).toBe("Vegan Diet");
     expect(formatDietName("https://schema.org/GlutenFreeDiet")).toBe(
-      "Gluten Free Diet",
+      "Gluten Free Diet"
     );
   });
 

@@ -17,7 +17,7 @@ export class SallysBakingAddictionScraper extends AbstractScraper {
       this.ingredients(),
       this.$,
       ".tasty-recipes-ingredients-body h4",
-      "li[data-tr-ingredient-checkbox]",
+      "li[data-tr-ingredient-checkbox]"
     );
   }
 }

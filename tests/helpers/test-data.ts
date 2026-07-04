@@ -81,7 +81,7 @@ export function getTestDomains(): string[] {
  * @returns Array of test case objects with html and json filenames
  */
 export function getTestCases(
-  domain: string,
+  domain: string
 ): Array<{ html: string; json: string }> {
   const domainPath = getTestDataPath(domain);
 

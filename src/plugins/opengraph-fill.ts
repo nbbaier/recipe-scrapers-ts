@@ -23,7 +23,7 @@ export class OpenGraphFillPlugin extends PluginInterface {
       if (settings.LOG_LEVEL <= 0) {
         // debug level
         console.debug(
-          `Decorating: ${className}.${methodName}() with OpenGraphFillPlugin`,
+          `Decorating: ${className}.${methodName}() with OpenGraphFillPlugin`
         );
       }
 
@@ -42,7 +42,7 @@ export class OpenGraphFillPlugin extends PluginInterface {
             if (settings.LOG_LEVEL <= 1) {
               // info level
               console.info(
-                `${className}.${methodName}() not implemented but OpenGraph metadata available. Returning from OpenGraph.`,
+                `${className}.${methodName}() not implemented but OpenGraph metadata available. Returning from OpenGraph.`
               );
             }
             return opengraphMethod.apply(this.opengraph, args);

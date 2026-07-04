@@ -11,9 +11,9 @@ import { readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 interface ScraperMeta {
-  moduleName: string;
   className: string;
   host: string;
+  moduleName: string;
 }
 
 const SITES_DIR = join(import.meta.dirname, "../src/scrapers/sites");
@@ -29,7 +29,7 @@ function getImplementedScrapers(): ScraperMeta[] {
 
     const classMatch = content.match(/export\s+class\s+(\w+)/);
     const hostMatch = content.match(
-      /host\(\)\s*:\s*string\s*\{[^}]*return\s+["']([^"']+)["']/s,
+      /host\(\)\s*:\s*string\s*\{[^}]*return\s+["']([^"']+)["']/s
     );
 
     if (!classMatch) {
@@ -52,7 +52,7 @@ function renderIndex(scrapers: ScraperMeta[]): string {
   const imports = scrapers
     .map(
       (scraper) =>
-        `import { ${scraper.className} } from "./${scraper.moduleName}";`,
+        `import { ${scraper.className} } from "./${scraper.moduleName}";`
     )
     .join("\n");
 
@@ -91,7 +91,7 @@ function main(): void {
   writeFileSync(INDEX_PATH, renderIndex(scrapers));
 
   console.log(
-    `✅ Regenerated src/scrapers/sites/index.ts for ${scrapers.length} scraper modules.`,
+    `✅ Regenerated src/scrapers/sites/index.ts for ${scrapers.length} scraper modules.`
   );
 }
 

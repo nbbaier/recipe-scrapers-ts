@@ -14,8 +14,8 @@ export class JamieOliverScraper extends AbstractScraper {
   }
 
   instructions(): string {
-    const methodHeading = this.$("h2").filter((_, el) =>
-      this.$(el).text().trim() === "Method"
+    const methodHeading = this.$("h2").filter(
+      (_, el) => this.$(el).text().trim() === "Method"
     );
     // Python uses find_next("ol") which searches forward in document order
     // In cheerio, search within the parent container
@@ -47,7 +47,7 @@ export class JamieOliverScraper extends AbstractScraper {
       this.ingredients(),
       this.$,
       ".ingredients-rich-text p.type-h5",
-      ".ingredients-rich-text p.type-body",
+      ".ingredients-rich-text p.type-body"
     );
   }
 }

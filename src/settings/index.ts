@@ -8,21 +8,20 @@
 import type { PluginInterface } from "../plugins/interface";
 
 export interface Settings {
-  /** Plugins to attach to scrapers (outer-most executed first) */
-  PLUGINS: (typeof PluginInterface)[];
-
   /** Enable best image selection plugin */
   BEST_IMAGE_SELECTION: boolean;
 
-  /** Suppress exceptions and return default values */
-  SUPPRESS_EXCEPTIONS: boolean;
+  /** Logging level (0=debug, 1=info, 2=warn, 3=error) */
+  LOG_LEVEL: number;
 
   /** Default values to return when exceptions are suppressed */
   // biome-ignore lint/suspicious/noExplicitAny: exception return values can be of any type
   ON_EXCEPTION_RETURN_VALUES: Record<string, any>;
+  /** Plugins to attach to scrapers (outer-most executed first) */
+  PLUGINS: (typeof PluginInterface)[];
 
-  /** Logging level (0=debug, 1=info, 2=warn, 3=error) */
-  LOG_LEVEL: number;
+  /** Suppress exceptions and return default values */
+  SUPPRESS_EXCEPTIONS: boolean;
 }
 
 /**
@@ -67,7 +66,7 @@ export function resetSettings(): void {
   settings.BEST_IMAGE_SELECTION = defaultSettings.BEST_IMAGE_SELECTION;
   settings.SUPPRESS_EXCEPTIONS = defaultSettings.SUPPRESS_EXCEPTIONS;
   settings.ON_EXCEPTION_RETURN_VALUES = structuredClone(
-    defaultSettings.ON_EXCEPTION_RETURN_VALUES,
+    defaultSettings.ON_EXCEPTION_RETURN_VALUES
   );
   settings.LOG_LEVEL = defaultSettings.LOG_LEVEL;
 }
@@ -82,10 +81,10 @@ function deepMerge(target: any, source: any): any {
   if (isObject(target) && isObject(source)) {
     Object.keys(source).forEach((key) => {
       if (isObject(source[key])) {
-        if (!(key in target)) {
-          output[key] = source[key];
-        } else {
+        if (key in target) {
           output[key] = deepMerge(target[key], source[key]);
+        } else {
+          output[key] = source[key];
         }
       } else {
         output[key] = source[key];
@@ -110,7 +109,7 @@ export function updateSettings(customSettings: Partial<Settings>): void {
   if (customSettings.ON_EXCEPTION_RETURN_VALUES) {
     settings.ON_EXCEPTION_RETURN_VALUES = deepMerge(
       settings.ON_EXCEPTION_RETURN_VALUES,
-      customSettings.ON_EXCEPTION_RETURN_VALUES,
+      customSettings.ON_EXCEPTION_RETURN_VALUES
     );
 
     // Remove from customSettings to avoid overwriting with shallow assign
@@ -129,11 +128,11 @@ export function updateSettings(customSettings: Partial<Settings>): void {
 let pluginsConfigured = false;
 
 export function configureDefaultPlugins(
-  plugins: (typeof PluginInterface)[],
+  plugins: (typeof PluginInterface)[]
 ): void {
   if (pluginsConfigured) {
     console.warn(
-      "configureDefaultPlugins() has already been called. Ignoring subsequent call.",
+      "configureDefaultPlugins() has already been called. Ignoring subsequent call."
     );
     return;
   }

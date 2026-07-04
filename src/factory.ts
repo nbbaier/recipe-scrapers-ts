@@ -52,10 +52,10 @@ export const SCRAPERS: Record<string, ScraperConstructor> = {
  * Options for scrapeHtml function
  */
 export interface ScrapeOptions {
-  /** Whether to restrict to supported domains only (default: true) */
-  supportedOnly?: boolean;
   /** Whether to enable best image selection (default: from settings) */
   bestImage?: boolean;
+  /** Whether to restrict to supported domains only (default: true) */
+  supportedOnly?: boolean;
 }
 
 /**
@@ -72,7 +72,7 @@ export interface ScrapeOptions {
 export function scrapeHtml(
   html: string,
   url: string,
-  options: ScrapeOptions = {},
+  options: ScrapeOptions = {}
 ): AbstractScraper {
   const { supportedOnly = true, bestImage } = options;
 
@@ -113,7 +113,7 @@ request on our bugtracker.`;
  */
 export function registerScraper(
   hostname: string,
-  scraperClass: ScraperConstructor,
+  scraperClass: ScraperConstructor
 ): void {
   SCRAPERS[hostname] = scraperClass;
 }
