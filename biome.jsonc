@@ -1,0 +1,22 @@
+{
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "extends": ["ultracite/biome/core", "ultracite/biome/vitest"],
+  "linter": {
+    "rules": {
+      // Published library: barrel index.ts files are the intended public API surface.
+      "performance": { "noBarrelFile": "off" },
+      // Kept as a warning to match the project's prior intent; some scraped
+      // JSON-LD payloads are genuinely dynamic.
+      "suspicious": { "noExplicitAny": "warn" }
+    }
+  },
+  "overrides": [
+    {
+      // The scraper registry imports every site scraper so it can reference
+      // them in SCRAPER_REGISTRY, and also re-exports them as the public API.
+      // The identifiers must be in scope, so `export ... from` is not usable.
+      "includes": ["src/scrapers/sites/index.ts"],
+      "linter": { "rules": { "style": { "noExportedImports": "off" } } }
+    }
+  ]
+}
