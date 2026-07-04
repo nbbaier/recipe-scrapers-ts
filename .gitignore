@@ -1,38 +1,37 @@
-# Dependencies
-node_modules/
-bun.lockb
-
-# Build outputs
-dist/
-*.tsbuildinfo
-
-# Test coverage
-coverage/
-.vitest/
-
-# Environment
-.env
-.env.local
-
-# Editor
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# Test data (synced from upstream via: bun run sync-test-data)
-test_data/
-
-# Parity reports
-parity-report.json
-
-# Generated dashboard
-dashboard.html
-
-# Migration artifacts
-artifacts/
-
-# OS
+_.log
+.cache
+.claude/settings.local.json
+.claude/worktrees
+.cursor/hooks/state/continual-learning*
 .DS_Store
+.env
+.env.development.local
+.env.local
+.env.production.local
+.env.test.local
+.eslintcache
+.idea
+.idea/
+.vitest/
+.vscode/
+*.lcov
+*.swo
+*.swp
+*.tgz
+*.tsbuildinfo
+*~
+artifacts/
+bun.lockb
+coverage
+coverage/
+dashboard.html
+dist
+dist/
+logs
+node_modules
+node_modules/
+out
+parity-report.json
+report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
+test_data/
 Thumbs.db
