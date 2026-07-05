@@ -19,7 +19,7 @@ remaining lint findings that Ultracite's stricter ruleset surfaced but that
 - Scripts and tests are held to the **same bar** as `src/` — fix everywhere.
 
 Suggested workflow: fix **one rule category per commit** so history stays readable.
-The post-edit hook runs `bun run fix` after each edit, so mechanical reformatting
+The post-edit hook runs `bun run check:fix` after each edit, so mechanical reformatting
 is applied automatically. Re-run `bun run test` after each category.
 
 ---

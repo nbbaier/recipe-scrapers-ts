@@ -1,7 +1,7 @@
 {
   "hooks": {
     "afterFileEdit": [
-      { "command": "bun run fix --skip=correctness/noUnusedImports" }
+      { "command": "bun run check:fix --skip=correctness/noUnusedImports" }
     ]
   },
   "version": 1

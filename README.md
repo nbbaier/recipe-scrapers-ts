@@ -4,7 +4,7 @@ TypeScript port of the popular [recipe-scrapers](https://github.com/hhursev/reci
 
 ## Status
 
-Core architecture is complete and functional. Wild mode (Schema.org-based scraping) works for the majority of recipe sites. 52 site-specific scrapers are implemented with more being added.
+Core architecture is complete and functional. Wild mode (Schema.org-based scraping) works for the majority of recipe sites. 58 site-specific scrapers are implemented with more being added.
 
 ## Quick Start
 
@@ -45,11 +45,11 @@ const scraper = scrapeHtml(html, "https://any-recipe-site.com/recipe", {
 src/
 ├── index.ts                # Main entry point, plugin initialization
 ├── factory.ts              # Scraper registry, wild mode
-├── exceptions.ts           # 10 exception classes
+├── exceptions.ts           # Exception classes (base + 10 subclasses)
 ├── settings/               # Configurable behavior
 ├── scrapers/
 │   ├── abstract.ts         # Base scraper class
-│   └── sites/              # 52 site-specific scrapers
+│   └── sites/              # 58 site-specific scrapers
 ├── parsers/
 │   ├── schema-org.ts       # Schema.org JSON-LD parser
 │   └── opengraph.ts        # OpenGraph fallback parser
