@@ -13,7 +13,7 @@ import "./default-plugins";
 
 import { AbstractScraper } from "./scrapers/abstract";
 import { SCRAPER_REGISTRY } from "./scrapers/sites";
-import type { ScraperConstructor } from "./types/scraper";
+import type { ScraperConstructor, ScraperRegistry } from "./types/scraper";
 import { getHostName } from "./utils/url";
 
 // Re-export ScraperConstructor for backwards compatibility
@@ -44,7 +44,7 @@ export class SchemaScraper extends AbstractScraper {
  * This is populated from SCRAPER_REGISTRY in scrapers/sites/index.ts
  * Additional scrapers can be added via registerScraper()
  */
-export const SCRAPERS: Record<string, ScraperConstructor> = {
+export const SCRAPERS: ScraperRegistry = {
   ...SCRAPER_REGISTRY,
 };
 

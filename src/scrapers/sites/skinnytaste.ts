@@ -8,6 +8,8 @@
 import { getEquipment, normalizeString } from "../../utils";
 import { AbstractScraper } from "../abstract";
 
+const TRAILING_ASTERISK_PATTERN = /\*$/;
+
 export class SkinnyTasteScraper extends AbstractScraper {
   host(): string {
     return "skinnytaste.com";
@@ -20,7 +22,9 @@ export class SkinnyTasteScraper extends AbstractScraper {
     const equipmentItems = this.$(".wprm-recipe-equipment-name")
       .map((_, elem) => {
         const text = this.$(elem).text();
-        return text ? normalizeString(text.replace(/\*$/, "")) : "";
+        return text
+          ? normalizeString(text.replace(TRAILING_ASTERISK_PATTERN, ""))
+          : "";
       })
       .get()
       .filter(Boolean);

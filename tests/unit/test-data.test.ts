@@ -12,6 +12,9 @@ import {
   loadTestHtml,
 } from "../helpers/test-data";
 
+const TEST_HTML_PATTERN = /\.testhtml$/;
+const TEST_JSON_PATTERN = /\.json$/;
+
 describe("Test Data Helpers", () => {
   describe("getTestDomains", () => {
     it("should return array of test domains", () => {
@@ -44,8 +47,8 @@ describe("Test Data Helpers", () => {
         const firstCase = testCases[0];
         expect(firstCase).toHaveProperty("html");
         expect(firstCase).toHaveProperty("json");
-        expect(firstCase.html).toMatch(/\.testhtml$/);
-        expect(firstCase.json).toMatch(/\.json$/);
+        expect(firstCase.html).toMatch(TEST_HTML_PATTERN);
+        expect(firstCase.json).toMatch(TEST_JSON_PATTERN);
       }
     });
   });

@@ -99,9 +99,7 @@ class TestPlugin extends PluginInterface {
   static override runOnHosts = ["*"];
   static override runOnMethods = ["title"];
 
-  // biome-ignore lint/suspicious/noExplicitAny: test plugin requires flexible signatures
   static override run<T extends (...args: any[]) => any>(decorated: T): T {
-    // biome-ignore lint/suspicious/noExplicitAny: test plugin requires flexible signatures
     const wrapper = function (this: any, ...args: any[]) {
       const result = decorated.apply(this, args);
       return `[PLUGIN] ${result}`;
@@ -154,7 +152,6 @@ describe("AbstractScraper", () => {
     it("should initialize bestImageSelection from settings by default", () => {
       updateSettings({ BEST_IMAGE_SELECTION: true });
       const scraper = new TestScraper(testHtml, "https://test.com/recipe");
-      // biome-ignore lint/suspicious/noExplicitAny: accessing protected property for testing
       expect((scraper as any).bestImageSelection).toBe(true);
     });
 
@@ -165,7 +162,6 @@ describe("AbstractScraper", () => {
         "https://test.com/recipe",
         false
       );
-      // biome-ignore lint/suspicious/noExplicitAny: accessing protected property for testing
       expect((scraper as any).bestImageSelection).toBe(false);
     });
   });
@@ -205,11 +201,9 @@ describe("AbstractScraper", () => {
         static override runOnHosts = ["other.com"];
         static override runOnMethods = ["title"];
 
-        // biome-ignore lint/suspicious/noExplicitAny: test plugin requires flexible signatures
         static override run<T extends (...args: any[]) => any>(
           decorated: T
         ): T {
-          // biome-ignore lint/suspicious/noExplicitAny: test plugin requires flexible signatures
           const wrapper = function (this: any, ...args: any[]) {
             const result = decorated.apply(this, args);
             return `[HOST_PLUGIN] ${result}`;

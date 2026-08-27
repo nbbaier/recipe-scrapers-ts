@@ -57,6 +57,7 @@ export class ExceptionHandlingPlugin extends PluginInterface {
     };
 
     Object.defineProperty(wrapper, "name", { value: decorated.name });
+    // SAFETY: wrapper has T's call signature: it forwards `this`/`args` to `decorated` and, when exceptions are suppressed, returns the field's configured default instead.
     return wrapper as T;
   }
 }

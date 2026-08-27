@@ -5,14 +5,14 @@
  * It extracts basic metadata like site name and images from OpenGraph meta tags.
  */
 
-import * as cheerio from "cheerio";
+import { type CheerioAPI, load } from "cheerio";
 import { OpenGraphException } from "../exceptions";
 
 /**
  * OpenGraph metadata parser
  */
 export class OpenGraph {
-  private readonly $: cheerio.CheerioAPI;
+  private readonly $: CheerioAPI;
 
   /**
    * Creates a new OpenGraph parser instance
@@ -20,7 +20,7 @@ export class OpenGraph {
    * @param html - HTML content of the page
    */
   constructor(html: string) {
-    this.$ = cheerio.load(html) as cheerio.CheerioAPI;
+    this.$ = load(html);
   }
 
   /**

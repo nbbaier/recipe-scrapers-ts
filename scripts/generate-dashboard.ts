@@ -21,6 +21,8 @@ const PYTHON_DIR = join(
   "../../recipe-scrapers/recipe_scrapers"
 );
 const OUTPUT = join(import.meta.dirname, "../dashboard.html");
+const CLASS_PATTERN = /export\s+class\s+(\w+)/;
+const HOST_PATTERN = /host\(\)[^}]*return\s+["']([^"']+)["']/;
 
 /**
  * Get all registered domains from the Python SCRAPERS dict.
@@ -106,9 +108,9 @@ function getTsRegistry(): Map<string, string> {
     const content = readFileSync(join(SITES_DIR, file), "utf-8");
 
     // Extract class name: export class FooScraper
-    const classMatch = content.match(/export\s+class\s+(\w+)/);
+    const classMatch = content.match(CLASS_PATTERN);
     // Extract host: host() { return "domain.com"; }
-    const hostMatch = content.match(/host\(\)[^}]*return\s+["']([^"']+)["']/);
+    const hostMatch = content.match(HOST_PATTERN);
 
     if (classMatch && hostMatch) {
       registry.set(hostMatch[1], classMatch[1]);
@@ -177,7 +179,6 @@ function generateHtml(rows: DashboardRow[]): string {
   const portedClasses = new Set(
     rows.filter((r) => r.ported).map((r) => r.pythonClass)
   );
-  ("");
   // Find classes with aliases where only some domains are registered in TS
 
   const scraperRow = (row: DashboardRow) => {

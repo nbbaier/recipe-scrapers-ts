@@ -29,6 +29,18 @@ const GITHUB_HEADERS = {
   Accept: "application/vnd.github+json",
   "User-Agent": "recipe-scrapers-ts-migrate-script",
 };
+const PYTHON_HOST_METHOD_PATTERN =
+  /@classmethod\s+def\s+host\(([^)]*)\):\s*\n([\s\S]*?)(?=\n\s*def\s|\nclass\s|\n\s*$)/;
+const RETURN_EXPRESSION_PATTERN = /return\s+([^\n#]+)/;
+const STRING_LITERAL_PATTERN = /^["']([^"']+)["']$/;
+const INTERPOLATED_STRING_PATTERN = /^f["']([^"'{]*)\{(\w+)\}([^"'}]*)["']$/;
+const VARIABLE_PATTERN = /^(\w+)$/;
+const PYTHON_CLASS_PATTERN = /class\s+(\w+)\((.*?)\):/;
+const WPRM_PATTERN = /WPRMMixin/;
+const SCRAPERS_DICT_ENTRY_PATTERN = /^(.*?):\s*([A-Za-z_]\w*),\s*$/;
+const TS_CLASS_PATTERN = /export\s+class\s+(\w+)/;
+const TS_HOST_PATTERN =
+  /host\(\)\s*(?::\s*string)?\s*\{[\s\S]*?return\s+["']([^"']+)["']/;
 
 type HostTemplate =
   | { kind: "literal"; value: string }
@@ -188,9 +200,7 @@ function parseDefaults(signature: string): Record<string, string> {
 }
 
 function parseHostTemplate(content: string): HostTemplate {
-  const hostMethodMatch = content.match(
-    /@classmethod\s+def\s+host\(([^)]*)\):\s*\n([\s\S]*?)(?=\n\s*def\s|\nclass\s|\n\s*$)/
-  );
+  const hostMethodMatch = content.match(PYTHON_HOST_METHOD_PATTERN);
 
   if (!hostMethodMatch) {
     throw new Error("Could not parse @classmethod host(...) method");
@@ -200,21 +210,19 @@ function parseHostTemplate(content: string): HostTemplate {
   const body = hostMethodMatch[2];
   const defaults = parseDefaults(signature);
 
-  const returnMatch = body.match(/return\s+([^\n#]+)/);
+  const returnMatch = body.match(RETURN_EXPRESSION_PATTERN);
   if (!returnMatch) {
     throw new Error("Could not parse return expression in host() method");
   }
 
   const expr = returnMatch[1].trim();
 
-  const literalMatch = expr.match(/^["']([^"']+)["']$/);
+  const literalMatch = expr.match(STRING_LITERAL_PATTERN);
   if (literalMatch) {
     return { kind: "literal", value: literalMatch[1] };
   }
 
-  const interpolatedMatch = expr.match(
-    /^f["']([^"'{]*)\{(\w+)\}([^"'}]*)["']$/
-  );
+  const interpolatedMatch = expr.match(INTERPOLATED_STRING_PATTERN);
   if (interpolatedMatch) {
     return {
       kind: "interpolated",
@@ -225,7 +233,7 @@ function parseHostTemplate(content: string): HostTemplate {
     };
   }
 
-  const variableMatch = expr.match(/^(\w+)$/);
+  const variableMatch = expr.match(VARIABLE_PATTERN);
   if (variableMatch) {
     return { kind: "variable", variable: variableMatch[1], defaults };
   }
@@ -258,7 +266,7 @@ function parsePythonScraper(
   scraperName: string,
   content: string
 ): ParsedScraper {
-  const classMatch = content.match(/class\s+(\w+)\((.*?)\):/);
+  const classMatch = content.match(PYTHON_CLASS_PATTERN);
   if (!classMatch) {
     throw new Error("Could not parse class definition");
   }
@@ -288,7 +296,7 @@ function parsePythonScraper(
     pythonFilename: scraperName,
     primaryHost,
     hostTemplate,
-    hasWprm: /WPRMMixin/.test(content),
+    hasWprm: WPRM_PATTERN.test(content),
     methods,
   };
 }
@@ -309,7 +317,7 @@ function resolveScrapersDictKey(
   className: string,
   hostTemplate: HostTemplate
 ): string | null {
-  const literalMatch = keyExpr.match(/^["']([^"']+)["']$/);
+  const literalMatch = keyExpr.match(STRING_LITERAL_PATTERN);
   if (literalMatch) {
     return literalMatch[1];
   }
@@ -352,7 +360,7 @@ function extractDomainsForClass(
       break;
     }
 
-    const entryMatch = trimmed.match(/^(.*?):\s*([A-Za-z_]\w*),\s*$/);
+    const entryMatch = trimmed.match(SCRAPERS_DICT_ENTRY_PATTERN);
     if (!entryMatch) {
       continue;
     }
@@ -512,14 +520,12 @@ function parseExistingRegistry(indexContent: string): Map<string, string> {
 
 function parseTsScraperMeta(filePath: string): TsScraperMeta {
   const content = readFileSync(filePath, "utf-8");
-  const classMatch = content.match(/export\s+class\s+(\w+)/);
+  const classMatch = content.match(TS_CLASS_PATTERN);
   if (!classMatch) {
     throw new Error(`Could not parse class name from ${filePath}`);
   }
 
-  const hostMatch = content.match(
-    /host\(\)\s*(?::\s*string)?\s*\{[\s\S]*?return\s+["']([^"']+)["']/
-  );
+  const hostMatch = content.match(TS_HOST_PATTERN);
   if (!hostMatch) {
     throw new Error(`Could not parse host() return value from ${filePath}`);
   }
@@ -562,7 +568,7 @@ function buildSitesIndexContent(
  * that maps hostnames to their corresponding scraper classes.
  */
 
-import type { ScraperConstructor } from "../../types/scraper";
+import type { ScraperRegistry } from "../../types/scraper";
 
 ${imports}
 
@@ -570,7 +576,7 @@ export {
 ${exports}
 };
 
-export const SCRAPER_REGISTRY: Record<string, ScraperConstructor> = {
+export const SCRAPER_REGISTRY: ScraperRegistry = {
 ${registryLines}
 };
 `;
@@ -910,7 +916,7 @@ async function main(): Promise<void> {
   );
 }
 
-void main().catch((error) => {
+main().catch((error) => {
   console.error(
     `\n❌ Migration failed: ${error instanceof Error ? error.message : String(error)}`
   );

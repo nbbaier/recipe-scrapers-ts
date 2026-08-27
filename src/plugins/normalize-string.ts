@@ -31,6 +31,7 @@ export class NormalizeStringPlugin extends PluginInterface {
     };
 
     Object.defineProperty(wrapper, "name", { value: decorated.name });
+    // SAFETY: wrapper has T's call signature: it forwards `this`/`args` to `decorated` and normalizes its string result in place (runOnMethods limits it to string-valued fields).
     return wrapper as T;
   }
 }

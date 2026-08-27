@@ -35,7 +35,7 @@ Write code that is **performant, type-safe, and maintainable**. Focus on clarity
 ### Type Safety & Explicitness
 
 - Use explicit types for function parameters and return values when they enhance clarity
-- Prefer `unknown` over `any` when the type is genuinely unknown
+- Prefer `unknown` over `any` — but treat `unknown` as a way station, not a destination. Parse the value at its I/O boundary and give it a named domain type; leaving `unknown` in a parameter, return type, or type alias pushes the unresolved shape onto every caller
 - Use const assertions (`as const`) for immutable values and literal types
 - Leverage TypeScript's type narrowing instead of type assertions
 - Use meaningful variable names instead of magic numbers - extract constants with descriptive names

@@ -121,7 +121,6 @@ describe("getMinutes", () => {
     });
 
     it("should throw error for undefined", () => {
-      // biome-ignore lint/suspicious/noExplicitAny: intentionally passing invalid type to test error handling
       expect(() => getMinutes(undefined as any)).toThrow();
     });
 

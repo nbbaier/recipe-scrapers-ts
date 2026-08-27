@@ -2,10 +2,12 @@
  * Fraction parsing utilities for recipe scrapers
  */
 
+const WHITESPACE_PATTERN = /\s+/;
+
 /**
  * Map of Unicode fraction characters to their decimal values
  */
-export const FRACTIONS: Record<string, number> = {
+export const FRACTIONS = {
   "½": 0.5,
   "⅓": 1 / 3,
   "⅔": 2 / 3,
@@ -41,18 +43,13 @@ export const FRACTIONS: Record<string, number> = {
 export function extractFractional(input: string): number {
   const trimmed = input.trim();
 
-  // Handle mixed numbers with unicode fractions (e.g., '1⅔')
+  // Handle unicode fractions, standalone or in mixed numbers (e.g., '¾', '1⅔')
   for (const [unicodeFraction, fractionValue] of Object.entries(FRACTIONS)) {
     if (trimmed.includes(unicodeFraction)) {
       const wholeNumberPart = trimmed.split(unicodeFraction)[0];
       const wholeNumber = Number.parseFloat(wholeNumberPart || "0");
       return wholeNumber + fractionValue;
     }
-  }
-
-  // Handle standalone unicode fractions
-  if (trimmed in FRACTIONS) {
-    return FRACTIONS[trimmed];
   }
 
   // Try parsing as a simple number
@@ -63,7 +60,7 @@ export function extractFractional(input: string): number {
 
   // Handle mixed numbers with slash fractions (e.g., '1 1/2')
   if (trimmed.includes(" ") && trimmed.includes("/")) {
-    const parts = trimmed.split(/\s+/); // Split on any whitespace
+    const parts = trimmed.split(WHITESPACE_PATTERN); // Split on any whitespace
     const wholePart = Number.parseFloat(parts[0]);
     const fractionalPart = parts[1];
     const [numerator, denominator] = fractionalPart.split("/");

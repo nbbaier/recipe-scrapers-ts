@@ -9,10 +9,10 @@ describe("RECIPE_YIELD_TYPES constant", () => {
     // Note: 'serving' is the default fallback, not a specific yield type
   });
   it("should have singular and plural forms", () => {
-    RECIPE_YIELD_TYPES.forEach(([singular, plural]) => {
+    for (const [singular, plural] of RECIPE_YIELD_TYPES) {
       expect(singular).toBeTruthy();
       expect(plural).toBeTruthy();
-    });
+    }
   });
 });
 

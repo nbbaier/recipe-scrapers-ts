@@ -14,13 +14,11 @@ import {
 
 // Mock plugin for testing
 class MockPlugin extends PluginInterface {
-  // biome-ignore lint/suspicious/noExplicitAny: test plugin requires flexible signatures
   static override run<T extends (...args: any[]) => any>(decorated: T): T {
     return decorated; // Pass-through for testing
   }
 }
 class AnotherMockPlugin extends PluginInterface {
-  // biome-ignore lint/suspicious/noExplicitAny: test plugin requires flexible signatures
   static override run<T extends (...args: any[]) => any>(decorated: T): T {
     return decorated; // Pass-through for testing
   }
@@ -222,7 +220,9 @@ describe("Settings System", () => {
       const secondPlugins = [AnotherMockPlugin as typeof PluginInterface];
 
       // Spy on console.warn
-      const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+      const warnSpy = vi
+        .spyOn(console, "warn")
+        .mockImplementation(() => undefined);
 
       // Note: configureDefaultPlugins can only be called once successfully
       // It's already been called in index.ts during module loading

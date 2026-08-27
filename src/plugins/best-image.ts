@@ -18,6 +18,7 @@ interface ImageCandidate {
 
 // Maximum reasonable dimension for an image (10000x10000 should cover most real images)
 const MAX_DIMENSION = 10_000;
+const DIMENSION_NUMBER_PATTERN = /\d+/;
 
 export class BestImagePlugin extends PluginInterface {
   static override runOnHosts = ["*"];
@@ -57,6 +58,7 @@ export class BestImagePlugin extends PluginInterface {
     };
 
     Object.defineProperty(wrapper, "name", { value: decorated.name });
+    // SAFETY: wrapper has T's call signature: it forwards `this`/`args` to `decorated` and returns either its result or a better image URL of the same type.
     return wrapper as T;
   }
 
@@ -141,6 +143,7 @@ export class BestImagePlugin extends PluginInterface {
     }
   }
 
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: OpenGraph metadata is a sequence of related property cases
   private static _collectOpenGraphCandidates(
     // biome-ignore lint/suspicious/noExplicitAny: scraper type includes dynamic Cheerio instance
     scraper: any,
@@ -183,15 +186,15 @@ export class BestImagePlugin extends PluginInterface {
       } else if (prop === "og:image:width") {
         // Apply width to the most recent image entry
         if (ogImageData.length > 0) {
-          const lastImage = ogImageData[ogImageData.length - 1];
+          // biome-ignore lint/style/useAtIndex: package target does not include Array.prototype.at
+          const lastImage = ogImageData.slice(-1)[0];
           lastImage.width = BestImagePlugin._parseDimension(content);
         }
-      } else if (prop === "og:image:height") {
+      } else if (prop === "og:image:height" && ogImageData.length > 0) {
         // Apply height to the most recent image entry
-        if (ogImageData.length > 0) {
-          const lastImage = ogImageData[ogImageData.length - 1];
-          lastImage.height = BestImagePlugin._parseDimension(content);
-        }
+        // biome-ignore lint/style/useAtIndex: package target does not include Array.prototype.at
+        const lastImage = ogImageData.slice(-1)[0];
+        lastImage.height = BestImagePlugin._parseDimension(content);
       }
     }
 
@@ -264,6 +267,7 @@ export class BestImagePlugin extends PluginInterface {
   }
 
   // biome-ignore lint/suspicious/noExplicitAny: value can be number, string, or object with nested values
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: dimensions can be represented by several supported Schema.org shapes
   private static _parseDimension(value: any): number | null {
     if (value === null || value === undefined) {
       return null;
@@ -276,7 +280,7 @@ export class BestImagePlugin extends PluginInterface {
     }
 
     if (typeof value === "string") {
-      const match = value.match(/\d+/);
+      const match = value.match(DIMENSION_NUMBER_PATTERN);
       if (match) {
         const parsed = Number.parseInt(match[0], 10);
         if (!Number.isNaN(parsed)) {

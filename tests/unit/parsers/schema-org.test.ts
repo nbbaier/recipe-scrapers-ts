@@ -845,7 +845,7 @@ describe("SchemaOrg Parser", () => {
         expect(schema.title()).toBeTruthy();
         expect(schema.ingredients()).toBeInstanceOf(Array);
         expect(schema.ingredients().length).toBeGreaterThan(0);
-      } catch (_error) {
+      } catch {
         // Test data might not be available
         console.warn("allrecipes.com test data not found, skipping");
       }

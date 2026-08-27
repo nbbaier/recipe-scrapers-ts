@@ -6,7 +6,7 @@
  * Schema.org and OpenGraph parsers.
  */
 
-import * as cheerio from "cheerio";
+import { type CheerioAPI, load } from "cheerio";
 import { ElementNotFoundInHtml, NotImplementedError } from "../exceptions";
 import { OpenGraph } from "../parsers/opengraph";
 import { SchemaOrg } from "../parsers/schema-org";
@@ -14,13 +14,17 @@ import { settings } from "../settings";
 import type { IngredientGroup, Recipe } from "../types/recipe";
 import { groupIngredients } from "../utils/grouping";
 
+/** Any scraper method; plugins wrap these without knowing the exact signature. */
+// biome-ignore lint/suspicious/noExplicitAny: matches the decorator constraint of PluginInterface.run()
+type ScraperMethod = (...args: any[]) => any;
+
 /**
  * Abstract base scraper class
  */
 export abstract class AbstractScraper {
   protected pageData: string;
   protected url: string;
-  protected readonly $: cheerio.CheerioAPI;
+  protected readonly $: CheerioAPI;
   protected opengraph: OpenGraph;
   protected schema: SchemaOrg;
   protected bestImageSelection: boolean;
@@ -30,8 +34,7 @@ export abstract class AbstractScraper {
    * Used by factory to determine if wild mode scraping is possible
    */
   hasSchema(): boolean {
-    // biome-ignore lint/suspicious/noExplicitAny: accessing internal data property
-    return !!(this.schema && (this.schema as any).data);
+    return !!this.schema?.data;
   }
 
   /**
@@ -44,7 +47,7 @@ export abstract class AbstractScraper {
   constructor(html: string, url: string, bestImage?: boolean) {
     this.pageData = html;
     this.url = url;
-    this.$ = cheerio.load(html) as cheerio.CheerioAPI;
+    this.$ = load(html);
     this.opengraph = new OpenGraph(html);
     this.schema = new SchemaOrg(html);
     this.bestImageSelection = bestImage ?? settings.BEST_IMAGE_SELECTION;
@@ -52,29 +55,29 @@ export abstract class AbstractScraper {
     // Attach plugins as instructed in settings.PLUGINS
     // Apply plugins per-instance to avoid prototype pollution
     const methodNames = this._getMethodNames();
+    // `_getMethodNames()` only yields names whose prototype descriptor holds a
+    // function, so every lookup below resolves to a callable scraper method.
+    const prototypeMethods: Record<string, ScraperMethod> =
+      Object.getPrototypeOf(this);
 
     for (const methodName of methodNames) {
-      // Get the current method from the instance's prototype
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      let currentMethod = (
-        Object.getPrototypeOf(this) as Record<string, unknown>
-      )[methodName];
+      let currentMethod = prototypeMethods[methodName];
 
       // Apply plugins in reverse order (outermost plugin first)
       for (let i = settings.PLUGINS.length - 1; i >= 0; i--) {
         const plugin = settings.PLUGINS[i];
         if (plugin.shouldRun(this.host(), methodName)) {
-          // biome-ignore lint/suspicious/noExplicitAny: plugin run method accepts any function signature
-          currentMethod = plugin.run(currentMethod as any);
+          currentMethod = plugin.run(currentMethod);
         }
       }
 
       // Replace the method on the instance, binding 'this' to the current instance
-      (this as unknown as Record<string, unknown>)[methodName] =
-        typeof currentMethod === "function"
-          ? // biome-ignore lint/complexity/noBannedTypes: generic function binding required for dynamic method replacement
-            (currentMethod as Function).bind(this)
-          : currentMethod;
+      Object.defineProperty(this, methodName, {
+        value: currentMethod.bind(this),
+        writable: true,
+        enumerable: true,
+        configurable: true,
+      });
     }
   }
 
@@ -380,9 +383,9 @@ export abstract class AbstractScraper {
   /**
    * Extracts all links found in the recipe
    */
-  links(): Array<Record<string, string>> {
+  links(): Record<string, string>[] {
     const invalidHref = new Set(["#", ""]);
-    const links: Array<Record<string, string>> = [];
+    const links: Record<string, string>[] = [];
 
     this.$("a[href]").each((_, element) => {
       const $link = this.$(element);
@@ -440,34 +443,24 @@ export abstract class AbstractScraper {
   ] as const;
 
   toJson(): Partial<Recipe> {
-    // Use Record<string, unknown> for type-safe dynamic property assignment
     const jsonDict: Record<string, unknown> = {};
 
-    // List of methods to call (excluding internal methods)
-    const methodsToCall: readonly string[] = AbstractScraper.scraperMethodNames;
-
-    for (const method of methodsToCall) {
+    for (const method of AbstractScraper.scraperMethodNames) {
       try {
-        const func = this[method as keyof this];
-        if (typeof func === "function") {
-          let result = (func as () => unknown).call(this);
+        // Convert undefined to null for Python parity (recursively)
+        // Python's json.dumps serializes None as null, while JSON.stringify omits undefined
+        const result = this.convertUndefinedToNull(this[method]());
 
-          // Convert undefined to null for Python parity (recursively)
-          // Python's json.dumps serializes None as null, while JSON.stringify omits undefined
-          result = this.convertUndefinedToNull(result);
-
-          // Map method names to Recipe field names
-          const fieldName = this.mapMethodToField(
-            method as keyof AbstractScraper
-          );
-          jsonDict[fieldName] = result;
-        }
-      } catch (_error) {
+        // Map method names to Recipe field names
+        jsonDict[this.mapMethodToField(method)] = result;
+      } catch {
         // Skip fields that throw exceptions (data not available)
       }
     }
 
-    // Safe to cast since we control the method names and field mappings
+    // SAFETY: every key is a `scraperMethodNames` entry mapped through
+    // `mapMethodToField` to its Recipe field name, and each value is that
+    // scraper method's result.
     return jsonDict as Partial<Recipe>;
   }
 
@@ -482,11 +475,12 @@ export abstract class AbstractScraper {
       return value.map((item) => this.convertUndefinedToNull(item));
     }
     if (value !== null && typeof value === "object") {
-      const result: Record<string, unknown> = {};
-      for (const [key, val] of Object.entries(value)) {
-        result[key] = this.convertUndefinedToNull(val);
-      }
-      return result;
+      return Object.fromEntries(
+        Object.entries(value).map(([key, val]) => [
+          key,
+          this.convertUndefinedToNull(val),
+        ])
+      );
     }
     return value;
   }
@@ -497,19 +491,19 @@ export abstract class AbstractScraper {
    */
   private mapMethodToField(method: keyof AbstractScraper): string {
     // Convert method names to match Recipe interface
-    const mapping: Record<string, string> = {
-      siteName: "site_name",
-      canonicalUrl: "canonical_url",
-      ingredientGroups: "ingredient_groups",
-      instructionsList: "instructions_list",
-      totalTime: "total_time",
-      cookTime: "cook_time",
-      prepTime: "prep_time",
-      ratingsCount: "ratings_count",
-      cookingMethod: "cooking_method",
-      dietaryRestrictions: "dietary_restrictions",
-    };
+    const mapping = new Map<keyof AbstractScraper, string>([
+      ["siteName", "site_name"],
+      ["canonicalUrl", "canonical_url"],
+      ["ingredientGroups", "ingredient_groups"],
+      ["instructionsList", "instructions_list"],
+      ["totalTime", "total_time"],
+      ["cookTime", "cook_time"],
+      ["prepTime", "prep_time"],
+      ["ratingsCount", "ratings_count"],
+      ["cookingMethod", "cooking_method"],
+      ["dietaryRestrictions", "dietary_restrictions"],
+    ]);
 
-    return mapping[method] || method;
+    return mapping.get(method) ?? method;
   }
 }

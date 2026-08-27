@@ -6,7 +6,7 @@
  * Microdata and RDFa support can be added in the future.
  */
 
-import * as cheerio from "cheerio";
+import { load } from "cheerio";
 import { SchemaOrgException } from "../exceptions";
 import {
   csvToTags,
@@ -17,6 +17,7 @@ import {
 } from "../utils";
 
 const SCHEMA_ORG_HOST = "schema.org";
+const TRAILING_PERIODS_PATTERN = /\.+$/;
 
 /**
  * Represents a Schema.org entity (Recipe, Person, WebSite, etc.)
@@ -61,9 +62,9 @@ type HowToSchemaItem = string | HowToStep | HowToSection;
  */
 export class SchemaOrg {
   // private format: string | null = null;  // Reserved for future use (microdata/RDFa)
-  public data: SchemaEntity = {};
-  private people: Record<string, SchemaEntity> = {};
-  private ratingsData: Record<string, SchemaEntity> = {};
+  data: SchemaEntity = {};
+  private readonly people: Record<string, SchemaEntity> = {};
+  private readonly ratingsData: Record<string, SchemaEntity> = {};
   private websiteName: string | null = null;
 
   /**
@@ -78,8 +79,9 @@ export class SchemaOrg {
   /**
    * Extracts Schema.org data from HTML
    */
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: parsing multiple supported Schema.org document shapes requires these branches
   private extractData(pageData: string): void {
-    const $ = cheerio.load(pageData);
+    const $ = load(pageData);
     const jsonLdScripts: SchemaEntity[] = [];
 
     // Extract all JSON-LD scripts
@@ -95,7 +97,7 @@ export class SchemaOrg {
             jsonLdScripts.push(parsed);
           }
         }
-      } catch (_error) {
+      } catch {
         // Skip invalid JSON
       }
     });
@@ -458,17 +460,18 @@ export class SchemaOrg {
     }
 
     // Normalize keys and values
-    const result: Record<string, string> = {};
-    for (const [key, value] of Object.entries(cleanedNutrients)) {
-      result[normalizeString(key)] = normalizeString(value);
-    }
-
-    return result;
+    return Object.fromEntries(
+      Object.entries(cleanedNutrients).map(([key, value]) => [
+        normalizeString(key),
+        normalizeString(value),
+      ])
+    );
   }
 
   /**
    * Extracts text from HowTo instruction items
    */
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: instruction items support strings, steps, nested steps, and sections
   private extractHowToInstructionsText(schemaItem: HowToSchemaItem): string[] {
     const instructionsGist: string[] = [];
 
@@ -481,14 +484,22 @@ export class SchemaOrg {
       if (
         schemaItem.name &&
         schemaItem.text &&
-        !schemaItem.text.startsWith(schemaItem.name.replace(/\.+$/, ""))
+        !schemaItem.text.startsWith(
+          schemaItem.name.replace(TRAILING_PERIODS_PATTERN, "")
+        )
       ) {
         instructionsGist.push(schemaItem.name);
       }
 
       // Handle nested itemListElement
-      if (schemaItem.itemListElement) {
-        schemaItem = schemaItem.itemListElement as unknown as HowToStep;
+      const nestedItem = schemaItem.itemListElement;
+      if (nestedItem) {
+        if (nestedItem.text) {
+          instructionsGist.push(nestedItem.text);
+        } else if (nestedItem.name) {
+          instructionsGist.push(nestedItem.name);
+        }
+        return instructionsGist;
       }
 
       if (schemaItem.text) {

@@ -12,3 +12,9 @@ export type ScraperConstructor = new (
   url: string,
   bestImage?: boolean
 ) => AbstractScraper;
+
+/**
+ * Hostname -> scraper class registry.
+ * Open by design: `registerScraper()` extends it at runtime.
+ */
+export type ScraperRegistry = Record<string, ScraperConstructor>;

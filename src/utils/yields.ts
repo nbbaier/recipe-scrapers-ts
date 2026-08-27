@@ -22,7 +22,7 @@ const SERVE_REGEX_TO = /\d+(\s+to\s+|-)\d+/i;
  * Recipe yield types in (singular, plural) format
  * Used to identify and format specific yield types
  */
-export const RECIPE_YIELD_TYPES: Array<[string, string]> = [
+export const RECIPE_YIELD_TYPES: [string, string][] = [
   ["dozen", "dozen"],
   ["batch", "batches"],
   ["cake", "cakes"],
@@ -80,6 +80,7 @@ function formatCountLabel(
  * getYields("12 servings") // Returns: "12 servings"
  * getYields("8 muffins") // Returns: "8 muffins"
  */
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: yield strings have several supported numeric and label formats
 export function getYields(
   element: string | { getText?: () => string } | null
 ): string {

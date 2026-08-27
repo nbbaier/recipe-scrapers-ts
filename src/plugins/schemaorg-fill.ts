@@ -42,6 +42,7 @@ export class SchemaOrgFillPlugin extends PluginInterface {
   // biome-ignore lint/suspicious/noExplicitAny: decorator pattern requires flexible type signatures
   static override run<T extends (...args: any[]) => any>(decorated: T): T {
     // biome-ignore lint/suspicious/noExplicitAny: decorator pattern requires flexible type signatures
+    // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: fallback behavior has distinct exception and schema availability branches
     const wrapper = function (this: any, ...args: any[]) {
       const className = this.constructor.name;
       const methodName = decorated.name;
@@ -88,6 +89,7 @@ export class SchemaOrgFillPlugin extends PluginInterface {
     };
 
     Object.defineProperty(wrapper, "name", { value: decorated.name });
+    // SAFETY: wrapper has T's call signature: it forwards `this`/`args` to `decorated` and, on a fill exception, to the same-named SchemaOrg method, which returns the same field type.
     return wrapper as T;
   }
 }
