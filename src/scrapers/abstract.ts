@@ -6,7 +6,7 @@
  * Schema.org and OpenGraph parsers.
  */
 
-import * as cheerio from "cheerio";
+import { type CheerioAPI, load } from "cheerio";
 import { ElementNotFoundInHtml, NotImplementedError } from "../exceptions";
 import { OpenGraph } from "../parsers/opengraph";
 import { SchemaOrg } from "../parsers/schema-org";
@@ -24,7 +24,7 @@ type ScraperMethod = (...args: any[]) => any;
 export abstract class AbstractScraper {
   protected pageData: string;
   protected url: string;
-  protected readonly $: cheerio.CheerioAPI;
+  protected readonly $: CheerioAPI;
   protected opengraph: OpenGraph;
   protected schema: SchemaOrg;
   protected bestImageSelection: boolean;
@@ -47,7 +47,7 @@ export abstract class AbstractScraper {
   constructor(html: string, url: string, bestImage?: boolean) {
     this.pageData = html;
     this.url = url;
-    this.$ = cheerio.load(html);
+    this.$ = load(html);
     this.opengraph = new OpenGraph(html);
     this.schema = new SchemaOrg(html);
     this.bestImageSelection = bestImage ?? settings.BEST_IMAGE_SELECTION;
@@ -383,9 +383,9 @@ export abstract class AbstractScraper {
   /**
    * Extracts all links found in the recipe
    */
-  links(): Array<Record<string, string>> {
+  links(): Record<string, string>[] {
     const invalidHref = new Set(["#", ""]);
-    const links: Array<Record<string, string>> = [];
+    const links: Record<string, string>[] = [];
 
     this.$("a[href]").each((_, element) => {
       const $link = this.$(element);
@@ -453,7 +453,7 @@ export abstract class AbstractScraper {
 
         // Map method names to Recipe field names
         jsonDict[this.mapMethodToField(method)] = result;
-      } catch (_error) {
+      } catch {
         // Skip fields that throw exceptions (data not available)
       }
     }

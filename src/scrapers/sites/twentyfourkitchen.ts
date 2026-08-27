@@ -7,6 +7,8 @@ import type { IngredientGroup } from "../../types/recipe";
 import { groupIngredients } from "../../utils/grouping";
 import { AbstractScraper } from "../abstract";
 
+const STEP_PREFIX_PATTERN = /^Stap\s*\d+:?/;
+
 export class TwentyFourKitchenScraper extends AbstractScraper {
   host(): string {
     return "24kitchen.nl";
@@ -43,7 +45,7 @@ export class TwentyFourKitchenScraper extends AbstractScraper {
     // Instructions format #2
     this.$(".preparation-text p").each((_, el) => {
       const text = this.$(el).text().trim();
-      const cleaned = text.replace(/^Stap\s*\d+:?/, "").trim();
+      const cleaned = text.replace(STEP_PREFIX_PATTERN, "").trim();
       if (cleaned) {
         instructions.push(cleaned);
       }

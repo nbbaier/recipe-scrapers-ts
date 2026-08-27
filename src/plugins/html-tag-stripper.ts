@@ -5,7 +5,7 @@
  * Handles both string outputs and arrays of strings.
  */
 
-import * as cheerio from "cheerio";
+import { load } from "cheerio";
 import { settings } from "../settings";
 import { PluginInterface } from "./interface";
 
@@ -21,7 +21,7 @@ function stripTags(html: string): string {
   try {
     // Use cheerio to parse and extract text content
     // This properly handles all HTML edge cases
-    const $ = cheerio.load(html);
+    const $ = load(html);
     // Use $.root().text() instead of $('*').text() to avoid duplication
     // $('*') selects ALL elements (html, body, etc.) causing text to appear multiple times
     return $.root().text().trim();

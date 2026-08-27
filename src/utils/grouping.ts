@@ -97,6 +97,7 @@ function bestMatch(testString: string, targetStrings: string[]): string {
   return targetStrings[bestIndex];
 }
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: grouping combines several legacy ingredient parsing cases
 export function groupIngredients(
   ingredientsList: string[],
   $: CheerioAPI,

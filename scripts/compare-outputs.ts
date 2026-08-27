@@ -15,15 +15,15 @@ import { unlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import chalk from "chalk";
-import * as diff from "diff";
+import { type Change, diffJson } from "diff";
 import { getTestCases, loadTestHtml } from "../tests/helpers/test-data";
 
 type ScraperOutput = Record<string, unknown>;
 
 class OutputComparer {
-  private domain: string;
-  private testFile?: string;
-  private pythonCommand: string;
+  private readonly domain: string;
+  private readonly testFile?: string;
+  private readonly pythonCommand: string;
 
   constructor(domain: string, testFile?: string) {
     this.domain = domain;
@@ -239,23 +239,26 @@ print(json.dumps(scraper.to_json(), indent=2, sort_keys=True, default=str))
 
     // Show diff
     console.log(chalk.bold("Differences:"));
-    const differences = diff.diffJson(pythonOutput, typescriptOutput);
+    const differences = diffJson(pythonOutput, typescriptOutput);
 
-    differences.forEach((part: diff.Change) => {
-      const color = part.added
-        ? chalk.green
-        : part.removed
-          ? chalk.red
-          : chalk.gray;
-      const prefix = part.added ? "+ " : part.removed ? "- " : "  ";
+    for (const part of differences as Change[]) {
+      let color = chalk.gray;
+      let prefix = "  ";
+      if (part.added) {
+        color = chalk.green;
+        prefix = "+ ";
+      } else if (part.removed) {
+        color = chalk.red;
+        prefix = "- ";
+      }
       const lines = part.value.split("\n");
 
-      lines.forEach((line: string) => {
+      for (const line of lines) {
         if (line) {
           console.log(color(prefix + line));
         }
-      });
-    });
+      }
+    }
 
     console.log("");
 
@@ -348,7 +351,7 @@ print(json.dumps(scraper.to_json(), indent=2, sort_keys=True, default=str))
           return group;
         }
         const copy = { ...group };
-        delete copy.purpose;
+        Reflect.deleteProperty(copy, "purpose");
         return copy;
       });
       // biome-ignore lint/suspicious/noExplicitAny: ingredient group structure is dynamic
@@ -357,7 +360,7 @@ print(json.dumps(scraper.to_json(), indent=2, sort_keys=True, default=str))
           return group;
         }
         const copy = { ...group };
-        delete copy.purpose;
+        Reflect.deleteProperty(copy, "purpose");
         return copy;
       });
 

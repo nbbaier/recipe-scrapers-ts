@@ -155,7 +155,9 @@ describe("Factory Pattern", () => {
     it("should return empty array when no scrapers registered", () => {
       // Clear all scrapers for this test
       for (const key in SCRAPERS) {
-        delete SCRAPERS[key];
+        if (Object.hasOwn(SCRAPERS, key)) {
+          delete SCRAPERS[key];
+        }
       }
 
       expect(getSupportedUrls()).toEqual([]);

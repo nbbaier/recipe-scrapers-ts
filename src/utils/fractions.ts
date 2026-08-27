@@ -2,6 +2,8 @@
  * Fraction parsing utilities for recipe scrapers
  */
 
+const WHITESPACE_PATTERN = /\s+/;
+
 /**
  * Map of Unicode fraction characters to their decimal values
  */
@@ -58,7 +60,7 @@ export function extractFractional(input: string): number {
 
   // Handle mixed numbers with slash fractions (e.g., '1 1/2')
   if (trimmed.includes(" ") && trimmed.includes("/")) {
-    const parts = trimmed.split(/\s+/); // Split on any whitespace
+    const parts = trimmed.split(WHITESPACE_PATTERN); // Split on any whitespace
     const wholePart = Number.parseFloat(parts[0]);
     const fractionalPart = parts[1];
     const [numerator, denominator] = fractionalPart.split("/");

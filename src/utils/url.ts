@@ -15,6 +15,9 @@ export interface UrlComponents {
   user?: string;
 }
 
+const URL_PATTERN =
+  /^((?<schema>.+?):\/\/)?((?<user>.+?)(:(?<password>.*?))?@)?(?<host>[^:/]+)(:(?<port>\d+?))?(?<path>\/.*?)?(?<query>[?].*?)?$/;
+
 /**
  * Parses a URL path into its component parts.
  * Extracts schema, user, password, host, port, path, and query.
@@ -33,10 +36,7 @@ export interface UrlComponents {
  * // }
  */
 export function urlPathToDict(path: string): UrlComponents | null {
-  const pattern =
-    /^((?<schema>.+?):\/\/)?((?<user>.+?)(:(?<password>.*?))?@)?(?<host>[^:/]+)(:(?<port>\d+?))?(?<path>\/.*?)?(?<query>[?].*?)?$/;
-
-  const match = path.match(pattern);
+  const match = path.match(URL_PATTERN);
   if (!match?.groups) {
     return null;
   }
@@ -120,5 +120,6 @@ export function getUrlSlug(url: string): string {
   }
 
   // Return the last segment (e.g., 'chocolate-cake' from '/recipes/chocolate-cake/' or '/recipes/chocolate-cake')
-  return segments[segments.length - 1];
+  // biome-ignore lint/style/useAtIndex: package target does not include Array.prototype.at
+  return segments.slice(-1)[0];
 }

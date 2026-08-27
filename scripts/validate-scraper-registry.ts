@@ -20,6 +20,13 @@ interface ScraperMeta {
 
 const SITES_DIR = join(import.meta.dirname, "../src/scrapers/sites");
 const INDEX_PATH = join(SITES_DIR, "index.ts");
+const CLASS_PATTERN = /export\s+class\s+(\w+)/;
+const HOST_PATTERN =
+  /host\(\)\s*:\s*string\s*\{[^}]*return\s+["']([^"']+)["']/s;
+const MODULE_PATTERN = /\.ts$/;
+const EXPORT_PATTERN = /export\s*\{([\s\S]*?)\};/;
+const REGISTRY_PATTERN =
+  /export\s+const\s+SCRAPER_REGISTRY:[\s\S]*?=\s*\{([\s\S]*?)\n\};/;
 
 function getImplementedScrapers(): ScraperMeta[] {
   const files = readdirSync(SITES_DIR)
@@ -29,10 +36,8 @@ function getImplementedScrapers(): ScraperMeta[] {
   return files.map((file) => {
     const content = readFileSync(join(SITES_DIR, file), "utf-8");
 
-    const classMatch = content.match(/export\s+class\s+(\w+)/);
-    const hostMatch = content.match(
-      /host\(\)\s*:\s*string\s*\{[^}]*return\s+["']([^"']+)["']/s
-    );
+    const classMatch = content.match(CLASS_PATTERN);
+    const hostMatch = content.match(HOST_PATTERN);
 
     if (!classMatch) {
       throw new Error(`Could not parse class name from ${file}`);
@@ -43,7 +48,7 @@ function getImplementedScrapers(): ScraperMeta[] {
     }
 
     return {
-      moduleName: file.replace(/\.ts$/, ""),
+      moduleName: file.replace(MODULE_PATTERN, ""),
       className: classMatch[1],
       host: hostMatch[1],
     };
@@ -64,7 +69,7 @@ function getIndexImports(indexContent: string): Map<string, string> {
 }
 
 function getIndexExports(indexContent: string): Set<string> {
-  const exportMatch = indexContent.match(/export\s*\{([\s\S]*?)\};/);
+  const exportMatch = indexContent.match(EXPORT_PATTERN);
 
   if (!exportMatch) {
     throw new Error(
@@ -81,9 +86,7 @@ function getIndexExports(indexContent: string): Set<string> {
 }
 
 function getIndexRegistry(indexContent: string): Map<string, string> {
-  const registryBlockMatch = indexContent.match(
-    /export\s+const\s+SCRAPER_REGISTRY:[\s\S]*?=\s*\{([\s\S]*?)\n\};/
-  );
+  const registryBlockMatch = indexContent.match(REGISTRY_PATTERN);
 
   if (!registryBlockMatch) {
     throw new Error(

@@ -29,7 +29,7 @@ export class OpenGraphImageFetchPlugin extends PluginInterface {
 
       try {
         image = decorated.apply(this, args);
-      } catch (_error) {
+      } catch {
         // Silently catch exception
       }
 

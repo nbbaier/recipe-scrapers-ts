@@ -26,10 +26,10 @@ import {
 
 type ScraperOutput = Record<string, unknown>;
 
-type FieldDifference = {
+interface FieldDifference {
   python: unknown;
   typescript: unknown;
-};
+}
 
 type Differences = Record<string, FieldDifference>;
 
@@ -48,9 +48,9 @@ interface ValidationReport {
 }
 
 class ParityValidator {
-  private report: ValidationReport;
-  private specificDomain?: string;
-  private implementedOnly: boolean;
+  private readonly report: ValidationReport;
+  private readonly specificDomain?: string;
+  private readonly implementedOnly: boolean;
   private pythonCommand: string;
 
   constructor(specificDomain?: string, implementedOnly = false) {
@@ -398,7 +398,7 @@ print(json.dumps(scraper.to_json(), sort_keys=True, default=str))
           return group;
         }
         const copy = { ...group };
-        delete copy.purpose;
+        Reflect.deleteProperty(copy, "purpose");
         return copy;
       });
       // biome-ignore lint/suspicious/noExplicitAny: ingredient group structure is dynamic
@@ -407,7 +407,7 @@ print(json.dumps(scraper.to_json(), sort_keys=True, default=str))
           return group;
         }
         const copy = { ...group };
-        delete copy.purpose;
+        Reflect.deleteProperty(copy, "purpose");
         return copy;
       });
 
@@ -462,14 +462,12 @@ print(json.dumps(scraper.to_json(), sort_keys=True, default=str))
     }
     if (typeof obj === "object" && obj !== null) {
       const normalized: Record<string, unknown> = {};
-      Object.keys(obj)
-        .sort()
-        .forEach((key) => {
-          const value = (obj as Record<string, unknown>)[key];
-          if (value !== null && value !== undefined) {
-            normalized[key] = this.normalize(value);
-          }
-        });
+      for (const key of Object.keys(obj).sort()) {
+        const value = (obj as Record<string, unknown>)[key];
+        if (value !== null && value !== undefined) {
+          normalized[key] = this.normalize(value);
+        }
+      }
       return normalized;
     }
     if (typeof obj === "string") {

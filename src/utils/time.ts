@@ -28,6 +28,7 @@ const TIME_REGEX =
  * getMinutes("2.5 hours") // Returns: 150
  * getMinutes("12-15 minutes") // Returns: 15 (uses max value)
  */
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: time strings have several legacy formats and fallbacks
 export function getMinutes(
   element: string | number | { text?: string } | null
 ): number | null {
