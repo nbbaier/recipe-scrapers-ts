@@ -3,7 +3,7 @@
   "extends": ["ultracite/biome/core", "ultracite/biome/vitest"],
   "files": {
     // Vendored Oxlint anti-slop plugin: third-party source, not owned by this repo.
-    "includes": ["!tools/oxlint/anti-slop"]
+    "includes": ["!tools/oxlint/anti-slop", "!.agents/skills/install-anti-slop"]
   },
   "linter": {
     "rules": {
