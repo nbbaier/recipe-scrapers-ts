@@ -22,40 +22,40 @@ const TRAILING_PERIODS_PATTERN = /\.+$/;
 /**
  * Represents a Schema.org entity (Recipe, Person, WebSite, etc.)
  */
+type SchemaValue =
+  | string
+  | number
+  | boolean
+  | null
+  | SchemaEntity
+  | SchemaValue[];
+
 interface SchemaEntity {
   "@context"?: string;
   "@graph"?: SchemaEntity[] | SchemaEntity;
   "@id"?: string;
   "@type"?: string | string[];
 
-  // biome-ignore lint/suspicious/noExplicitAny: Schema.org entities can have arbitrary properties
-  [key: string]: any;
+  [key: string]: SchemaValue | undefined;
 }
 
-/**
- * Represents a HowToStep schema item
- */
-interface HowToStep {
-  "@type": "HowToStep";
-  itemListElement?: HowToStep;
-  name?: string;
-  text?: string;
+function isSchemaEntity(value: SchemaValue | undefined): value is SchemaEntity {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
 }
 
-/**
- * Represents a HowToSection schema item
- */
-interface HowToSection {
-  "@type": "HowToSection";
-  itemListElement?: HowToSchemaItem[];
-  Name?: string;
-  name?: string;
+function isSchemaString(value: SchemaValue | undefined): value is string {
+  return typeof value === "string";
+}
+
+function schemaString(entity: SchemaEntity, key: string): string | undefined {
+  const value = entity[key];
+  return isSchemaString(value) ? value : undefined;
 }
 
 /**
  * Union type for instruction schema items
  */
-type HowToSchemaItem = string | HowToStep | HowToSection;
+type HowToSchemaItem = string | SchemaEntity;
 
 /**
  * Schema.org parser for recipe data
@@ -92,8 +92,12 @@ export class SchemaOrg {
           const parsed = JSON.parse(content);
           // Handle both array and object formats
           if (Array.isArray(parsed)) {
-            jsonLdScripts.push(...parsed);
-          } else {
+            for (const value of parsed) {
+              if (isSchemaEntity(value)) {
+                jsonLdScripts.push(value);
+              }
+            }
+          } else if (isSchemaEntity(parsed)) {
             jsonLdScripts.push(parsed);
           }
         }
@@ -105,8 +109,9 @@ export class SchemaOrg {
     // Extract website name
     for (const item of jsonLdScripts) {
       const website = this.findEntity(item, "WebSite");
-      if (website?.name) {
-        this.websiteName = website.name;
+      const websiteName = website ? schemaString(website, "name") : undefined;
+      if (websiteName) {
+        this.websiteName = websiteName;
       }
     }
 
@@ -114,7 +119,7 @@ export class SchemaOrg {
     for (const item of jsonLdScripts) {
       const person = this.findEntity(item, "Person");
       if (person) {
-        const key = person["@id"] || person.url;
+        const key = schemaString(person, "@id") ?? schemaString(person, "url");
         if (key) {
           this.people[key] = person;
         }
@@ -124,15 +129,16 @@ export class SchemaOrg {
     // Extract ratings data
     for (const item of jsonLdScripts) {
       const rating = this.findEntity(item, "AggregateRating");
-      if (rating?.["@id"]) {
-        this.ratingsData[rating["@id"]] = rating;
+      const ratingId = rating ? schemaString(rating, "@id") : undefined;
+      if (rating && ratingId) {
+        this.ratingsData[ratingId] = rating;
       }
     }
 
     // Find and extract recipe data
     for (const item of jsonLdScripts) {
       const context = item["@context"];
-      if (typeof context === "string" && !context.includes(SCHEMA_ORG_HOST)) {
+      if (isSchemaString(context) && !context.includes(SCHEMA_ORG_HOST)) {
         continue;
       }
 
@@ -143,7 +149,10 @@ export class SchemaOrg {
         recipe = item;
       }
       // Check if item is a WebPage with mainEntity that's a recipe
-      else if (this.containsSchemaType(item, "WebPage") && item.mainEntity) {
+      else if (
+        this.containsSchemaType(item, "WebPage") &&
+        isSchemaEntity(item.mainEntity)
+      ) {
         recipe = item.mainEntity;
       }
       // Search in @graph
@@ -200,11 +209,7 @@ export class SchemaOrg {
     if (graph) {
       const nodes = Array.isArray(graph) ? graph : [graph];
       for (const node of nodes) {
-        if (
-          typeof node === "object" &&
-          node !== null &&
-          this.containsSchemaType(node, schemaType)
-        ) {
+        if (this.containsSchemaType(node, schemaType)) {
           return node;
         }
       }
@@ -227,14 +232,19 @@ export class SchemaOrg {
    * Extracts language from Schema.org data
    */
   language(): string | undefined {
-    return this.data.inLanguage || this.data.language;
+    const language = this.data.inLanguage;
+    if (isSchemaString(language)) {
+      return language;
+    }
+    const fallback = this.data.language;
+    return isSchemaString(fallback) ? fallback : undefined;
   }
 
   /**
    * Extracts recipe title
    */
   title(): string {
-    return normalizeString(this.data.name || "");
+    return normalizeString(schemaString(this.data, "name") ?? "");
   }
 
   /**
@@ -243,10 +253,10 @@ export class SchemaOrg {
   category(): string | undefined {
     const category = this.data.recipeCategory;
     if (Array.isArray(category)) {
-      return category.map((c) => normalizeString(c)).join(",");
+      return category.map((c) => normalizeString(String(c))).join(",");
     }
     if (category) {
-      return normalizeString(category);
+      return normalizeString(String(category));
     }
     return;
   }
@@ -255,7 +265,7 @@ export class SchemaOrg {
    * Extracts recipe author
    */
   author(): string | undefined {
-    let author = this.data.author || this.data.Author;
+    let author: SchemaValue | undefined = this.data.author || this.data.Author;
 
     // Handle array of authors
     if (Array.isArray(author) && author.length > 0) {
@@ -263,19 +273,20 @@ export class SchemaOrg {
     }
 
     // Resolve author reference
-    if (typeof author === "object" && author !== null) {
-      const authorKey = author["@id"] || author.url;
+    if (isSchemaEntity(author)) {
+      const authorKey =
+        schemaString(author, "@id") ?? schemaString(author, "url");
       if (authorKey && this.people[authorKey]) {
         author = this.people[authorKey];
       }
     }
 
     // Extract name from author object
-    if (typeof author === "object" && author !== null) {
-      author = author.name;
+    if (isSchemaEntity(author)) {
+      author = schemaString(author, "name");
     }
 
-    if (typeof author === "string") {
+    if (isSchemaString(author)) {
       return author.trim();
     }
 
@@ -291,13 +302,13 @@ export class SchemaOrg {
       return null;
     }
 
-    if (typeof value === "string") {
+    if (isSchemaString(value)) {
       return getMinutes(value);
     }
 
     // Handle QuantitativeValue with maxValue
-    if (typeof value === "object" && value.maxValue) {
-      return getMinutes(value.maxValue);
+    if (isSchemaEntity(value) && value.maxValue) {
+      return getMinutes(String(value.maxValue));
     }
 
     return null;
@@ -397,13 +408,13 @@ export class SchemaOrg {
     }
 
     // Handle image object with url property
-    if (typeof image === "object" && image !== null) {
+    if (isSchemaEntity(image)) {
       image = image.url;
     }
 
     // Check if it's an absolute URL
     if (
-      typeof image === "string" &&
+      isSchemaString(image) &&
       !(
         image.startsWith("http://") ||
         image.startsWith("https://") ||
@@ -414,7 +425,7 @@ export class SchemaOrg {
       return "";
     }
 
-    return typeof image === "string" ? image : "";
+    return isSchemaString(image) ? image : "";
   }
 
   /**
@@ -429,7 +440,7 @@ export class SchemaOrg {
     }
 
     // Handle single string ingredient
-    if (typeof ingredients === "string") {
+    if (isSchemaString(ingredients)) {
       ingredients = [ingredients];
     }
 
@@ -446,7 +457,9 @@ export class SchemaOrg {
    * Extracts nutrition information
    */
   nutrients(): Record<string, string> {
-    const nutrition = this.data.nutrition || {};
+    const nutrition = isSchemaEntity(this.data.nutrition)
+      ? this.data.nutrition
+      : {};
     const cleanedNutrients: Record<string, string> = {};
 
     for (const [key, value] of Object.entries(nutrition)) {
@@ -475,50 +488,57 @@ export class SchemaOrg {
   private extractHowToInstructionsText(schemaItem: HowToSchemaItem): string[] {
     const instructionsGist: string[] = [];
 
-    if (typeof schemaItem === "string") {
+    if (isSchemaString(schemaItem)) {
       instructionsGist.push(schemaItem);
-    } else if (schemaItem?.["@type"] === "HowToStep") {
+    } else if (schemaString(schemaItem, "@type") === "HowToStep") {
+      const name = schemaString(schemaItem, "name");
+      const text = schemaString(schemaItem, "text");
       // Some sites have duplicated name and text properties (1:1)
       // others have name same as text but truncated to X chars.
       // Include name only if it's different from the text
       if (
-        schemaItem.name &&
-        schemaItem.text &&
-        !schemaItem.text.startsWith(
-          schemaItem.name.replace(TRAILING_PERIODS_PATTERN, "")
-        )
+        name &&
+        text &&
+        !text.startsWith(name.replace(TRAILING_PERIODS_PATTERN, ""))
       ) {
-        instructionsGist.push(schemaItem.name);
+        instructionsGist.push(name);
       }
 
       // Handle nested itemListElement
       const nestedItem = schemaItem.itemListElement;
-      if (nestedItem) {
-        if (nestedItem.text) {
-          instructionsGist.push(nestedItem.text);
-        } else if (nestedItem.name) {
-          instructionsGist.push(nestedItem.name);
+      if (isSchemaEntity(nestedItem)) {
+        const nestedText = schemaString(nestedItem, "text");
+        const nestedName = schemaString(nestedItem, "name");
+        if (nestedText) {
+          instructionsGist.push(nestedText);
+        } else if (nestedName) {
+          instructionsGist.push(nestedName);
         }
         return instructionsGist;
       }
 
-      if (schemaItem.text) {
-        instructionsGist.push(schemaItem.text);
-      } else if (schemaItem.name) {
+      if (text) {
+        instructionsGist.push(text);
+      } else if (name) {
         // Fallback to name if text is missing
-        instructionsGist.push(schemaItem.name);
+        instructionsGist.push(name);
       }
-    } else if (schemaItem?.["@type"] === "HowToSection") {
+    } else if (schemaString(schemaItem, "@type") === "HowToSection") {
       // Add section name
-      const sectionName = schemaItem.name || schemaItem.Name;
+      const sectionName =
+        schemaString(schemaItem, "name") ?? schemaString(schemaItem, "Name");
       if (sectionName) {
         instructionsGist.push(sectionName);
       }
 
       // Process items in the section
-      const items = schemaItem.itemListElement || [];
+      const items = Array.isArray(schemaItem.itemListElement)
+        ? schemaItem.itemListElement
+        : [];
       for (const item of items) {
-        instructionsGist.push(...this.extractHowToInstructionsText(item));
+        if (isSchemaString(item) || isSchemaEntity(item)) {
+          instructionsGist.push(...this.extractHowToInstructionsText(item));
+        }
       }
     }
 
@@ -529,7 +549,7 @@ export class SchemaOrg {
    * Extracts recipe instructions
    */
   instructions(): string {
-    let instructions =
+    let instructions: SchemaValue | undefined =
       this.data.recipeInstructions || this.data.RecipeInstructions || "";
 
     // Flatten nested arrays
@@ -541,11 +561,7 @@ export class SchemaOrg {
     }
 
     // Handle dict with itemListElement
-    if (
-      typeof instructions === "object" &&
-      !Array.isArray(instructions) &&
-      instructions !== null
-    ) {
+    if (isSchemaEntity(instructions)) {
       instructions = instructions.itemListElement;
     }
 
@@ -553,34 +569,36 @@ export class SchemaOrg {
     if (Array.isArray(instructions)) {
       const instructionsGist: string[] = [];
       for (const item of instructions) {
-        instructionsGist.push(...this.extractHowToInstructionsText(item));
+        if (isSchemaString(item) || isSchemaEntity(item)) {
+          instructionsGist.push(...this.extractHowToInstructionsText(item));
+        }
       }
       return instructionsGist
         .map((instruction) => normalizeString(instruction))
         .join("\n");
     }
 
-    return typeof instructions === "string" ? instructions : "";
+    return isSchemaString(instructions) ? instructions : "";
   }
 
   /**
    * Extracts recipe rating
    */
   ratings(): number {
-    let ratings =
+    let ratings: SchemaValue | undefined =
       this.data.aggregateRating ||
       this.findEntity(this.data, "AggregateRating");
 
     // Resolve rating reference
-    if (ratings && typeof ratings === "object") {
-      const ratingId = ratings["@id"];
+    if (isSchemaEntity(ratings)) {
+      const ratingId = schemaString(ratings, "@id");
       if (ratingId && this.ratingsData[ratingId]) {
         ratings = this.ratingsData[ratingId];
       }
     }
 
     // Extract rating value
-    if (ratings && typeof ratings === "object") {
+    if (isSchemaEntity(ratings)) {
       ratings = ratings.ratingValue;
     }
 
@@ -595,13 +613,13 @@ export class SchemaOrg {
    * Extracts recipe ratings count
    */
   ratingsCount(): number | null {
-    let ratings =
+    let ratings: SchemaValue | undefined =
       this.data.aggregateRating ||
       this.findEntity(this.data, "AggregateRating");
 
     // Resolve rating reference
-    if (ratings && typeof ratings === "object") {
-      const ratingId = ratings["@id"];
+    if (isSchemaEntity(ratings)) {
+      const ratingId = schemaString(ratings, "@id");
       if (ratingId && this.ratingsData[ratingId]) {
         ratings = this.ratingsData[ratingId];
       }
@@ -693,7 +711,7 @@ export class SchemaOrg {
     }
 
     const formattedDiets = dietaryRestrictions
-      .map((diet: unknown) => formatDietName(String(diet)))
+      .map((diet) => formatDietName(String(diet)))
       .filter((diet: string | null): diet is string => diet !== null);
 
     const joined = formattedDiets.join(", ");

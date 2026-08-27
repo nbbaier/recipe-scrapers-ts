@@ -194,6 +194,7 @@ print(json.dumps(scraper.to_json(), indent=2, sort_keys=True, default=str))
       // Clean up temp file
       unlinkSync(tmpFile);
 
+      // SAFETY: the Python scraper serializes the documented recipe-scrapers JSON shape.
       return JSON.parse(output) as ScraperOutput;
     } catch (error: unknown) {
       // Clean up temp file on error
@@ -220,6 +221,7 @@ print(json.dumps(scraper.to_json(), indent=2, sort_keys=True, default=str))
     });
 
     // Get JSON output
+    // SAFETY: AbstractScraper.toJson() returns the documented recipe output shape.
     return scraper.toJson() as ScraperOutput;
   }
 
@@ -241,6 +243,7 @@ print(json.dumps(scraper.to_json(), indent=2, sort_keys=True, default=str))
     console.log(chalk.bold("Differences:"));
     const differences = diffJson(pythonOutput, typescriptOutput);
 
+    // SAFETY: diffJson returns the `Change[]` shape documented by the `diff` package.
     for (const part of differences as Change[]) {
       let color = chalk.gray;
       let prefix = "  ";
@@ -299,7 +302,9 @@ print(json.dumps(scraper.to_json(), indent=2, sort_keys=True, default=str))
 
     // Object comparison (key order doesn't matter)
     if (typeof a === "object" && typeof b === "object") {
+      // SAFETY: the null and array checks above leave both values as object records.
       const aKeys = Object.keys(a as Record<string, unknown>).sort();
+      // SAFETY: the null and array checks above leave both values as object records.
       const bKeys = Object.keys(b as Record<string, unknown>).sort();
 
       // Different number of keys
@@ -313,6 +318,7 @@ print(json.dumps(scraper.to_json(), indent=2, sort_keys=True, default=str))
       }
 
       // Compare values for each key
+      // SAFETY: every key came from the corresponding object, so indexed access is defined.
       return aKeys.every((key) =>
         this.deepEqual(
           (a as Record<string, unknown>)[key],

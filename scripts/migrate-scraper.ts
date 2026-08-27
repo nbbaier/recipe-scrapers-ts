@@ -716,6 +716,7 @@ async function syncDomainFixtures(
       };
     }
 
+    // SAFETY: GitHub's contents API returns this documented file-entry shape for the requested directory.
     const payload = (await response.json()) as Array<{
       type: string;
       name: string;
@@ -740,6 +741,7 @@ async function syncDomainFixtures(
 
     mkdirSync(destination, { recursive: true });
     for (const file of files) {
+      // SAFETY: the preceding filter narrowed every selected entry to a string download URL.
       const fileResponse = await fetch(file.download_url as string, {
         headers: GITHUB_HEADERS,
       });
@@ -804,6 +806,7 @@ function runParityValidation(domains: string[]): ParityResult {
       detail: `Validated domains: ${domains.join(", ")}`,
     };
   } catch (error) {
+    // SAFETY: execSync errors expose these optional stdout, stderr, and message fields.
     const err = error as {
       stdout?: string;
       stderr?: string;

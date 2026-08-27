@@ -18,6 +18,18 @@ const SERVE_REGEX_ITEMS =
  */
 const SERVE_REGEX_TO = /\d+(\s+to\s+|-)\d+/i;
 
+type YieldElement = string | { getText?: () => string } | null;
+
+function isStringElement(element: YieldElement): element is string {
+  return typeof element === "string";
+}
+
+function isTextElement(
+  element: YieldElement
+): element is { getText?: () => string } {
+  return element !== null && typeof element === "object";
+}
+
 /**
  * Recipe yield types in (singular, plural) format
  * Used to identify and format specific yield types
@@ -90,13 +102,9 @@ export function getYields(
 
   // Extract text from element
   let serveText: string;
-  if (typeof element === "string") {
+  if (isStringElement(element)) {
     serveText = element;
-  } else if (
-    typeof element === "object" &&
-    "getText" in element &&
-    element.getText
-  ) {
+  } else if (isTextElement(element) && element.getText) {
     serveText = element.getText();
   } else {
     serveText = element.toString();

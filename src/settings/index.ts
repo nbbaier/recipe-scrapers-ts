@@ -7,6 +7,28 @@
 
 import type { PluginInterface } from "../plugins/interface";
 
+type SettingValue =
+  | string
+  | number
+  | boolean
+  | null
+  | SettingValue[]
+  | { [key: string]: SettingValue }
+  | undefined;
+
+type MergeValue =
+  | string
+  | number
+  | boolean
+  | null
+  | MergeValue[]
+  | { [key: string]: MergeValue }
+  | undefined;
+
+interface MergeObject {
+  [key: string]: MergeValue;
+}
+
 export interface Settings {
   /** Enable best image selection plugin */
   BEST_IMAGE_SELECTION: boolean;
@@ -15,8 +37,7 @@ export interface Settings {
   LOG_LEVEL: number;
 
   /** Default values to return when exceptions are suppressed */
-  // biome-ignore lint/suspicious/noExplicitAny: exception return values can be of any type
-  ON_EXCEPTION_RETURN_VALUES: Record<string, any>;
+  ON_EXCEPTION_RETURN_VALUES: { [key: string]: SettingValue };
   /** Plugins to attach to scrapers (outer-most executed first) */
   PLUGINS: (typeof PluginInterface)[];
 
@@ -96,8 +117,8 @@ function deepMerge(target: any, source: any): any {
 }
 
 // biome-ignore lint/suspicious/noExplicitAny: type checking function for arbitrary values
-function isObject(item: any): boolean {
-  return item && typeof item === "object" && !Array.isArray(item);
+function isObject(item: any): item is MergeObject {
+  return item !== null && typeof item === "object" && !Array.isArray(item);
 }
 
 /**

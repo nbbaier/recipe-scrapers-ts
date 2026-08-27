@@ -14,7 +14,7 @@ import { PluginInterface } from "./interface";
  * Properly handles edge cases like comments, CDATA, and malformed HTML
  */
 function stripTags(html: string): string {
-  if (!html || typeof html !== "string") {
+  if (!html) {
     return "";
   }
 

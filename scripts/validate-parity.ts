@@ -265,6 +265,7 @@ print(json.dumps(scraper.to_json(), sort_keys=True, default=str))
       // Clean up temp file
       unlinkSync(tmpFilePath);
 
+      // SAFETY: the Python scraper serializes the documented recipe-scrapers JSON shape.
       return JSON.parse(output) as ScraperOutput;
     } catch (error: unknown) {
       // Clean up temp file on error
@@ -295,6 +296,7 @@ print(json.dumps(scraper.to_json(), sort_keys=True, default=str))
       });
 
       // Get JSON output
+      // SAFETY: AbstractScraper.toJson() returns the documented recipe output shape.
       return scraper.toJson() as ScraperOutput;
     } catch (error: unknown) {
       // Re-throw with a clear message if scraper not implemented
@@ -346,7 +348,9 @@ print(json.dumps(scraper.to_json(), sort_keys=True, default=str))
 
     // Object comparison (key order doesn't matter)
     if (typeof a === "object" && typeof b === "object") {
+      // SAFETY: the null and array checks above leave both values as object records.
       const aKeys = Object.keys(a as Record<string, unknown>).sort();
+      // SAFETY: the null and array checks above leave both values as object records.
       const bKeys = Object.keys(b as Record<string, unknown>).sort();
 
       // Different number of keys
@@ -360,6 +364,7 @@ print(json.dumps(scraper.to_json(), sort_keys=True, default=str))
       }
 
       // Compare values for each key
+      // SAFETY: every key came from the corresponding object, so indexed access is defined.
       return aKeys.every((key) =>
         this.deepEqual(
           (a as Record<string, unknown>)[key],
@@ -463,6 +468,7 @@ print(json.dumps(scraper.to_json(), sort_keys=True, default=str))
     if (typeof obj === "object" && obj !== null) {
       const normalized: Record<string, unknown> = {};
       for (const key of Object.keys(obj).sort()) {
+        // SAFETY: the preceding object guard establishes a string-keyed record.
         const value = (obj as Record<string, unknown>)[key];
         if (value !== null && value !== undefined) {
           normalized[key] = this.normalize(value);

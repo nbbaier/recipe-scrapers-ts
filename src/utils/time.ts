@@ -12,6 +12,20 @@ import { extractFractional } from "./fractions";
 const TIME_REGEX =
   /(?:\D*(?<days>\d+)\s*(?:days|D))?(?:[^\d¼½¾⅓⅔⅕⅖⅗]*(?<hours>[\d.\s/?¼½¾⅓⅔⅕⅖⅗]+)\s*(?:hours|hrs|hr|h|óra|:))?(?:\D*(?<minutes>\d+(?:\.\d+)?)\s*(?:minutes|mins|min|m|perc|$))?(?:\D*(?<seconds>\d+)\s*(?:seconds|secs|sec|s))?/i;
 
+type TimeElement = string | number | { text?: string } | null;
+
+function isTextElement(element: TimeElement): element is { text?: string } {
+  return element !== null && typeof element === "object";
+}
+
+function isStringElement(element: TimeElement): element is string {
+  return typeof element === "string";
+}
+
+function isNumberElement(element: TimeElement): element is number {
+  return typeof element === "number";
+}
+
 /**
  * Parses a time element and returns the total time in minutes.
  * Handles ISO 8601 durations (PT1H30M), text formats ("1 hour 30 min"),
@@ -38,11 +52,11 @@ export function getMinutes(
 
   // Extract text from element if it's an object with a text property
   let timeText: string;
-  if (typeof element === "object" && "text" in element && element.text) {
+  if (isTextElement(element) && element.text) {
     timeText = element.text;
-  } else if (typeof element === "string") {
+  } else if (isStringElement(element)) {
     timeText = element;
-  } else if (typeof element === "number") {
+  } else if (isNumberElement(element)) {
     // If it's already a number, try to parse it as integer minutes
     try {
       return Number.parseInt(element.toString(), 10);

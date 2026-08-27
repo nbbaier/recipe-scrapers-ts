@@ -47,6 +47,7 @@ print(json.dumps(result))
       stdio: ["pipe", "pipe", "pipe"],
     }).trim();
 
+    // SAFETY: the upstream registry script emits a hostname-to-class-name JSON object.
     const raw = JSON.parse(output) as Record<string, string>;
     const domains = new Map(Object.entries(raw));
 

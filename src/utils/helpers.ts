@@ -27,8 +27,8 @@ export function changeKeys<T>(obj: T, convert: (key: string) => string): T {
     return obj.map((item) => changeKeys(item, convert)) as T;
   }
 
-  if (typeof obj === "object" && obj.constructor === Object) {
-    const result: Record<string, unknown> = {};
+  if (isPlainObject(obj)) {
+    const result: Record<string, T> = {};
     for (const [key, value] of Object.entries(obj)) {
       result[convert(key)] = changeKeys(value, convert);
     }
@@ -46,6 +46,14 @@ export function changeKeys<T>(obj: T, convert: (key: string) => string): T {
   return obj;
 }
 
+function isPlainObject<T>(value: T): value is T & Record<string, T> {
+  return (
+    value !== null &&
+    typeof value === "object" &&
+    Object.getPrototypeOf(value) === Object.prototype
+  );
+}
+
 /**
  * Removes duplicate equipment items from an array while preserving order.
  *
@@ -59,7 +67,7 @@ export function changeKeys<T>(obj: T, convert: (key: string) => string): T {
 export function getEquipment(equipmentItems: string[]): string[] {
   // Use object keys to maintain order while removing duplicates
   // (Objects in modern JS maintain insertion order)
-  const seen: Record<string, boolean> = {};
+  const seen: Record<string, true> = {};
   const result: string[] = [];
 
   for (const item of equipmentItems) {

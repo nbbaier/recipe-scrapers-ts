@@ -11,12 +11,32 @@ import { ElementNotFoundInHtml, NotImplementedError } from "../exceptions";
 import { OpenGraph } from "../parsers/opengraph";
 import { SchemaOrg } from "../parsers/schema-org";
 import { settings } from "../settings";
-import type { IngredientGroup, Recipe } from "../types/recipe";
+import type { IngredientGroup, Nutrients, Recipe } from "../types/recipe";
 import { groupIngredients } from "../utils/grouping";
 
 /** Any scraper method; plugins wrap these without knowing the exact signature. */
 // biome-ignore lint/suspicious/noExplicitAny: matches the decorator constraint of PluginInterface.run()
 type ScraperMethod = (...args: any[]) => any;
+
+type RecipeValue =
+  | Partial<Recipe>[keyof Recipe]
+  | null
+  | IngredientGroup
+  | Nutrients
+  | { [key: string]: RecipeValue }
+  | RecipeValue[];
+
+function isRecipeObject(
+  value: RecipeValue
+): value is { [key: string]: RecipeValue } {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
+function isScraperMethod(
+  value: PropertyDescriptor["value"]
+): value is ScraperMethod {
+  return typeof value === "function";
+}
 
 /**
  * Abstract base scraper class
@@ -118,7 +138,7 @@ export abstract class AbstractScraper {
         ) {
           const descriptor = Object.getOwnPropertyDescriptor(current, name);
           // Check if it's a method (function) not a getter/setter or property
-          if (descriptor && typeof descriptor.value === "function") {
+          if (descriptor && isScraperMethod(descriptor.value)) {
             methods.push(name);
           }
         }
@@ -397,9 +417,7 @@ export abstract class AbstractScraper {
         const elementAttrs = $link.attr();
         if (elementAttrs) {
           for (const [key, value] of Object.entries(elementAttrs)) {
-            if (typeof value === "string") {
-              attrs[key] = value;
-            }
+            attrs[key] = value;
           }
         }
         links.push(attrs);
@@ -443,7 +461,7 @@ export abstract class AbstractScraper {
   ] as const;
 
   toJson(): Partial<Recipe> {
-    const jsonDict: Record<string, unknown> = {};
+    const jsonDict: Partial<Record<keyof Recipe, RecipeValue>> = {};
 
     for (const method of AbstractScraper.scraperMethodNames) {
       try {
@@ -467,14 +485,14 @@ export abstract class AbstractScraper {
   /**
    * Recursively converts undefined values to null for JSON serialization parity with Python
    */
-  private convertUndefinedToNull(value: unknown): unknown {
+  private convertUndefinedToNull(value: RecipeValue): RecipeValue {
     if (value === undefined) {
       return null;
     }
     if (Array.isArray(value)) {
       return value.map((item) => this.convertUndefinedToNull(item));
     }
-    if (value !== null && typeof value === "object") {
+    if (isRecipeObject(value)) {
       return Object.fromEntries(
         Object.entries(value).map(([key, val]) => [
           key,
@@ -489,7 +507,7 @@ export abstract class AbstractScraper {
    * Maps method names to Recipe field names
    * Handles camelCase conversion
    */
-  private mapMethodToField(method: keyof AbstractScraper): string {
+  private mapMethodToField(method: keyof AbstractScraper): keyof Recipe {
     // Convert method names to match Recipe interface
     const mapping = new Map<keyof AbstractScraper, string>([
       ["siteName", "site_name"],
@@ -504,6 +522,13 @@ export abstract class AbstractScraper {
       ["dietaryRestrictions", "dietary_restrictions"],
     ]);
 
-    return mapping.get(method) ?? method;
+    const mappedField = mapping.get(method);
+    if (mappedField) {
+      // SAFETY: the mapping values are Recipe field names by construction.
+      return mappedField as keyof Recipe;
+    }
+    // SAFETY: every scraper method name is either explicitly mapped above or is
+    // already a valid camelCase Recipe field name.
+    return method as keyof Recipe;
   }
 }

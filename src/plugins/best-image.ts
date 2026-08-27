@@ -16,6 +16,36 @@ interface ImageCandidate {
   width: number | null;
 }
 
+type ImageValue =
+  | string
+  | number
+  | null
+  | undefined
+  | ImageObject
+  | ImageValue[]
+  | Set<ImageValue>;
+
+interface ImageObject {
+  [key: string]: ImageValue;
+}
+
+function isImageObject(value: ImageValue): value is ImageObject {
+  return (
+    value !== null &&
+    typeof value === "object" &&
+    !Array.isArray(value) &&
+    !(value instanceof Set)
+  );
+}
+
+function isImageString(value: ImageValue): value is string {
+  return typeof value === "string";
+}
+
+function isImageNumber(value: ImageValue): value is number {
+  return typeof value === "number";
+}
+
 // Maximum reasonable dimension for an image (10000x10000 should cover most real images)
 const MAX_DIMENSION = 10_000;
 const DIMENSION_NUMBER_PATTERN = /\d+/;
@@ -81,7 +111,7 @@ export class BestImagePlugin extends PluginInterface {
 
     // Get schema images
     const schemaData = scraper.schema?.data;
-    if (schemaData && typeof schemaData === "object") {
+    if (isImageObject(schemaData)) {
       register(schemaData.image, "schema");
     }
 
@@ -91,8 +121,10 @@ export class BestImagePlugin extends PluginInterface {
     return Array.from(candidates.values());
   }
 
-  // biome-ignore lint/suspicious/noExplicitAny: entry type is dynamic and can be string, object, or array
-  private static *_normalizeEntries(entry: any): Generator<ImageCandidate> {
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: image metadata supports nested arrays and several Schema.org shapes
+  private static *_normalizeEntries(
+    entry: ImageValue
+  ): Generator<ImageCandidate> {
     if (!entry) {
       return;
     }
@@ -104,13 +136,18 @@ export class BestImagePlugin extends PluginInterface {
       return;
     }
 
-    if (typeof entry === "object" && !(entry instanceof Set)) {
+    if (isImageObject(entry)) {
       const url =
         entry.url || entry["@id"] || entry.contentUrl || entry.contentURL;
       let urlString: string | undefined;
 
       if (Array.isArray(url)) {
-        urlString = url[0];
+        const firstUrl = url[0];
+        if (isImageString(firstUrl)) {
+          urlString = firstUrl;
+        } else if (firstUrl) {
+          urlString = String(firstUrl);
+        }
       } else if (url) {
         urlString = String(url);
       }
@@ -134,7 +171,7 @@ export class BestImagePlugin extends PluginInterface {
       return;
     }
 
-    if (typeof entry === "string") {
+    if (isImageString(entry)) {
       const trimmed = entry.trim();
       if (trimmed) {
         yield { url: trimmed, width: null, height: null };
@@ -266,20 +303,19 @@ export class BestImagePlugin extends PluginInterface {
     return Math.max(current, newVal);
   }
 
-  // biome-ignore lint/suspicious/noExplicitAny: value can be number, string, or object with nested values
   // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: dimensions can be represented by several supported Schema.org shapes
-  private static _parseDimension(value: any): number | null {
+  private static _parseDimension(value: ImageValue): number | null {
     if (value === null || value === undefined) {
       return null;
     }
 
-    if (typeof value === "number") {
+    if (isImageNumber(value)) {
       const dimension = Math.floor(value);
       // Validate dimension is reasonable
       return dimension > 0 && dimension <= MAX_DIMENSION ? dimension : null;
     }
 
-    if (typeof value === "string") {
+    if (isImageString(value)) {
       const match = value.match(DIMENSION_NUMBER_PATTERN);
       if (match) {
         const parsed = Number.parseInt(match[0], 10);
@@ -291,7 +327,7 @@ export class BestImagePlugin extends PluginInterface {
       return null;
     }
 
-    if (typeof value === "object") {
+    if (isImageObject(value)) {
       for (const key of ["value", "maxValue", "minValue"]) {
         if (key in value) {
           const parsed = BestImagePlugin._parseDimension(value[key]);
