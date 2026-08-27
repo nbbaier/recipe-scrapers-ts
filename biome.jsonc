@@ -1,6 +1,10 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "extends": ["ultracite/biome/core", "ultracite/biome/vitest"],
+  "files": {
+    // Vendored Oxlint anti-slop plugin: third-party source, not owned by this repo.
+    "includes": ["!tools/oxlint/anti-slop"]
+  },
   "linter": {
     "rules": {
       // Published library: barrel index.ts files are the intended public API surface.
