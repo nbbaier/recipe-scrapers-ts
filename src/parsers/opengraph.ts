@@ -20,7 +20,7 @@ export class OpenGraph {
    * @param html - HTML content of the page
    */
   constructor(html: string) {
-    this.$ = cheerio.load(html) as cheerio.CheerioAPI;
+    this.$ = cheerio.load(html);
   }
 
   /**

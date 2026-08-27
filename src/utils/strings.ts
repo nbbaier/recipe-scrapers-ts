@@ -51,7 +51,7 @@ export function normalizeString(input: string): string {
  * Helper function to unescape HTML entities
  */
 function unescapeHtml(text: string): string {
-  const htmlEntities: Record<string, string> = {
+  const htmlEntities = {
     "&amp;": "&",
     "&lt;": "<",
     "&gt;": ">",
@@ -127,7 +127,7 @@ export function csvToTags(csv: string, lowercase = false): string[] {
  * // Returns: "Gluten Free Diet"
  */
 export function formatDietName(dietInput: string): string | null {
-  const replacements: Record<string, string> = {
+  const replacements = {
     // schema.org/RestrictedDiet
     DiabeticDiet: "Diabetic Diet",
     GlutenFreeDiet: "Gluten Free Diet",

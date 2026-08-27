@@ -5,7 +5,7 @@
  * that maps hostnames to their corresponding scraper classes.
  */
 
-import type { ScraperConstructor } from "../../types/scraper";
+import type { ScraperRegistry } from "../../types/scraper";
 
 import { AllRecipesScraper } from "./allrecipes";
 import { AllTheHealthyThingsScraper } from "./allthehealthythings";
@@ -127,7 +127,7 @@ export {
   TwentyFourKitchenScraper,
 };
 
-export const SCRAPER_REGISTRY: Record<string, ScraperConstructor> = {
+export const SCRAPER_REGISTRY: ScraperRegistry = {
   "allrecipes.com": AllRecipesScraper,
   "allthehealthythings.com": AllTheHealthyThingsScraper,
   "altonbrown.com": AltonBrownScraper,

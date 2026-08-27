@@ -21,7 +21,7 @@ export class FoodNetworkScraper extends AbstractScraper {
   author(): string | undefined {
     const schemaData = this.schema.getRawData();
     if (schemaData?.copyrightNotice) {
-      return schemaData.copyrightNotice as string;
+      return String(schemaData.copyrightNotice);
     }
     return this.schema.author();
   }

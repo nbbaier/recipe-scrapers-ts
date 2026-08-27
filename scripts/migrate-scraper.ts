@@ -562,7 +562,7 @@ function buildSitesIndexContent(
  * that maps hostnames to their corresponding scraper classes.
  */
 
-import type { ScraperConstructor } from "../../types/scraper";
+import type { ScraperRegistry } from "../../types/scraper";
 
 ${imports}
 
@@ -570,7 +570,7 @@ export {
 ${exports}
 };
 
-export const SCRAPER_REGISTRY: Record<string, ScraperConstructor> = {
+export const SCRAPER_REGISTRY: ScraperRegistry = {
 ${registryLines}
 };
 `;

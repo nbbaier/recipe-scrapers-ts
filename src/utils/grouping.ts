@@ -1,10 +1,9 @@
 import type { CheerioAPI } from "cheerio";
-import type { Element } from "domhandler";
 import type { IngredientGroup } from "../types/recipe";
 import { normalizeString } from "./strings";
 
 function normalizeFractions(text: string): string {
-  const fractionMap: Record<string, string> = {
+  const fractionMap = {
     "½": "1/2",
     "⅓": "1/3",
     "⅔": "2/3",
@@ -142,7 +141,7 @@ export function groupIngredients(
   let currentHeading: string | null = null;
   const elements = $(`${heading}, ${element}`);
   elements.each((_idx, elem) => {
-    const $elem = $(elem as Element);
+    const $elem = $(elem);
     const parent = $elem.parent();
     if (
       parent &&

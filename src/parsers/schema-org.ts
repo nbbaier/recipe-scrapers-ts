@@ -458,12 +458,12 @@ export class SchemaOrg {
     }
 
     // Normalize keys and values
-    const result: Record<string, string> = {};
-    for (const [key, value] of Object.entries(cleanedNutrients)) {
-      result[normalizeString(key)] = normalizeString(value);
-    }
-
-    return result;
+    return Object.fromEntries(
+      Object.entries(cleanedNutrients).map(([key, value]) => [
+        normalizeString(key),
+        normalizeString(value),
+      ])
+    );
   }
 
   /**
@@ -488,7 +488,7 @@ export class SchemaOrg {
 
       // Handle nested itemListElement
       if (schemaItem.itemListElement) {
-        schemaItem = schemaItem.itemListElement as unknown as HowToStep;
+        schemaItem = schemaItem.itemListElement;
       }
 
       if (schemaItem.text) {

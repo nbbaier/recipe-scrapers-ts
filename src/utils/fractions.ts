@@ -5,7 +5,7 @@
 /**
  * Map of Unicode fraction characters to their decimal values
  */
-export const FRACTIONS: Record<string, number> = {
+export const FRACTIONS = {
   "½": 0.5,
   "⅓": 1 / 3,
   "⅔": 2 / 3,
@@ -41,18 +41,13 @@ export const FRACTIONS: Record<string, number> = {
 export function extractFractional(input: string): number {
   const trimmed = input.trim();
 
-  // Handle mixed numbers with unicode fractions (e.g., '1⅔')
+  // Handle unicode fractions, standalone or in mixed numbers (e.g., '¾', '1⅔')
   for (const [unicodeFraction, fractionValue] of Object.entries(FRACTIONS)) {
     if (trimmed.includes(unicodeFraction)) {
       const wholeNumberPart = trimmed.split(unicodeFraction)[0];
       const wholeNumber = Number.parseFloat(wholeNumberPart || "0");
       return wholeNumber + fractionValue;
     }
-  }
-
-  // Handle standalone unicode fractions
-  if (trimmed in FRACTIONS) {
-    return FRACTIONS[trimmed];
   }
 
   // Try parsing as a simple number

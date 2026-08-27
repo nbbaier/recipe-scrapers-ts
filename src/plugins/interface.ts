@@ -42,8 +42,7 @@ export abstract class PluginInterface {
    */
   static shouldRun(host: string, method: string): boolean {
     // biome-ignore lint/complexity/noThisInStatic: in a static method, `this` is the concrete plugin class (intended)
-    const pluginClass = this as unknown as typeof PluginInterface;
-    return shouldRunPlugin(pluginClass, host, method);
+    return shouldRunPlugin(this, host, method);
   }
 }
 
