@@ -23,6 +23,7 @@ export function changeKeys<T>(obj: T, convert: (key: string) => string): T {
   }
 
   if (Array.isArray(obj)) {
+    // SAFETY: only keys are renamed; the array shape and element types are preserved, so the result is still a T.
     return obj.map((item) => changeKeys(item, convert)) as T;
   }
 
@@ -31,10 +32,12 @@ export function changeKeys<T>(obj: T, convert: (key: string) => string): T {
     for (const [key, value] of Object.entries(obj)) {
       result[convert(key)] = changeKeys(value, convert);
     }
+    // SAFETY: only keys are renamed; values are converted recursively with their own types preserved, so the result has T's shape.
     return result as T;
   }
 
   if (obj instanceof Set) {
+    // SAFETY: a Set of key-renamed elements has the same shape as the input Set, so it is still a T.
     return new Set(
       Array.from(obj).map((item) => changeKeys(item, convert))
     ) as T;

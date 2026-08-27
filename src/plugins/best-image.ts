@@ -57,6 +57,7 @@ export class BestImagePlugin extends PluginInterface {
     };
 
     Object.defineProperty(wrapper, "name", { value: decorated.name });
+    // SAFETY: wrapper has T's call signature: it forwards `this`/`args` to `decorated` and returns either its result or a better image URL of the same type.
     return wrapper as T;
   }
 

@@ -54,6 +54,7 @@ export class OpenGraphImageFetchPlugin extends PluginInterface {
     };
 
     Object.defineProperty(wrapper, "name", { value: decorated.name });
+    // SAFETY: wrapper has T's call signature: it returns `decorated`'s result or the og:image URL fallback (string | null), and runOnMethods limits it to `image()`.
     return wrapper as T;
   }
 }

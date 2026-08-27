@@ -60,6 +60,7 @@ export class StaticValueExceptionHandlingPlugin extends PluginInterface {
     };
 
     Object.defineProperty(wrapper, "name", { value: decorated.name });
+    // SAFETY: wrapper has T's call signature: it forwards `this`/`args` to `decorated` and, for static-value exceptions, returns the exception's `returnValue`, which is that field's value.
     return wrapper as T;
   }
 }

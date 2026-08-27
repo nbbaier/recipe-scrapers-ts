@@ -88,6 +88,7 @@ export class SchemaOrgFillPlugin extends PluginInterface {
     };
 
     Object.defineProperty(wrapper, "name", { value: decorated.name });
+    // SAFETY: wrapper has T's call signature: it forwards `this`/`args` to `decorated` and, on a fill exception, to the same-named SchemaOrg method, which returns the same field type.
     return wrapper as T;
   }
 }

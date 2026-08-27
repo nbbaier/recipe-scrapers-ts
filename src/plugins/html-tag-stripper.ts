@@ -61,6 +61,7 @@ export class HTMLTagStripperPlugin extends PluginInterface {
     };
 
     Object.defineProperty(wrapper, "name", { value: decorated.name });
+    // SAFETY: wrapper has T's call signature: it forwards `this`/`args` to `decorated` and maps its string / string[] result through stripTags, which preserves that type (runOnMethods limits it to string-valued fields).
     return wrapper as T;
   }
 }
