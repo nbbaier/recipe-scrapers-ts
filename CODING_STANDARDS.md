@@ -1,36 +1,20 @@
 # Coding Standards
 
-Biome (via Ultracite) enforces most formatting and lint rules automatically. These are the project rules it does not cover, or that need judgement.
+Biome (Ultracite) and Oxlint (anti-slop plugin) enforce the mechanical rules; `bun run check` reports them. These are the judgement rules they cannot catch.
 
-## Types
+## Types and data
 
-- Prefer `unknown` over `any`, but treat `unknown` as a way station, not a destination. Parse the value at its I/O boundary and give it a named domain type; leaving `unknown` in a parameter, return type, or type alias pushes the unresolved shape onto every caller.
-- Use const assertions (`as const`) for immutable values and literal types.
-- Narrow types instead of asserting them.
-- Extract magic numbers into named constants.
+- Parse external input (scraped HTML, JSON-LD, network responses) at its I/O boundary: validate and sanitize it, then give it a named domain type.
+- Narrow types with checks rather than asserting them.
+- Mark immutable values and literal sets `as const`.
+- Give magic numbers a named constant.
 
-## Code organization
+## Control flow
 
-- Keep functions focused and under reasonable cognitive complexity limits.
-- Extract complex conditions into well-named boolean variables.
-- Prefer early returns over nesting, including for error cases.
-- Use `try-catch` meaningfully: catch to handle or add context, not just to rethrow.
+- Return early, including for error cases, so the main path stays unnested.
+- Name complex conditions with well-named boolean variables.
+- Catch an error only to handle it or add context.
 
-## Security
+## Review focus
 
-- Validate and sanitize external input (scraped HTML, network responses).
-
-## Performance
-
-- Avoid spread syntax in accumulators within loops.
-- Use top-level regex literals instead of creating them in loops.
-- Prefer specific imports over namespace imports.
-- Avoid barrel files (index files that re-export everything).
-
-## Testing
-
-- Keep test suites flat; avoid deep `describe` nesting.
-
-## Where Biome can't help
-
-Focus review attention on business logic correctness, meaningful naming, module structure and data flow, and edge cases (boundary conditions and error states).
+Spend review attention on business logic correctness, meaningful naming, module structure and data flow, and edge cases (boundary conditions and error states).

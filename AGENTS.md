@@ -1,20 +1,4 @@
-## Agent skills
-
-### Issue tracker
-
-Issues live in GitHub Issues for `nbbaier/recipe-scrapers-ts` (via the `gh` CLI). External PRs are not treated as a triage surface. See `docs/agents/issue-tracker.md`.
-
-### Triage labels
-
-Default label vocabulary (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`) is used as-is. See `docs/agents/triage-labels.md`.
-
-### Domain docs
-
-Single-context layout — one `GLOSSARY.md` + `docs/adr/` at the repo root. See `docs/agents/domain.md`.
-
-## Code standards
-
-Run `bun run check:fix` (`ultracite fix`) before committing; `bun run check` reports remaining issues.
-
-When writing or reviewing TypeScript in `src/` or `tests/`, read `CODING_STANDARDS.md`.
-</coding_guidelines>
+- **Issues**: before creating, reading, labelling, or closing a GitHub issue or PR, read `docs/agents/issue-tracker.md`.
+- **Triage labels**: before applying or interpreting a triage label or deciding whether an issue is dispatchable, read `docs/agents/triage-labels.md`.
+- **Domain docs**: before exploring the codebase or naming a domain concept, read `docs/agents/domain.md`.
+- **Code standards**: before writing or reviewing TypeScript in `src/` or `tests/`, read `CODING_STANDARDS.md`. Before committing, run `bun run check:fix` (`ultracite fix`); `bun run check` reports what remains.
