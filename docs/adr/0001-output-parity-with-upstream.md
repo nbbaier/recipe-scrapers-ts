@@ -1,0 +1,3 @@
+# Match upstream output exactly instead of idiomatic TypeScript
+
+This project is a port of upstream (the Python recipe-scrapers library), and we decided its output must match upstream's for the same page, field for field, even where idiomatic TypeScript would differ. That is why `toJson()` emits snake_case keys (`cook_time`, `site_name`) and converts `undefined` to `null`, and why site scrapers reproduce upstream quirks rather than fixing them. Parity lets us reuse upstream's fixtures as our test oracle and lets consumers swap between the two libraries; the cost is a less natural TypeScript output shape, so a known gap is recorded as a parity divergence in `docs/PARITY_ISSUES.md` rather than silently "corrected".
